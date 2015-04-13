@@ -1,5 +1,9 @@
-var Plugin = require("./plugin-base");
+/**
+ * A plugin to identify (and validate) header tags.
+ */
+
 var $ = require("jquery");
+var Plugin = require("./plugin-base");
 
 class Header extends Plugin {
     getTitle() {
@@ -10,7 +14,7 @@ class Header extends Plugin {
         return "Highlights headers (<h1>, <h2>, etc) and order violations";
     }
 
-    execute() {
+    run() {
         $("h1, h2, h3, h4, h5, h6").css({
             "border": "1px solid #000"
         });
