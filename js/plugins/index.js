@@ -7,5 +7,5 @@
 var HeaderPlugin = require("./header");
 
 module.exports = [
-    new HeaderPlugin()
+    new HeaderPlugin(),
 ];

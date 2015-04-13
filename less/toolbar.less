@@ -3,19 +3,40 @@
 @spacing: 8px;
 
 .tota11y-toolbar {
-    background-color: #222;
     bottom: 0;
     color: #ccc;
-    font-family: "Arial";
+    font-family: Arial;
     position: absolute;
+
+    .toolbar-toggle {
+        background-color: #222;
+        color: inherit;
+        display: inline-block;
+        font-size: @fontSize;
+        padding: @spacing;
+        text-decoration: none;
+    }
+
+    .toolbar-body {
+        background-color: #222;
+        display: none;
+    }
+    &.expanded .toolbar-body {
+        display: block;
+    }
 
     .plugin {
         border-bottom: 1px solid #cccccc;
-        padding: @spacing;
+        .no-select;
 
-        label {
+        &-label {
             align-items: center;
             display: flex;
+            padding: @spacing;
+
+            &:hover {
+                cursor: pointer;
+            }
         }
 
         &-controls {
@@ -37,6 +58,13 @@
             border: none;
         }
     }
+}
 
-
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

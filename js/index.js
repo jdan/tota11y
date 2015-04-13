@@ -16,6 +16,10 @@ class Toolbar {
         var $toolbar = $(template());
         $el.append($toolbar);
 
+        $toolbar.find(".toolbar-toggle").click(() => {
+            $toolbar.toggleClass("expanded")
+        });
+
         // Attach each plugin
         var $pluginsContainer = $toolbar.find(".plugins");
         plugins.forEach((plugin) => {
@@ -26,5 +30,7 @@ class Toolbar {
 
 $(function() {
     var bar = new Toolbar();
+
+    // TODO: Make this customizable
     bar.appendTo($("body"));
 });
