@@ -26,10 +26,19 @@ class Plugin {
     }
 
     appendTo($el) {
+        // Render and mount plugin
         var $plugin = this.render();
         $el.append($plugin);
 
-        $plugin.click(() => this.run());
+        // Register events
+        var $checkbox = $plugin.find(".plugin-checkbox");
+        $checkbox.click(() => {
+            if ($checkbox.is(":checked")) {
+                this.run();
+            } else {
+                this.cleanup();
+            }
+        });
     }
 }
 
