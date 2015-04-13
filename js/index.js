@@ -9,6 +9,8 @@ var $ = require("jquery");
 var plugins = require("./plugins");
 var template = require("../templates/toolbar.handlebars");
 
+require("../less/toolbar.less");
+
 class Toolbar {
     appendTo($el) {
         var $toolbar = $(template());

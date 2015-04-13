@@ -1,0 +1,42 @@
+@fontSize: 14px;
+@fontSizeSmall: 11px;
+@spacing: 8px;
+
+.tota11y-toolbar {
+    background-color: #222;
+    bottom: 0;
+    color: #ccc;
+    font-family: "Arial";
+    position: absolute;
+
+    .plugin {
+        border-bottom: 1px solid #cccccc;
+        padding: @spacing;
+
+        label {
+            align-items: center;
+            display: flex;
+        }
+
+        &-controls {
+            margin-right: @spacing;
+        }
+
+        &-title {
+            font-size: @fontSize;
+            font-weight: bold;
+        }
+
+        &-description {
+            font-size: @fontSizeSmall;
+            font-style: italic;
+            margin-right: 3px;
+        }
+
+        &:last-child {
+            border: none;
+        }
+    }
+
+
+}
