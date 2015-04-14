@@ -1,24 +1,37 @@
 @fontSize: 14px;
 @fontSizeSmall: 11px;
-@spacing: 8px;
+@spacing: 10px;
+@borderRadius: 5px;
+
+@backgroundColor: #333;
+@borderColor: #555;
+@textColor: #eee;
+
+@descriptionWidth: 200px;
+
+.dark-color-scheme {
+    background-color: @backgroundColor;
+    color: @textColor;
+    font-family: Arial;
+}
 
 .tota11y-toolbar {
+    .dark-color-scheme;
+
+    border-top-left-radius: @borderRadius;
+    border-top-right-radius: @borderRadius;
     bottom: 0;
-    color: #ccc;
-    font-family: Arial;
     position: absolute;
 
     .toolbar-toggle {
-        background-color: #222;
         color: inherit;
-        display: inline-block;
+        display: block;
         font-size: @fontSize;
         padding: @spacing;
         text-decoration: none;
     }
 
     .toolbar-body {
-        background-color: #222;
         display: none;
     }
     &.expanded .toolbar-body {
@@ -26,7 +39,7 @@
     }
 
     .tota11y-plugin {
-        border-bottom: 1px solid #cccccc;
+        border-bottom: 1px solid @borderColor;
         .no-select;
 
         &-label {
@@ -51,12 +64,33 @@
         &-description {
             font-size: @fontSizeSmall;
             font-style: italic;
+            width: @descriptionWidth;
             margin-right: 3px;
         }
+    }
+}
 
-        &:last-child {
-            border: none;
-        }
+@panelWidth: 300px;
+@panelHeight: 180px;
+@panelPosition: 15px;
+
+.tota11y-info {
+    .dark-color-scheme;
+
+    border-radius: @borderRadius;
+    display: none;
+
+    width: @panelWidth;
+    height: @panelHeight;
+
+    position: absolute;
+    bottom: @panelPosition;
+    right: @panelPosition;
+
+    padding: @spacing;
+
+    &.active {
+        display: block;
     }
 }
 

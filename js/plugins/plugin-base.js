@@ -21,6 +21,9 @@ class Plugin {
         return "";
     }
 
+    /**
+     * Renders the plugin view.
+     */
     render() {
         var templateData = {
             title: this.getTitle(),
@@ -30,6 +33,10 @@ class Plugin {
         return $(template(templateData));
     }
 
+    /**
+     * Attaches the plugin to a given DOMNode.
+     * (chainable)
+     */
     appendTo($el) {
         // Render and mount plugin
         var $plugin = this.render();
@@ -38,12 +45,34 @@ class Plugin {
         // Register events
         var $checkbox = $plugin.find(".tota11y-plugin-checkbox");
         $checkbox.click(() => {
-            if ($checkbox.is(":checked")) {
-                this.run();
+            this.active = $checkbox.is(":checked");
+
+            // You can probably change the class based on active being true
+            // or not
+            if (this.active) {
+                var infoHtml = this.run();
+
+                if (infoHtml) {
+                    this.$infoContainer
+                        .html(infoHtml)
+                        .addClass("active");
+                }
             } else {
                 this.cleanup();
+                this.$infoContainer.removeClass("active");
             }
         });
+
+        return this;
+    }
+
+    /**
+     * Registers a container in which to display more information.
+     * (chainable)
+     */
+    registerInfo($el) {
+        this.$infoContainer = $el;
+        return this;
     }
 }
 
