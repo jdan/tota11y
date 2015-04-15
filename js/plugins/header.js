@@ -49,10 +49,15 @@ class Header extends Plugin {
             var last = children.length && children[children.length-1];
 
             if (!children.length || level <= last.level) {
+                var content = $("<div>")
+                    .append($("<span>").addClass("header-level").text(level))
+                    .append($("<span>").addClass("header-text").text(text))
+                    .html();
+
                 children.push({
                     level: level,
                     children: [],
-                    text: text
+                    content: content
                 });
             } else {
                 add(level, text, last.children);
@@ -61,9 +66,9 @@ class Header extends Plugin {
 
         $headers.each(function() {
             var $this = $(this);
-            var level = +$this.prop("tagName").slice(1);
+            var level = +$(this).prop("tagName").slice(1);
 
-            add(level, $this.text(), root.children);
+            add(level, $(this).text(), root.children);
         });
 
         var treeToHtml = (tree) => {
@@ -72,7 +77,7 @@ class Header extends Plugin {
                     .append(tree.children.map(treeToHtml));
             } else {
                 return $("<ul>")
-                    .append($("<li>").text(tree.level + ' - ' + tree.text))
+                    .append($("<li>").html(tree.content))
                     .append(tree.children.map(treeToHtml));
             }
         };
