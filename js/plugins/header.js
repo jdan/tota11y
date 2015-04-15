@@ -4,8 +4,10 @@
 
 var $ = require("jquery");
 var Plugin = require("./plugin-base");
+var headerInfoTemplate = require("../../templates/header-plugin.handlebars");
 
 require("../../less/tag.less");
+require("../../less/header-plugin.less");
 
 class Header extends Plugin {
     getTitle() {
@@ -38,13 +40,63 @@ class Header extends Plugin {
         $offsetParent.append($tag);
     }
 
+    hierarchy($headers) {
+        var root = { level: 0, children: [] };
+        var prevLevel = 0;
+
+        // TODO: rename subtree?
+        var add = (level, text, children) => {
+            var last = children.length && children[children.length-1];
+
+            if (!children.length || level <= last.level) {
+                children.push({
+                    level: level,
+                    children: [],
+                    text: text
+                });
+            } else {
+                add(level, text, last.children);
+            }
+        };
+
+        $headers.each(function() {
+            var $this = $(this);
+            var level = +$this.prop("tagName").slice(1);
+
+            add(level, $this.text(), root.children);
+        });
+
+        var treeToHtml = (tree) => {
+            if (tree.level === 0) {
+                return $("<div>")
+                    .append(tree.children.map(treeToHtml));
+            } else {
+                return $("<ul>")
+                    .append($("<li>").text(tree.level + ' - ' + tree.text))
+                    .append(tree.children.map(treeToHtml));
+            }
+        };
+
+        // Now convert `tree` to HTML
+        return headerInfoTemplate({
+            hierarchy: treeToHtml(root).html()
+        });
+    }
+
+    /**
+     * Tags headers
+     *
+     * Returns HTML mapping out the header hierarchy.
+     */
     run() {
         var _tag = this.tag;
-        $("h1, h2, h3, h4, h5, h6").each(function() {
+        var $headers = $("h1, h2, h3, h4, h5, h6");
+
+        $headers.each(function() {
             _tag($(this));
         });
 
-        return "Hello world!";
+        return this.hierarchy($headers);
     }
 
     cleanup() {
