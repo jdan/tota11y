@@ -45,12 +45,32 @@ class Header extends Plugin {
         var prevLevel = 0;
 
         // TODO: rename subtree?
-        var add = (level, text, children) => {
+        var add = (level, text, children, parentLevel) => {
             var last = children.length && children[children.length-1];
 
             if (!children.length || level <= last.level) {
+                var errorData;
+
+                // Check for violations
+                if (parentLevel === 0 && level !== 1) {
+                    // First header should be an h1
+                    errorData = "Your first header should be an <h1>";
+                } else if (level === 1 && children.length) {
+                    // There should only be one h1
+                    errorData = "You should not use more than one <h1>";
+                } else if (level - parentLevel > 1) {
+                    // Should only go up by one
+                    errorData = "You should not have any gaps in your " +
+                                "header numbering";
+                }
+
+                var $info = $("<span>")
+                    .addClass("header-level")
+                    .attr("data-error", errorData)
+                    .text(level);
+
                 var content = $("<div>")
-                    .append($("<span>").addClass("header-level").text(level))
+                    .append($info)
                     .append($("<span>").addClass("header-text").text(text))
                     .html();
 
@@ -60,7 +80,7 @@ class Header extends Plugin {
                     content: content
                 });
             } else {
-                add(level, text, last.children);
+                add(level, text, last.children, last.level);
             }
         };
 
@@ -68,7 +88,7 @@ class Header extends Plugin {
             var $this = $(this);
             var level = +$(this).prop("tagName").slice(1);
 
-            add(level, $(this).text(), root.children);
+            add(level, $(this).text(), root.children, 0);
         });
 
         var treeToHtml = (tree) => {

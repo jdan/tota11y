@@ -6,7 +6,7 @@
         padding: 10px;
         margin: 10px 0;
 
-        max-height: 132px;
+        max-height: 172px;
         overflow: scroll;
     }
 
@@ -15,12 +15,12 @@
         list-style: none;
         margin: 0 0 0 3px;
         padding-left: 12px;
+    }
 
-        &:first-child {
-            border: none;
-            padding-left: 0;
-            margin-left: 0;
-        }
+    .hierarchy > ul {
+        border: none;
+        padding-left: 0;
+        margin-left: 0;
     }
 
     li {
@@ -31,9 +31,15 @@
         box-sizing: border-box;
         margin-right: 5px;
         font-size: 10px;
-        padding: 3px 4px;
+        padding: 2px 3px;
         position: relative;
         top: -2px;
-        background-color: #ddd;
+        background-color: #b9eda9;
+        border: 1px solid #9ecd90;
+
+        &[data-error] {
+            background-color: rgb(255, 174, 174);
+            border-color: rgb(255, 109, 109);
+        }
     }
 }
