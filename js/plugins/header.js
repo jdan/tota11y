@@ -42,7 +42,11 @@ class Header extends Plugin {
     // Very similar to tag...
     highlight($el) {
         var $offsetParent = $el.offsetParent();
-        var { top, bottom, left, right } = $el[0].getBoundingClientRect();
+
+        var textNode = $el[0].firstChild;
+        var range = document.createRange();
+        range.selectNodeContents(textNode);
+        var { top, bottom, left, right } = range.getBoundingClientRect();
 
         var $highlight = $("<div>")
             .addClass("tota11y-highlight")
