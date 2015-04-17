@@ -23,9 +23,6 @@ class Header extends Plugin {
      */
     tag($el) {
         var tagName = $el.prop("tagName").toLowerCase();
-
-        // We'll position the tag absolutely to its nearest positioned
-        // ancestor
         var $offsetParent = $el.offsetParent();
         var { top, left } = $el.position();
 
@@ -38,15 +35,42 @@ class Header extends Plugin {
             .text(tagName);
 
         $offsetParent.append($tag);
+
+        return $tag;
+    }
+
+    // Very similar to tag...
+    highlight($el) {
+        var $offsetParent = $el.offsetParent();
+        var { top, bottom, left, right } = $el[0].getBoundingClientRect();
+
+        var $highlight = $("<div>")
+            .addClass("tota11y-highlight")
+            .css({
+                top: top,
+                left: left,
+                width: right - left,
+                height: bottom - top,
+            });
+
+        $offsetParent.append($highlight);
+
+        return $highlight;
     }
 
     hierarchy($headers) {
+        // `root` is a pseudotree that we will eventually use to construct the
+        // info panel
         var root = { level: 0, children: [] };
         var prevLevel = 0;
 
-        // TODO: rename subtree?
-        var add = (level, text, children, parentLevel) => {
+        // Function to add an item to the `root` tree.
+        // This checks the item for any header violations, and builds an
+        // element that we can eventually place in the info panel.
+        var add = ($el, children, parentLevel) => {
             var last = children.length && children[children.length-1];
+            var level = +$el.prop("tagName").slice(1);
+            var text = $el.text();
 
             if (!children.length || level <= last.level) {
                 var errorData;
@@ -74,38 +98,51 @@ class Header extends Plugin {
                     .append($("<span>").addClass("header-text").text(text))
                     .html();
 
+                // Create a new node
                 children.push({
                     level: level,
                     children: [],
-                    content: content
+                    content: content,
+                    $el: $el
                 });
             } else {
-                add(level, text, last.children, last.level);
+                add($el, last.children, last.level);
             }
         };
 
         $headers.each(function() {
-            var $this = $(this);
-            var level = +$(this).prop("tagName").slice(1);
-
-            add(level, $(this).text(), root.children, 0);
+            add($(this), root.children, 0);
         });
 
+        // This builds the info box and attaches some event listeners to its
+        // items
+        var $highlight;
         var treeToHtml = (tree) => {
-            if (tree.level === 0) {
-                return $("<div>")
-                    .append(tree.children.map(treeToHtml));
-            } else {
-                return $("<ul>")
-                    .append($("<li>").html(tree.content))
-                    .append(tree.children.map(treeToHtml));
+            var $root = (tree.level === 0) ?
+                $("<div>") :
+                $("<ul>").append($("<li>").html(tree.content));
+
+            $root.append(tree.children.map(treeToHtml));
+
+            // Tag the parent element and set events
+            if (tree.$el) {
+                this.tag(tree.$el);
+
+                $root.find("> li").on("mouseenter", (e) => {
+                    e.stopPropagation();
+                    $highlight && $highlight.remove();
+                    $highlight = this.highlight(tree.$el);
+                }).on("mouseleave", (e) => {
+                    e.stopPropagation();
+                    $highlight.remove();
+                });
             }
+
+            return $root;
         };
 
-        // Now convert `tree` to HTML
-        return headerInfoTemplate({
-            hierarchy: treeToHtml(root).html()
-        });
+        // Finally, convert `tree` to HTML
+        return treeToHtml(root);
     }
 
     /**
@@ -117,11 +154,12 @@ class Header extends Plugin {
         var _tag = this.tag;
         var $headers = $("h1, h2, h3, h4, h5, h6");
 
-        $headers.each(function() {
-            _tag($(this));
-        });
+        var $template = $(headerInfoTemplate());
+        var $hierarchy = this.hierarchy($headers);
 
-        return this.hierarchy($headers);
+        $template.find(".hierarchy").append($hierarchy);
+
+        return $template;
     }
 
     cleanup() {

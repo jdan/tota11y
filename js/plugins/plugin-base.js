@@ -50,16 +50,16 @@ class Plugin {
             // You can probably change the class based on active being true
             // or not
             if (this.active) {
-                var infoHtml = this.run();
+                var $infoHtml = this.run();
 
-                if (infoHtml) {
+                if ($infoHtml) {
                     this.$infoContainer
-                        .html(infoHtml)
+                        .append($infoHtml)
                         .addClass("active");
                 }
             } else {
                 this.cleanup();
-                this.$infoContainer.removeClass("active");
+                this.$infoContainer.empty().removeClass("active");
             }
         });
 
