@@ -4,6 +4,7 @@
 
 var $ = require("jquery");
 var Plugin = require("./plugin-base");
+var annotate = require("./shared/annotate");
 
 class AltText extends Plugin {
     getTitle() {
@@ -16,19 +17,16 @@ class AltText extends Plugin {
 
     run() {
         $("img").each(function() {
-            $(this).fadeOut(1000, () => {
-                var $altText = $("<span>")
-                    .addClass("tota11y-alt-text")
-                    .text($(this).prop("alt"));
-
-                $(this).after($altText);
-            });
+            var $highlight = annotate.highlight($(this), "black", 1.0);
+            $highlight.append(
+                $("<div>")
+                    .css({ color: "white" })
+                    .text($(this).prop("alt")));
         });
     }
 
     cleanup() {
-        $(".tota11y-alt-text").remove();
-        $("img").fadeIn(1000);
+        $(".tota11y-highlight").remove();
     }
 }
 
