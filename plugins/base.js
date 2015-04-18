@@ -10,7 +10,7 @@
  */
 
 var $ = require("jquery");
-var template = require("../../templates/plugin.handlebars");
+var template = require("../templates/plugin.handlebars");
 
 class Plugin {
     getTitle() {

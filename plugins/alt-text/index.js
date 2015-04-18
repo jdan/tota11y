@@ -3,8 +3,10 @@
  */
 
 var $ = require("jquery");
-var Plugin = require("./plugin-base");
-var annotate = require("./shared/annotate");
+var Plugin = require("../base");
+var annotate = require("../shared/annotate");
+
+require("./style.less");
 
 class AltText extends Plugin {
     getTitle() {
@@ -20,7 +22,7 @@ class AltText extends Plugin {
             var $highlight = annotate.highlight($(this), "black", 1.0);
             $highlight.append(
                 $("<div>")
-                    .css({ color: "white" })
+                    .addClass("tota11y-alt-text")
                     .text($(this).prop("alt")));
         });
     }

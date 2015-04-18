@@ -5,9 +5,9 @@
  */
 
 var AltTextPlugin = require("./alt-text");
-var HeaderPlugin = require("./header");
+var HeadersPlugin = require("./headers");
 
 module.exports = [
-    new HeaderPlugin(),
+    new HeadersPlugin(),
     new AltTextPlugin(),
 ];

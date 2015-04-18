@@ -2,7 +2,7 @@ var path = require("path");
 var webpack = require("webpack");
 
 module.exports = {
-    entry: "./js/index.js",
+    entry: "./index.js",
     output: {
         path: path.join(__dirname, "dist"),
         filename: "tota11y.js"
