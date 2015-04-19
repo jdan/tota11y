@@ -8,7 +8,6 @@ require("./style.less");
 
 module.exports = {
     label($el, text=$el.prop("tagName").toLowerCase()) {
-        var $offsetParent = $el.offsetParent();
         var { top, left } = $el.position();
 
         var $tag = $("<span>")
@@ -19,13 +18,11 @@ module.exports = {
             })
             .text(text);
 
-        $offsetParent.append($tag);
-
+        $("body").append($tag);
         return $tag;
     },
 
     highlight($el, color="blue", opacity=0.2) {
-        var $offsetParent = $el.offsetParent();
         var { top, left } = $el.position();
 
         var $highlight = $("<div>")
@@ -39,12 +36,11 @@ module.exports = {
                 opacity: opacity
             });
 
-        $offsetParent.append($highlight);
+        $("body").append($highlight);
         return $highlight;
     },
 
     highlightText($el, color="blue", opacity=0.2) {
-        var $offsetParent = $el.offsetParent();
         var textNode = $el[0].firstChild;
         var range = document.createRange();
         range.selectNodeContents(textNode);
@@ -62,7 +58,7 @@ module.exports = {
                 opacity: opacity
             });
 
-        $offsetParent.append($textHighlight);
+        $("body").append($textHighlight);
         return $textHighlight;
     }
 };
