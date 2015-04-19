@@ -53,10 +53,16 @@ class Header extends Plugin {
 
                 var $info = $("<span>")
                     .addClass("header-level")
-                    .attr("data-error", errorData)
+                    .toggleClass("header-level-error", errorData !== undefined)
                     .text(level);
 
-                var content = $("<div>")
+                if (errorData) {
+                    $info
+                        .addClass("tota11y-tooltipped")
+                        .attr("data-content", errorData);
+                }
+
+                var $content = $("<div>")
                     .append($info)
                     .append($("<span>").addClass("header-text").text(text))
                     .html();
@@ -65,7 +71,7 @@ class Header extends Plugin {
                 children.push({
                     level: level,
                     children: [],
-                    content: content,
+                    content: $content,
                     $el: $el
                 });
             } else {
