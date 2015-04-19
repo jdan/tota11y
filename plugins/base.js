@@ -44,22 +44,22 @@ class Plugin {
 
         // Register events
         var $checkbox = $plugin.find(".tota11y-plugin-checkbox");
+        var hasInfoBox;
         $checkbox.click(() => {
-            this.active = $checkbox.is(":checked");
+            if ($checkbox.is(":checked")) {
+                var $infoHtml = this.run();
 
-            // You can probably change the class based on active being true
-            // or not
-            if (this.active) {
-                var infoHtml = this.run();
-
-                if (infoHtml) {
+                if ($infoHtml) {
+                    hasInfoBox = true;
                     this.$infoContainer
-                        .html(infoHtml)
+                        .html($infoHtml)
                         .addClass("active");
                 }
             } else {
                 this.cleanup();
-                this.$infoContainer.empty().removeClass("active");
+                if (hasInfoBox) {
+                    this.$infoContainer.empty().removeClass("active");
+                }
             }
         });
 
