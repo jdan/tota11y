@@ -19,11 +19,17 @@ class AltText extends Plugin {
 
     run() {
         $("img").each(function() {
-            var $highlight = annotate.highlight($(this), "black", 1.0);
-            $highlight.append(
-                $("<div>")
-                    .addClass("tota11y-alt-text")
-                    .text($(this).prop("alt")));
+            var $highlight = annotate.highlight($(this), "tota11y-alt-text");
+            var altText = $(this).prop("alt");
+            var $inner = $("<div>").addClass("highlight-inner");
+
+            if (altText) {
+                $inner.text(altText);
+            } else {
+                $inner.addClass("header-violation").text("!");
+            }
+
+            $highlight.append($inner);
         });
     }
 
