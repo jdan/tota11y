@@ -7,7 +7,6 @@ var $ = require("jquery");
 require("./style.less");
 
 module.exports = {
-
     label($el, text=$el.prop("tagName").toLowerCase()) {
         var $offsetParent = $el.offsetParent();
         var { top, left } = $el.position();
