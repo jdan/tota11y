@@ -7,11 +7,12 @@ var $ = require("jquery");
 require("./style.less");
 
 module.exports = {
-    label($el, text=$el.prop("tagName").toLowerCase()) {
+    label($el, className, text=$el.prop("tagName").toLowerCase()) {
         var { top, left } = $el.position();
 
         var $tag = $("<span>")
-            .addClass("tota11y-tag")
+            .addClass("tota11y-label")
+            .addClass(className)
             .css({
                 top: top + parseFloat($el.css("margin-top")),
                 left: left + parseFloat($el.css("margin-left"))
