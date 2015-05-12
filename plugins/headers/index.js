@@ -10,8 +10,8 @@ var infoTemplate = require("./info.handlebars");
 require("./style.less");
 
 const LABEL_CLASS = "tota11y-header-label";
- 
-class Header extends Plugin {
+
+class HeadersPlugin extends Plugin {
     getTitle() {
         return "Headers";
     }
@@ -138,4 +138,4 @@ class Header extends Plugin {
     }
 }
 
-module.exports = Header;
+module.exports = HeadersPlugin;

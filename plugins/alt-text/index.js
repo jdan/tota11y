@@ -8,7 +8,7 @@ var annotate = require("../shared/annotate");
 
 require("./style.less");
 
-class AltText extends Plugin {
+class AltTextPlugin extends Plugin {
     getTitle() {
         return "Image alt-text";
     }
@@ -38,4 +38,4 @@ class AltText extends Plugin {
     }
 }
 
-module.exports = AltText;
+module.exports = AltTextPlugin;
