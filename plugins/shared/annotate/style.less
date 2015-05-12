@@ -4,37 +4,31 @@
 
 .tota11y-label {
     background-color: rgb(255, 232, 0);
-    border: 1px solid #ffd500;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: default;
     font-family: Arial;
     font-size: @fontSize;
     padding: @tagPadding;
     position: absolute;
     z-index: 9998;
-
-    &:hover {
-        cursor: default;
-        opacity: 0.8;
-    }
 }
 
 .tota11y-highlight {
+    background-color: rgba(120, 130, 200, 0.2);
     position: absolute;
-
-    // Oh boy - managing these is going to be fun
     z-index: 9997;
 }
 
 .tota11y-tooltipped:hover:before {
-    content: attr(data-content);
-    padding: @tooltipPadding;
+    background-color: #222;
     border-radius: 5px;
     color: #fff;
-    background-color: #222;
-
-    position: absolute;
-    width: 200px;
-    top: 20px;
+    content: attr(data-content);
     font-size: @fontSize;
-
+    padding: @tooltipPadding;
+    pointer-events: none;
+    position: absolute;
+    top: 20px;
+    width: 200px;
     z-index: 9999;
 }

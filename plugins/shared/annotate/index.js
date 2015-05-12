@@ -24,16 +24,16 @@ module.exports = {
     },
 
     highlight($el, className) {
-        var { top, left } = $el.position();
+        var { top, bottom, left, right } = $el[0].getBoundingClientRect();
 
         var $highlight = $("<div>")
             .addClass("tota11y-highlight")
             .addClass(className)
             .css({
-                top: top + parseFloat($el.css("margin-top")),
-                left: left + parseFloat($el.css("margin-left")),
-                width: $el.width(),
-                height: $el.height()
+                top: top,
+                left: left,
+                width: right - left,
+                height: bottom - top
             });
 
         $("body").append($highlight);
