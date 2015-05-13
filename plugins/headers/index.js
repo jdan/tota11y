@@ -100,7 +100,7 @@ class HeadersPlugin extends Plugin {
                 $root.find("> li").on("mouseenter", (e) => {
                     e.stopPropagation();
                     $highlight && $highlight.remove();
-                    $highlight = annotate.highlightText(
+                    $highlight = annotate.highlight(
                         tree.$el, "tota11y-header-highlight");
                 }).on("mouseleave", (e) => {
                     e.stopPropagation();
