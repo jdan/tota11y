@@ -36,7 +36,7 @@ class Plugin {
         $el.append($plugin);
 
         // Register events
-        var $checkbox = $plugin.find(".plugin-checkbox");
+        var $checkbox = $plugin.find(".tota11y-plugin-checkbox");
         $checkbox.click(() => {
             if ($checkbox.is(":checked")) {
                 this.run();

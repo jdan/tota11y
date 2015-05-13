@@ -21,7 +21,7 @@ class Toolbar {
         });
 
         // Attach each plugin
-        var $pluginsContainer = $toolbar.find(".plugins");
+        var $pluginsContainer = $toolbar.find(".tota11y-plugins");
         plugins.forEach((plugin) => {
             plugin.appendTo($pluginsContainer)
         });
