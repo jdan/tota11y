@@ -19,27 +19,39 @@ class LabelsPlugin extends Plugin {
         return "Identifies inputs with missing labels"
     }
 
-    // Test for inputs that require a label.
-    //
-    // A "label" includes one of the following
-    //   - a label with a `for` attribute matching the `id` of the input
-    //   - a label wrapping the input
-    //   - an `aria-label` attribute
-    //   - an element whose `id` matches the input's `aria-labeledby`
-    //     value
-    //
-    // TODO: aria-describedby?
+    // Tests if a given nullable string has any content that can be read by
+    // a screen reader
+    isReadable(text) {
+        return /\w/.test(text || "");
+    }
+
+    // Test for inputs that require a label
     hasValidLabel($el) {
         // Check for a label tag whose `for` matches the `id` of the input
-        var id = $el.prop("id");
+        let id = $el.prop("id");
         if (id && $(`label[for="${id}"]`).text()) {
             return true;
         }
 
         // Check if the input is wrapped in a label
-        if ($el.parents("label").length > 0) {
+        if (this.isReadable($el.closest("label").text())) {
             return true;
         }
+
+        // Check for an `aria-label` attribute
+        if (this.isReadable($el.prop("aria-label"))) {
+            return true;
+        }
+
+        // Check for an element whose `id` matches the input's
+        // `aria-labelledby` value
+        let labelledBy = $el.prop("aria-labelledby");
+        let $label = $("#" + labelledBy);
+        if ($label && this.isReadable($label.text())) {
+            return true;
+        }
+
+        // TODO: aria-describedby?
 
         return false;
     }
@@ -77,16 +89,17 @@ class LabelsPlugin extends Plugin {
             }
 
             if ($el.is("button")) {
-                return assert($el, /\w/.test($el.text() || ""),
+                return assert($el, this.isReadable($el.text()),
                     "This button does not contain any inner text");
             }
 
             if ($el.is("[type='image']")) {
-                return assert($el, /\w/.test($el.attr("alt") || ""),
+                return assert($el, this.isReadable($el.attr("alt")),
                     "Image inputs must have non-empty alt-text associated " +
                     "with them");
             }
 
+            // This element requires a valid label
             return assert($el, this.hasValidLabel($el),
                 "This input does not have a valid label associated with it");
         });
