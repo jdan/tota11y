@@ -30,8 +30,8 @@ module.exports = {
             .addClass("tota11y-highlight")
             .addClass(className)
             .css({
-                top: top,
-                left: left,
+                top: top + window.scrollY,
+                left: left + window.scrollX,
                 width: right - left,
                 height: bottom - top
             });

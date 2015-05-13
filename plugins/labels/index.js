@@ -47,10 +47,12 @@ class LabelsPlugin extends Plugin {
     run() {
         const assert = ($el, condition, message) => {
             if (!condition) {
-                annotate
-                    .highlight($el, LABEL_CLASS)
-                    .addClass("tota11y-tooltipped")
-                    .attr("data-content", message);
+                annotate.highlight($el, LABEL_CLASS);
+
+                // Wrap element in a tooltipped span
+                $el.wrap(
+                    $("<span>").addClass("tota11y-tooltipped")
+                               .attr("data-content", message));
             }
         }
 
