@@ -8,9 +8,9 @@ require("./style.less");
 
 module.exports = {
     label($el, className, text=$el.prop("tagName").toLowerCase()) {
-        var { top, left } = $el.position();
+        let { top, left } = $el.position();
 
-        var $tag = $("<span>")
+        let $tag = $("<span>")
             .addClass("tota11y-label")
             .addClass(className)
             .css({
@@ -24,40 +24,19 @@ module.exports = {
     },
 
     highlight($el, className) {
-        var { top, bottom, left, right } = $el[0].getBoundingClientRect();
+        let { top, bottom, left, right } = $el[0].getBoundingClientRect();
 
-        var $highlight = $("<div>")
+        let $highlight = $("<div>")
             .addClass("tota11y-highlight")
             .addClass(className)
             .css({
-                top: top + window.scrollY,
-                left: left + window.scrollX,
+                top: top + $(window).scrollTop(),
+                left: left + $(window).scrollLeft(),
                 width: right - left,
                 height: bottom - top
             });
 
         $("body").append($highlight);
         return $highlight;
-    },
-
-    highlightText($el, className) {
-        var textNode = $el[0].firstChild;
-        var range = document.createRange();
-        range.selectNodeContents(textNode);
-
-        var { top, bottom, left, right } = range.getBoundingClientRect();
-
-        var $textHighlight = $("<div>")
-            .addClass("tota11y-highlight")
-            .addClass(className)
-            .css({
-                top: top + $(window).scrollTop(),   // no range .position :(
-                left: left + $(window).scrollLeft(),
-                width: right - left,
-                height: bottom - top
-            });
-
-        $("body").append($textHighlight);
-        return $textHighlight;
     }
 };
