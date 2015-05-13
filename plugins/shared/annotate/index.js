@@ -7,6 +7,8 @@ var $ = require("jquery");
 require("./style.less");
 
 module.exports = {
+    // Places a small label in the top left corner of a given jQuery element.
+    // By default, this label contains the elements tagName.
     label($el, className, text=$el.prop("tagName").toLowerCase()) {
         let { top, left } = $el.position();
 
@@ -14,29 +16,31 @@ module.exports = {
             .addClass("tota11y-label")
             .addClass(className)
             .css({
-                top: top + parseFloat($el.css("margin-top")),
-                left: left + parseFloat($el.css("margin-left"))
+                top: top,
+                left: left
             })
             .text(text);
 
-        $("body").append($tag);
+        $el.offsetParent().append($tag);
         return $tag;
     },
 
+    // Highlights a given jQuery element by placing a translucent rectangle
+    // directly over it.
     highlight($el, className) {
-        let { top, bottom, left, right } = $el[0].getBoundingClientRect();
+        let { top, left } = $el.position();
 
         let $highlight = $("<div>")
             .addClass("tota11y-highlight")
             .addClass(className)
             .css({
-                top: top + $(window).scrollTop(),
-                left: left + $(window).scrollLeft(),
-                width: right - left,
-                height: bottom - top
+                top: top,
+                left: left,
+                width: $el.outerWidth(true),  // include margins
+                height: $el.outerHeight(true)
             });
 
-        $("body").append($highlight);
+        $el.offsetParent().append($highlight);
         return $highlight;
     }
 };

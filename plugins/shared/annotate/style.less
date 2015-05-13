@@ -2,21 +2,25 @@
 @tooltipPadding: 10px;
 @fontSize: 11px;
 
+// Base styles that labels and highlights will inherit from
+.tota11y-annotation {
+    pointer-events: none;
+    position: absolute;
+}
+
 .tota11y-label {
+    .tota11y-annotation;
     background-color: rgb(255, 232, 0);
     border: 1px solid rgba(0, 0, 0, 0.1);
-    cursor: default;
     font-family: Arial;
     font-size: @fontSize;
     padding: @tagPadding;
-    position: absolute;
     z-index: 9998;
 }
 
 .tota11y-highlight {
+    .tota11y-annotation;
     background-color: rgba(120, 130, 200, 0.2);
-    pointer-events: none;
-    position: absolute;
     z-index: 9997;
 }
 
@@ -25,14 +29,13 @@
 }
 
 .tota11y-tooltipped:hover:before {
+    .tota11y-annotation;
     background-color: #222;
     border-radius: 5px;
     color: #fff;
     content: attr(data-content);
     font-size: @fontSize;
     padding: @tooltipPadding;
-    pointer-events: none;
-    position: absolute;
     top: 20px;
     width: 200px;
     z-index: 9999;
