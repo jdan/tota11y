@@ -7,14 +7,18 @@
 var $ = require("jquery");
 
 var plugins = require("./plugins");
-var template = require("../templates/toolbar.handlebars");
+var toolbarTemplate = require("../templates/toolbar.handlebars");
+var infoTemplate = require("../templates/info-panel.handlebars");
 
 require("../less/toolbar.less");
 
 class Toolbar {
     appendTo($el) {
-        var $toolbar = $(template());
+        var $toolbar = $(toolbarTemplate());
+        var $infoPanel = $(infoTemplate());
+
         $el.append($toolbar);
+        $toolbar.after($infoPanel);
 
         $toolbar.find(".toolbar-toggle").click(() => {
             $toolbar.toggleClass("expanded")
@@ -23,7 +27,11 @@ class Toolbar {
         // Attach each plugin
         var $pluginsContainer = $toolbar.find(".tota11y-plugins");
         plugins.forEach((plugin) => {
-            plugin.appendTo($pluginsContainer)
+            plugin
+                // Mount the plugin to the list
+                .appendTo($pluginsContainer)
+                // Register the info panel
+                .registerInfo($infoPanel);
         });
     }
 }
