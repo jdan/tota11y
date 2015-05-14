@@ -3,11 +3,14 @@
  */
 
 var $ = require("jquery");
-var Plugin = require("./plugin-base");
-var headerInfoTemplate = require("../../templates/header-plugin.handlebars");
+var Plugin = require("../base");
+var annotate = require("../shared/annotate");
+// TODO: if we want multiple plugins simultaneously we'll need to namespace
+// annotations to remove them individually
 
-require("../../less/tag.less");
-require("../../less/header-plugin.less");
+var infoTemplate = require("./info.handlebars");
+
+require("./style.less");
 
 class Header extends Plugin {
     getTitle() {
@@ -16,50 +19,6 @@ class Header extends Plugin {
 
     getDescription() {
         return "Highlights headers (<h1>, <h2>, etc) and order violations";
-    }
-
-    /**
-     * Tags a particular jQuery element with its tagName
-     */
-    tag($el) {
-        var tagName = $el.prop("tagName").toLowerCase();
-        var $offsetParent = $el.offsetParent();
-        var { top, left } = $el.position();
-
-        var $tag = $("<span>")
-            .addClass("tota11y-tag")
-            .css({
-                top: top + parseFloat($el.css("margin-top")),
-                left: left
-            })
-            .text(tagName);
-
-        $offsetParent.append($tag);
-
-        return $tag;
-    }
-
-    // Very similar to tag...
-    highlight($el) {
-        var $offsetParent = $el.offsetParent();
-
-        var textNode = $el[0].firstChild;
-        var range = document.createRange();
-        range.selectNodeContents(textNode);
-        var { top, bottom, left, right } = range.getBoundingClientRect();
-
-        var $highlight = $("<div>")
-            .addClass("tota11y-highlight")
-            .css({
-                top: top,
-                left: left,
-                width: right - left,
-                height: bottom - top,
-            });
-
-        $offsetParent.append($highlight);
-
-        return $highlight;
     }
 
     hierarchy($headers) {
@@ -130,12 +89,12 @@ class Header extends Plugin {
 
             // Tag the parent element and set events
             if (tree.$el) {
-                this.tag(tree.$el);
+                annotate.label(tree.$el);
 
                 $root.find("> li").on("mouseenter", (e) => {
                     e.stopPropagation();
                     $highlight && $highlight.remove();
-                    $highlight = this.highlight(tree.$el);
+                    $highlight = annotate.highlightText(tree.$el);
                 }).on("mouseleave", (e) => {
                     e.stopPropagation();
                     $highlight.remove();
@@ -158,7 +117,7 @@ class Header extends Plugin {
         var _tag = this.tag;
         var $headers = $("h1, h2, h3, h4, h5, h6");
 
-        var $template = $(headerInfoTemplate());
+        var $template = $(infoTemplate());
         var $hierarchy = this.hierarchy($headers);
 
         $template.find(".hierarchy").append($hierarchy);

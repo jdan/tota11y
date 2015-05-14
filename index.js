@@ -7,10 +7,10 @@
 var $ = require("jquery");
 
 var plugins = require("./plugins");
-var toolbarTemplate = require("../templates/toolbar.handlebars");
-var infoTemplate = require("../templates/info-panel.handlebars");
+var toolbarTemplate = require("./templates/toolbar.handlebars");
+var infoTemplate = require("./templates/info-panel.handlebars");
 
-require("../less/toolbar.less");
+require("./less/toolbar.less");
 
 class Toolbar {
     appendTo($el) {

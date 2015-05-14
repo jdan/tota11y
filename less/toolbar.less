@@ -21,7 +21,7 @@
     border-top-left-radius: @borderRadius;
     border-top-right-radius: @borderRadius;
     bottom: 0;
-    position: absolute;
+    position: fixed;
     z-index: 9999;
 
     .toolbar-toggle {
@@ -84,12 +84,11 @@
     width: @panelWidth;
     height: @panelHeight;
 
-    position: absolute;
+    position: fixed;
     bottom: @panelPosition;
     right: @panelPosition;
 
     z-index: 9999;
-
     padding: @spacing;
 
     &.active {
