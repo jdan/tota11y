@@ -4,9 +4,7 @@
 
 var $ = require("jquery");
 var Plugin = require("../base");
-var annotate = require("../shared/annotate");
-
-const LABEL_CLASS = "tota11y-landmark-label";
+var annotate = require("../shared/annotate")("landmarks");
 
 class LandmarksPlugin extends Plugin {
     getTitle() {
@@ -26,13 +24,12 @@ class LandmarksPlugin extends Plugin {
 
         const $regions = $("[role]");
         $regions.each(function() {
-            annotate.label($(this), LABEL_CLASS, $(this).attr("role"));
+            annotate.label($(this), $(this).attr("role"));
         });
     }
 
     cleanup() {
-        // Remove all labels
-        $("." + LABEL_CLASS).remove();
+        annotate.removeAll();
     }
 }
 

@@ -4,7 +4,7 @@
 
 var $ = require("jquery");
 var Plugin = require("../base");
-var annotate = require("../shared/annotate");
+var annotate = require("../shared/annotate")("alt-text");
 
 require("./style.less");
 
@@ -19,7 +19,7 @@ class AltTextPlugin extends Plugin {
 
     run() {
         $("img").each(function() {
-            var $highlight = annotate.highlight($(this), "tota11y-alt-text");
+            var $highlight = annotate.highlight($(this));
             var altText = $(this).prop("alt");
             var $inner = $("<div>").addClass("highlight-inner");
 
@@ -34,7 +34,7 @@ class AltTextPlugin extends Plugin {
     }
 
     cleanup() {
-        $(".tota11y-highlight").remove();
+        annotate.removeAll();
     }
 }
 
