@@ -11,51 +11,73 @@
  */
 
 var $ = require("jquery");
+var debounce = require("lodash.debounce");
 
 require("./style.less");
 
 module.exports = (namespace) => {
+    // The class that will be applied to any annotation generated in this
+    // namespace
+    const ANNOTATION_CLASS = "tota11y-annotation-" + namespace;
+    const ANNOTATION_DEBOUNCE_MS = 50;
+
+    // Register a new annotation to a given jQuery element
+    let createAnnotation = ($el, className) => {
+        // Create a position an annotation relative to its offset parent.
+        // We also store the element its annotation so we can reposition when
+        // the window resizes.
+        let $annotation = $("<div>")
+            .addClass(ANNOTATION_CLASS)
+            .addClass(className)
+            .css($el.position())
+            .data({$el});
+
+        // Append the annotation to the element's closest ancestor that is
+        // positioned
+        $el.offsetParent().append($annotation);
+
+        return $annotation;
+    };
+
+    // We do a leading debounce to hide all annotations in this namespace
+    $(window).resize(debounce(() => {
+        $("." + ANNOTATION_CLASS).addClass("tota11y-hidden");
+    }, ANNOTATION_DEBOUNCE_MS, {
+        "leading": true,
+        "trailing": false
+    }));
+
+    // We do a default (trailing) debounce to reposition all annotations
+    // after resizing has stopped for a bit
+    $(window).resize(debounce(() => {
+        $("." + ANNOTATION_CLASS).each(function() {
+            // Reposition the annotation
+            $(this).css($(this).data("$el").position());
+            $(this).removeClass("tota11y-hidden");
+        });
+    }, ANNOTATION_DEBOUNCE_MS));
+
     return {
-        // Places a small label in the top left corner of a given jQuery element.
-        // By default, this label contains the elements tagName.
+        // Places a small label in the top left corner of a given jQuery
+        // element. By default, this label contains the element's tagName.
         label($el, text=$el.prop("tagName").toLowerCase()) {
-            let { top, left } = $el.position();
-
-            let $tag = $("<span>")
-                .addClass("tota11y-label")
-                .addClass("tota11y-label-" + namespace)
-                .css({
-                    top: top,
-                    left: left
-                })
-                .text(text);
-
-            $el.offsetParent().append($tag);
-            return $tag;
+            let $label = createAnnotation($el, "tota11y-label");
+            return $label.text(text);
         },
 
-        // Highlights a given jQuery element by placing a translucent rectangle
-        // directly over it.
+        // Highlights a given jQuery element by placing a translucent
+        // rectangle directly over it.
         highlight($el) {
-            let { top, left } = $el.position();
-
-            let $highlight = $("<div>")
-                .addClass("tota11y-highlight")
-                .addClass("tota11y-highlight-" + namespace)
-                .css({
-                    top: top,
-                    left: left,
-                    width: $el.outerWidth(true),  // include margins
-                    height: $el.outerHeight(true)
-                });
-
-            $el.offsetParent().append($highlight);
-            return $highlight;
+            let $highlight = createAnnotation($el, "tota11y-highlight");
+            return $highlight.css({
+                width: $el.outerWidth(true),    // include margins
+                height: $el.outerHeight(true)
+            });
         },
 
         removeAll() {
-            $(".tota11y-highlight-" + namespace).remove();
-            $(".tota11y-label-" + namespace).remove();
+            // Remove all annotations
+            $("." + ANNOTATION_CLASS).remove();
         }
     };
 };

@@ -66,13 +66,13 @@ class LabelsPlugin extends Plugin {
     run() {
         const assert = ($el, condition, message) => {
             if (!condition) {
-                annotate.highlight($el).addClass(HIGHLIGHT_CLASS);
-
                 // Wrap the element in a span so we can show a tooltip on
                 // hover. We will need to undo this in `cleanup()`
                 $el.addClass(WRAPPING_CLASS).wrap(
                     $("<span>").addClass("tota11y-tooltipped")
                                .attr("data-content", message));
+
+                annotate.highlight($el).addClass(HIGHLIGHT_CLASS);
             }
         }
 
