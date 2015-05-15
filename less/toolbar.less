@@ -9,14 +9,18 @@
 
 @descriptionWidth: 200px;
 
-.dark-color-scheme {
+.tota11y-dark-color-scheme {
     background-color: @backgroundColor;
     color: @textColor;
     font-family: Arial;
 }
 
+.tota11y-no-select {
+    user-select: none;
+}
+
 .tota11y-toolbar {
-    .dark-color-scheme;
+    .tota11y-dark-color-scheme;
 
     border-top-left-radius: @borderRadius;
     border-top-right-radius: @borderRadius;
@@ -24,24 +28,24 @@
     position: fixed;
     z-index: 9999;
 
-    .toolbar-toggle {
-        color: inherit;
+    &-toggle {
+        color: inherit !important;   // prevent global styles :(
         display: block;
         font-size: @fontSize;
         padding: @spacing;
-        text-decoration: none;
+        text-decoration: none !important;
     }
 
-    .toolbar-body {
+    &-body {
         display: none;
     }
-    &.expanded .toolbar-body {
+    &.tota11y-expanded &-body {
         display: block;
     }
 
     .tota11y-plugin {
+        .tota11y-no-select;
         border-bottom: 1px solid @borderColor;
-        .no-select;
 
         &-label {
             align-items: center;
@@ -76,31 +80,19 @@
 @panelPosition: 15px;
 
 .tota11y-info {
-    .dark-color-scheme;
+    .tota11y-dark-color-scheme;
 
     border-radius: @borderRadius;
-    display: none;
-
-    width: @panelWidth;
-    height: @panelHeight;
-
-    position: fixed;
     bottom: @panelPosition;
-    right: @panelPosition;
-
-    z-index: 9999;
+    display: none;
+    height: @panelHeight;
     padding: @spacing;
+    position: fixed;
+    right: @panelPosition;
+    width: @panelWidth;
+    z-index: 9999;
 
-    &.active {
+    &.tota11y-active {
         display: block;
     }
-}
-
-.no-select {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }

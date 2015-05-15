@@ -53,12 +53,12 @@ class Plugin {
                     hasInfoBox = true;
                     this.$infoContainer
                         .html($infoHtml)
-                        .addClass("active");
+                        .addClass("tota11y-active");
                 }
             } else {
                 this.cleanup();
                 if (hasInfoBox) {
-                    this.$infoContainer.empty().removeClass("active");
+                    this.$infoContainer.empty().removeClass("tota11y-active");
                 }
             }
         });
