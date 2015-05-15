@@ -12,7 +12,7 @@ module.exports = {
             { test: /\.js$/, exclude: /node_modules/, loader: "babel" },
             { test: /\.handlebars$/, loader: "handlebars" },
             { test: /\.css$/, loader: "style!css" },
-            { test: /\.less$/, loader: "style!css!less" }
+            { test: /\.less$/, loader: "style!css!autoprefixer?{browsers:['> 5%']}!less" }
         ]
     }
 };
