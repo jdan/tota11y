@@ -47,15 +47,21 @@ module.exports = (namespace) => {
         "trailing": false
     }));
 
-    // We do a default (trailing) debounce to reposition all annotations
-    // after resizing has stopped for a bit
-    $(window).resize(debounce(() => {
-        $("." + ANNOTATION_CLASS).each(function() {
-            // Reposition the annotation
-            $(this).css($(this).data("$el").position());
-            $(this).removeClass("tota11y-hidden");
+    $(window).resize(() => {
+        let positions = [];
+        let $annotations = $("." + ANNOTATION_CLASS);
+
+        // Record the position of each annotation's corresponding element to
+        // batch measurements
+        $annotations.each((i, el) => {
+            positions.push($(el).data("$el").position());
         });
-    }, ANNOTATION_DEBOUNCE_MS));
+
+        // Reposition each annotation (batching invalidations)
+        $annotations.each((i, el) => {
+            $(el).css(positions[i]).removeClass("tota11y-hidden");
+        });
+    });
 
     return {
         // Places a small label in the top left corner of a given jQuery
