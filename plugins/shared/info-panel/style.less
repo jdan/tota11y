@@ -1,0 +1,39 @@
+@import "../../../less/variables.less";
+
+@panelWidth: 350px;
+@panelHeight: 220px;
+@panelPosition: 15px;
+
+.tota11y-info {
+    .dark-color-scheme;
+    .position(fixed, auto, @panelPosition, @panelPosition, auto);
+
+    border-radius: @borderRadius;
+    height: @panelHeight;
+    padding: @spacing;
+    width: @panelWidth;
+    z-index: 9999;
+
+    &-tabs {
+        display: flex;
+        padding: 0;
+    }
+
+    &-tab {
+        list-style: none;
+        padding: 5px;
+        text-align: center;
+        width: 100%;
+    }
+
+    &-sections {
+
+    }
+
+    &-section {
+        display: none;
+        &.active {
+            display: block;
+        }
+    }
+}

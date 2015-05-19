@@ -1,32 +1,6 @@
-@fontSize: 14px;
-@fontSizeSmall: 11px;
-@spacing: 10px;
-@borderRadius: 5px;
-
-@backgroundColor: #333;
-@borderColor: #555;
-@textColor: #eee;
+@import "variables.less";
 
 @descriptionWidth: 200px;
-
-.tota11y-dark-color-scheme {
-    background-color: @backgroundColor;
-    color: @textColor;
-    font-family: Arial;
-}
-
-.tota11y-no-select {
-    user-select: none;
-}
-
-// Position mixin
-.position(@position: static, @top: auto, @right: auto, @bottom: auto, @left: auto) {
-    position: @position;
-    top: @top;
-    right: @right;
-    bottom: @bottom;
-    left: @left;
-}
 
 .tota11y-toolbar {
     .tota11y-dark-color-scheme;
@@ -80,25 +54,5 @@
             width: @descriptionWidth;
             margin-right: 3px;
         }
-    }
-}
-
-@panelWidth: 350px;
-@panelHeight: 220px;
-@panelPosition: 15px;
-
-.tota11y-info {
-    .tota11y-dark-color-scheme;
-    .position(fixed, auto, @panelPosition, @panelPosition, auto);
-
-    border-radius: @borderRadius;
-    display: none;
-    height: @panelHeight;
-    padding: @spacing;
-    width: @panelWidth;
-    z-index: 9999;
-
-    &.tota11y-active {
-        display: block;
     }
 }

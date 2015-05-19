@@ -6,6 +6,7 @@ var $ = require("jquery");
 var Plugin = require("../base");
 var annotate = require("../shared/annotate")("headers");
 var infoTemplate = require("./info.handlebars");
+var InfoPanel = require("../shared/info-panel");
 
 require("./style.less");
 
@@ -118,19 +119,22 @@ class HeadersPlugin extends Plugin {
      * Returns HTML mapping out the header hierarchy.
      */
     run() {
-        var _tag = this.tag;
-        var $headers = $("h1, h2, h3, h4, h5, h6");
+        this.panel = new InfoPanel("Headers");
 
-        var $template = $(infoTemplate());
-        var $hierarchy = this.hierarchy($headers);
+        let _tag = this.tag;
+        let $headers = $("h1, h2, h3, h4, h5, h6");
+
+        let $template = $(infoTemplate());
+        let $hierarchy = this.hierarchy($headers);
 
         $template.find(".hierarchy").append($hierarchy);
 
-        return $template;
+        this.panel.setSummary($template).render();
     }
 
     cleanup() {
         annotate.removeAll();
+        this.panel.destroy();
     }
 }
 

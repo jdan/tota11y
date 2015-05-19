@@ -25,7 +25,7 @@ class Plugin {
      * Renders the plugin view.
      */
     render() {
-        var templateData = {
+        let templateData = {
             title: this.getTitle(),
             description: this.getDescription()
         };
@@ -43,35 +43,15 @@ class Plugin {
         $el.append($plugin);
 
         // Register events
-        var $checkbox = $plugin.find(".tota11y-plugin-checkbox");
-        var hasInfoBox;
+        let $checkbox = $plugin.find(".tota11y-plugin-checkbox");
         $checkbox.click(() => {
             if ($checkbox.is(":checked")) {
-                var $infoHtml = this.run();
-
-                if ($infoHtml) {
-                    hasInfoBox = true;
-                    this.$infoContainer
-                        .html($infoHtml)
-                        .addClass("tota11y-active");
-                }
+                this.run();
             } else {
                 this.cleanup();
-                if (hasInfoBox) {
-                    this.$infoContainer.empty().removeClass("tota11y-active");
-                }
             }
         });
 
-        return this;
-    }
-
-    /**
-     * Registers a container in which to display more information.
-     * (chainable)
-     */
-    registerInfo($el) {
-        this.$infoContainer = $el;
         return this;
     }
 }
