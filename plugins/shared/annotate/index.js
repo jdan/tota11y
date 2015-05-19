@@ -59,7 +59,10 @@ module.exports = (namespace) => {
 
         // Reposition each annotation (batching invalidations)
         $annotations.each((i, el) => {
-            $(el).css(positions[i]).removeClass("tota11y-hidden");
+            $(el).css({
+                top: positions[i].top,
+                left: positions[i].left
+            }).removeClass("tota11y-hidden");
         });
     });
 
