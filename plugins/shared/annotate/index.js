@@ -11,7 +11,6 @@
  */
 
 var $ = require("jquery");
-var debounce = require("lodash.debounce");
 
 require("./style.less");
 
@@ -19,7 +18,6 @@ module.exports = (namespace) => {
     // The class that will be applied to any annotation generated in this
     // namespace
     const ANNOTATION_CLASS = "tota11y-annotation-" + namespace;
-    const ANNOTATION_DEBOUNCE_MS = 50;
 
     // Register a new annotation to a given jQuery element
     let createAnnotation = ($el, className) => {
@@ -39,14 +37,6 @@ module.exports = (namespace) => {
         return $annotation;
     };
 
-    // We do a leading debounce to hide all annotations in this namespace
-    $(window).resize(debounce(() => {
-        $("." + ANNOTATION_CLASS).addClass("tota11y-hidden");
-    }, ANNOTATION_DEBOUNCE_MS, {
-        "leading": true,
-        "trailing": false
-    }));
-
     $(window).resize(() => {
         let positions = [];
         let $annotations = $("." + ANNOTATION_CLASS);
@@ -62,7 +52,7 @@ module.exports = (namespace) => {
             $(el).css({
                 top: positions[i].top,
                 left: positions[i].left
-            }).removeClass("tota11y-hidden");
+            });
         });
     });
 
