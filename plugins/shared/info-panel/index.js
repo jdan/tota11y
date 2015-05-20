@@ -89,8 +89,10 @@ class InfoPanel {
 
             // Register events
             $tab.on("activate", () => {
-                $(".tota11y-info-tab.active").removeClass("active");
-                $(".tota11y-info-section.active").removeClass("active");
+                this.$el.find(".tota11y-info-tab.active")
+                    .removeClass("active");
+                this.$el.find(".tota11y-info-section.active")
+                    .removeClass("active");
 
                 $tab.addClass("active");
                 $section.addClass("active");
