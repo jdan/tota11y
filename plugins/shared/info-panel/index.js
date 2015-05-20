@@ -84,24 +84,34 @@ class InfoPanel {
                 .html(html);
             this.$el.find(".tota11y-info-sections").append($section);
 
-            // Store a reference to the section on the anchor to display it
-            $tabAnchor.data("section", $section);
-
             // Register events
+            $tab.on("activate", () => {
+                $(".tota11y-info-tab.active").removeClass("active");
+                $(".tota11y-info-section.active").removeClass("active");
+
+                $tab.addClass("active");
+                $section.addClass("active");
+            });
+
             $tabAnchor.on("click", (e) => {
                 e.preventDefault();
-
-                $(".tota11y-info-section.active").removeClass("active");
-                $tabAnchor.data("section").addClass("active");
+                $tab.trigger("activate");
             });
+
+            return $tab;
         };
 
+        let $activeTab;
         if (this.about) {
-            addTab("About", this.about);
+            $activeTab = addTab("About", this.about);
         }
 
         if (this.summary) {
-            addTab("Summary", this.summary);
+            $activeTab = addTab("Summary", this.summary);
+        }
+
+        if ($activeTab) {
+            $activeTab.trigger("activate");
         }
 
         // TODO: Add errors and attach events
