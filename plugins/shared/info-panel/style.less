@@ -1,7 +1,7 @@
 @import "../../../less/variables.less";
 
-@panelWidth: 350px;
-@panelHeight: 220px;
+@panelBodyWidth: 350px;
+@panelBodyHeight: 220px;
 @panelPosition: 15px;
 
 .tota11y-info {
@@ -14,8 +14,21 @@
     width: @panelWidth;
     z-index: 9999;
 
+    &-title, &-body {
+        padding: @spacing;
+    }
+
+    &-title {
+        border-bottom: 1px solid @gray;
+    }
+
+    &-body {
+
+    }
+
     &-tabs {
         display: flex;
+        margin: 0;
         padding: 0;
     }
 
@@ -27,11 +40,19 @@
     }
 
     &-sections {
-
+        position: relative;
+        height: @panelBodyHeight;
+        width: @panelBodyWidth;
     }
 
     &-section {
+        background-color: @white;
+        color: @darkGray;
         display: none;
+        position: absolute;
+        top: 0; bottom: 0;
+        left: 0; right: 0;
+
         &.active {
             display: block;
         }

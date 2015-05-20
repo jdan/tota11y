@@ -3,14 +3,21 @@
 @spacing: 10px;
 @borderRadius: 5px;
 
-@backgroundColor: #333;
-@borderColor: #555;
-@textColor: #eee;
+@darkGray: #333;
+@gray: #555;
+@white: #eee;
+
+@darkBorderColor: @gray;
 
 .dark-color-scheme {
-    background-color: @backgroundColor;
-    color: @textColor;
+    background-color: @darkGray;
+    color: @white;
     font-family: Arial;
+}
+
+.light-color-scheme {
+    background-color: @white;
+    color: @darkGray;
 }
 
 .tota11y-no-select {

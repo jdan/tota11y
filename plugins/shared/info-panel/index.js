@@ -104,8 +104,7 @@ class InfoPanel {
             addTab("Summary", this.summary);
         }
 
-        // Add errors and attach events
-
+        // TODO: Add errors and attach events
 
         $("body").append(this.$el);
     }
