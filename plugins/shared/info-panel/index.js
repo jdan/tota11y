@@ -39,6 +39,15 @@ class InfoPanel {
     }
 
     /**
+     * Sets the contents of the about section as HTML
+     * (chainable)
+     */
+    setAbout(about) {
+        this.about = about;
+        return this;
+    }
+
+    /**
      * Sets the contents of the summary section as HTML
      * (chainable)
      */
@@ -86,6 +95,10 @@ class InfoPanel {
                 $tabAnchor.data("section").addClass("active");
             });
         };
+
+        if (this.about) {
+            addTab("About", this.about);
+        }
 
         if (this.summary) {
             addTab("Summary", this.summary);

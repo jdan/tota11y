@@ -129,7 +129,7 @@ class HeadersPlugin extends Plugin {
 
         $template.find(".hierarchy").append($hierarchy);
 
-        this.panel.setSummary($template).render();
+        this.panel.setSummary($template).setAbout("hi").render();
     }
 
     cleanup() {
