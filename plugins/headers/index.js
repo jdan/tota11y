@@ -120,16 +120,13 @@ class HeadersPlugin extends Plugin {
      */
     run() {
         this.panel = new InfoPanel("Headers");
-
-        let _tag = this.tag;
-        let $headers = $("h1, h2, h3, h4, h5, h6");
-
         let $template = $(infoTemplate());
-        let $hierarchy = this.hierarchy($headers);
 
+        let $headers = $("h1, h2, h3, h4, h5, h6");
+        let $hierarchy = this.hierarchy($headers);
         $template.find(".hierarchy").append($hierarchy);
 
-        this.panel.setSummary($template).setAbout("hi").render();
+        this.panel.setSummary($template).setAbout("Headers plugin").render();
     }
 
     cleanup() {

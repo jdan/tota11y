@@ -87,7 +87,9 @@ class InfoPanel {
                 .html(html);
             this.$el.find(".tota11y-info-sections").append($section);
 
-            // Register events
+            // Register an "activate" event for the tab, which switches the
+            // tab's associated content to be visible, and changes the
+            // appearance of the newly-active tab marker
             $tab.on("activate", () => {
                 this.$el.find(".tota11y-info-tab.active")
                     .removeClass("active");
@@ -98,6 +100,7 @@ class InfoPanel {
                 $section.addClass("active");
             });
 
+            // Activate the tab when its anchor is clicked
             $tabAnchor.on("click", (e) => {
                 e.preventDefault();
                 $tab.trigger("activate");
@@ -106,6 +109,8 @@ class InfoPanel {
             return $tab;
         };
 
+        // Add the appropriate tabs based on which information the info panel
+        // was provided, then highlight the most important one.
         let $activeTab;
         if (this.about) {
             $activeTab = addTab("About", this.about);
@@ -121,7 +126,10 @@ class InfoPanel {
 
         // TODO: Add errors and attach events
 
+        // Append the info panel to the body. In reality we'll likely want it
+        // directly adjacent to the toolbar.
         $("body").append(this.$el);
+        return this.$el;
     }
 
     destroy() {
