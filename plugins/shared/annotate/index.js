@@ -38,13 +38,12 @@ module.exports = (namespace) => {
     };
 
     $(window).resize(() => {
-        let positions = [];
         let $annotations = $("." + ANNOTATION_CLASS);
 
         // Record the position of each annotation's corresponding element to
         // batch measurements
-        $annotations.each((i, el) => {
-            positions.push($(el).data("$el").position());
+        let positions = $annotations.map((i, el) => {
+            return $(el).data("$el").position();
         });
 
         // Reposition each annotation (batching invalidations)
