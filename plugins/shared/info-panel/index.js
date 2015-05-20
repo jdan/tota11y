@@ -74,7 +74,10 @@ class InfoPanel {
         let addTab = (title, html) => {
             // Create and append a tab marker
             let $tab = $("<li>").addClass("tota11y-info-tab");
-            let $tabAnchor = $("<a>").prop("href", "#").text(title);
+            let $tabAnchor = $("<a>")
+                .addClass("tota11y-info-tab-anchor")
+                .prop("href", "#")
+                .text(title);
             $tab.append($tabAnchor);
             this.$el.find(".tota11y-info-tabs").append($tab);
 

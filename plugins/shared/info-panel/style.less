@@ -4,6 +4,12 @@
 @panelBodyHeight: 220px;
 @panelPosition: 15px;
 
+@tabHoverColor: #555;
+@tabActiveColor: #888;
+
+@tabHeight: 30px;
+@panelPadding: 10px;
+
 .tota11y-info {
     .dark-color-scheme;
     .position(fixed, auto, @panelPosition, @panelPosition, auto);
@@ -15,15 +21,7 @@
     z-index: 9999;
 
     &-title, &-body {
-        padding: @spacing;
-    }
-
-    &-title {
-        border-bottom: 1px solid @gray;
-    }
-
-    &-body {
-
+        padding: @spacing @spacing 0;
     }
 
     &-tabs {
@@ -33,10 +31,40 @@
     }
 
     &-tab {
+        height: @tabHeight;
+        line-height: @tabHeight;
         list-style: none;
-        padding: 5px;
+        position: relative;
         text-align: center;
         width: 100%;
+
+        &-anchor {
+            bottom: 0;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+
+            &, &:hover {
+                color: inherit !important;
+            }
+
+            &:focus {
+            }
+        }
+
+        &.active {
+            background-color: @tabActiveColor;
+            text-decoration: outline;
+
+            &:hover {
+                background-color: @tabActiveColor;
+            }
+        }
+
+        &:hover {
+            background-color: @tabHoverColor;
+        }
     }
 
     &-sections {
@@ -47,11 +75,14 @@
 
     &-section {
         background-color: @white;
+        bottom: 0;
         color: @darkGray;
         display: none;
+        left: 0;
+        padding: 0 @panelPadding;
         position: absolute;
-        top: 0; bottom: 0;
-        left: 0; right: 0;
+        right: 0;
+        top: 0;
 
         &.active {
             display: block;
