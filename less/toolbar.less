@@ -19,14 +19,21 @@
     user-select: none;
 }
 
+// Position mixin
+.position(@position: static, @top: auto, @right: auto, @bottom: auto, @left: auto) {
+    position: @position;
+    top: @top;
+    right: @right;
+    bottom: @bottom;
+    left: @left;
+}
+
 .tota11y-toolbar {
     .tota11y-dark-color-scheme;
+    .position(fixed, auto, auto, 0, 10px);
 
     border-top-left-radius: @borderRadius;
     border-top-right-radius: @borderRadius;
-    bottom: 0;
-    left: 20px;
-    position: fixed;
     z-index: 9999;
 
     &-toggle {
@@ -82,14 +89,12 @@
 
 .tota11y-info {
     .tota11y-dark-color-scheme;
+    .position(fixed, auto, @panelPosition, @panelPosition, auto);
 
     border-radius: @borderRadius;
-    bottom: @panelPosition;
     display: none;
     height: @panelHeight;
     padding: @spacing;
-    position: fixed;
-    right: @panelPosition;
     width: @panelWidth;
     z-index: 9999;
 
