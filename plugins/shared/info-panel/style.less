@@ -5,7 +5,7 @@
 @panelPosition: 15px;
 
 @tabHoverColor: #555;
-@tabActiveColor: #888;
+@tabActiveColor: @white;
 
 @tabHeight: 30px;
 @panelPadding: 10px;
@@ -41,14 +41,11 @@
             &, &:hover {
                 color: inherit !important;
             }
-
-            &:focus {
-            }
         }
 
         &.active {
             background-color: @tabActiveColor;
-            text-decoration: outline;
+            color: @darkGray;
 
             &:hover {
                 background-color: @tabActiveColor;
