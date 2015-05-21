@@ -18,6 +18,7 @@ let $ = require("jquery");
 let annotate = require("../annotate")("info-panel");
 let template = require("./template.handlebars");
 let errorTemplate = require("./error.handlebars");
+let tabTemplate = require("./tab.handlebars");
 
 require("./style.less");
 
@@ -75,12 +76,7 @@ class InfoPanel {
 
         let addTab = (title, html) => {
             // Create and append a tab marker
-            let $tab = $("<li>").addClass("tota11y-info-tab");
-            let $tabAnchor = $("<a>")
-                .addClass("tota11y-info-tab-anchor")
-                .prop("href", "#")
-                .text(title);
-            $tab.append($tabAnchor);
+            let $tab = $(tabTemplate({title}));
             this.$el.find(".tota11y-info-tabs").append($tab);
 
             // Create and append the tab content
@@ -103,7 +99,7 @@ class InfoPanel {
             });
 
             // Activate the tab when its anchor is clicked
-            $tabAnchor.on("click", (e) => {
+            $tab.on("click", (e) => {
                 e.preventDefault();
                 $tab.trigger("activate");
             });
@@ -143,6 +139,13 @@ class InfoPanel {
             });
 
             $activeTab = addTab("Errors", $errors);
+
+            // Add a small badge next to the tab title
+            let $badge = $("<div>")
+                .addClass("tota11y-info-error-count")
+                .text(this.errors.length);
+
+            $activeTab.find(".tota11y-info-tab-anchor").append($badge);
         }
 
         if ($activeTab) {

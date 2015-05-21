@@ -37,9 +37,18 @@
 
         &-anchor {
             .position(absolute, 0, 0, 0, 0);
+            text-align: center;
 
-            &, &:hover {
+            // Overwrite any external colors and disable text underlining.
+            // We'll add text underlining only on the contained <span> which
+            // has the class `&-text`.
+            &, &:hover, &:focus {
                 color: inherit !important;
+                text-decoration: none !important;
+            }
+
+            &:hover &-text, &:focus &-text {
+                text-decoration: underline !important;
             }
         }
 
@@ -85,11 +94,16 @@
         list-style: none;
 
         &-title {
-            font-size: 20px;
+            font-weight: bold;
         }
+    }
 
-        &-description {
-            font-size: 16px;
-        }
+    &-error-count {
+        display: inline;
+        margin-left: 5px;
+        background-color: red;
+        padding: 1px 8px;
+        border-radius: 20px;
+        color: white;
     }
 }
