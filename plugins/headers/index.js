@@ -22,19 +22,18 @@ class HeadersPlugin extends Plugin {
     hierarchy($headers) {
         // `root` is a pseudotree that we will eventually use to construct the
         // info panel
-        var root = { level: 0, children: [] };
-        var prevLevel = 0;
+        let root = { level: 0, children: [] };
 
         // Function to add an item to the `root` tree.
         // This checks the item for any header violations, and builds an
         // element that we can eventually place in the info panel.
-        var add = ($el, children, parentLevel) => {
-            var last = children.length && children[children.length-1];
-            var level = +$el.prop("tagName").slice(1);
-            var text = $el.text();
+        let add = ($el, children, parentLevel) => {
+            let last = children.length && children[children.length-1];
+            let level = +$el.prop("tagName").slice(1);
+            let text = $el.text();
 
             if (!children.length || level <= last.level) {
-                var errorData;
+                let errorData;
 
                 // Check for violations
                 if (parentLevel === 0 && level !== 1) {
@@ -49,7 +48,7 @@ class HeadersPlugin extends Plugin {
                                 "header numbering";
                 }
 
-                var $info = $("<span>")
+                let $info = $("<span>")
                     .addClass("header-level")
                     .toggleClass("header-level-error", errorData !== undefined)
                     .text(level);
@@ -58,9 +57,15 @@ class HeadersPlugin extends Plugin {
                     $info
                         .addClass("tota11y-tooltipped")
                         .attr("data-content", errorData);
+
+                    this.panel.addError(
+                        "This is a test",
+                        "Here's a longer description",
+                        $el
+                    );
                 }
 
-                var $content = $("<div>")
+                let $content = $("<div>")
                     .append($info)
                     .append($("<span>").addClass("header-text").text(text))
                     .html();
@@ -119,7 +124,7 @@ class HeadersPlugin extends Plugin {
      * Returns HTML mapping out the header hierarchy.
      */
     run() {
-        this.panel = new InfoPanel("Headers");
+        this.panel = new InfoPanel(this.getTitle());
         let $template = $(infoTemplate());
 
         let $headers = $("h1, h2, h3, h4, h5, h6");

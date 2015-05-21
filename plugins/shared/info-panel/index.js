@@ -14,8 +14,10 @@
  *           contains the number of errors listed
  */
 
-var $ = require("jquery");
-var template = require("./template.handlebars");
+let $ = require("jquery");
+let annotate = require("../annotate")("info-panel");
+let template = require("./template.handlebars");
+let errorTemplate = require("./error.handlebars");
 
 require("./style.less");
 
@@ -57,12 +59,12 @@ class InfoPanel {
     }
 
     /**
-     * Adds an error to the errors tab. Also receives a callback to be
-     * fired off when the error is hovered in the info panel.
+     * Adds an error to the errors tab. Also receives a jQuery element to
+     * highlight on hover.
      * (chainable)
      */
-    addError(error, callback) {
-        this.errors.push({error, callback});
+    addError(title, description, $el) {
+        this.errors.push({title, description, $el});
         return this;
     }
 
@@ -120,11 +122,32 @@ class InfoPanel {
             $activeTab = addTab("Summary", this.summary);
         }
 
+        // TODO: Add errors and attach events
+        if (this.errors.length > 0) {
+            let $errors = $("<ul>").addClass("tota11y-info-errors");
+
+            this.errors.forEach((error) => {
+                let $error = $(errorTemplate(error));
+                $errors.append($error);
+
+                // Highlight the violating element on hover
+                let $highlight;
+                $error
+                    .on("mouseenter", () => {
+                        console.log('pls')
+                        $highlight = annotate.highlight(error.$el);
+                    })
+                    .on("mouseleave", () => {
+                        $highlight && $highlight.remove();
+                    });
+            });
+
+            $activeTab = addTab("Errors", $errors);
+        }
+
         if ($activeTab) {
             $activeTab.trigger("activate");
         }
-
-        // TODO: Add errors and attach events
 
         // Append the info panel to the body. In reality we'll likely want it
         // directly adjacent to the toolbar.
