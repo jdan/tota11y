@@ -9,10 +9,15 @@
  *     cleanup: code to run when the plugin is deactivated from the toolbar
  */
 
-var $ = require("jquery");
-var template = require("../templates/plugin.handlebars");
+let $ = require("jquery");
+let template = require("../templates/plugin.handlebars");
+let id = 1;
 
 class Plugin {
+    constructor() {
+        this.id = id++;
+    }
+
     getTitle() {
         return "New plugin";
     }
@@ -39,15 +44,33 @@ class Plugin {
      */
     appendTo($el) {
         // Render and mount plugin
-        var $plugin = this.render();
+        let $plugin = this.render();
         $el.append($plugin);
 
-        // Register events
         let $checkbox = $plugin.find(".tota11y-plugin-checkbox");
+
+        // Trigger a `plugin-switched` event on the container, which will be
+        // dispatched to all plugins. We include this plugin's ID to determine
+        // if we should enable or disable the plugin listening for this event.
         $checkbox.click(() => {
-            if ($checkbox.is(":checked")) {
-                this.run();
-            } else {
+            $el.trigger("plugin-switched", [this.id]);
+        });
+
+        // Listen for the `plugin-switched` event on the plugins container.
+        $el.on("plugin-switched", (e, id) => {
+            // If we are the plugin that the user has interacted with: we
+            // follow the traditional pattern of running if checked, and
+            // cleaning up if not.
+            if (id === this.id) {
+                if ($checkbox.is(":checked")) {
+                    this.run();
+                } else {
+                    this.cleanup();
+                }
+            // If we are an active plugin that the user switched from, we
+            // uncheck ourselves and clean up.
+            } else if ($checkbox.is(":checked")) {
+                $checkbox.attr("checked", false);
                 this.cleanup();
             }
         });
