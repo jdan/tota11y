@@ -20,8 +20,8 @@ class Toolbar {
         $el.append($toolbar);
         $toolbar.after($infoPanel);
 
-        $toolbar.find(".toolbar-toggle").click(() => {
-            $toolbar.toggleClass("expanded")
+        $toolbar.find(".tota11y-toolbar-toggle").click(() => {
+            $toolbar.toggleClass("tota11y-expanded")
         });
 
         // Attach each plugin

@@ -9,39 +9,51 @@
 
 @descriptionWidth: 200px;
 
-.dark-color-scheme {
+.tota11y-dark-color-scheme {
     background-color: @backgroundColor;
     color: @textColor;
     font-family: Arial;
 }
 
+.tota11y-no-select {
+    user-select: none;
+}
+
+// Position mixin
+.position(@position: static, @top: auto, @right: auto, @bottom: auto, @left: auto) {
+    position: @position;
+    top: @top;
+    right: @right;
+    bottom: @bottom;
+    left: @left;
+}
+
 .tota11y-toolbar {
-    .dark-color-scheme;
+    .tota11y-dark-color-scheme;
+    .position(fixed, auto, auto, 0, 10px);
 
     border-top-left-radius: @borderRadius;
     border-top-right-radius: @borderRadius;
-    bottom: 0;
-    position: fixed;
     z-index: 9999;
 
-    .toolbar-toggle {
-        color: inherit;
+    &-toggle {
+        color: inherit !important;   // prevent global styles :(
         display: block;
         font-size: @fontSize;
         padding: @spacing;
-        text-decoration: none;
+        text-decoration: none !important;
     }
 
-    .toolbar-body {
+    &-body {
         display: none;
     }
-    &.expanded .toolbar-body {
+    &.tota11y-expanded &-body {
         display: block;
     }
 
     .tota11y-plugin {
+        .tota11y-no-select;
         border-bottom: 1px solid @borderColor;
-        .no-select;
 
         &-label {
             align-items: center;
@@ -76,31 +88,17 @@
 @panelPosition: 15px;
 
 .tota11y-info {
-    .dark-color-scheme;
+    .tota11y-dark-color-scheme;
+    .position(fixed, auto, @panelPosition, @panelPosition, auto);
 
     border-radius: @borderRadius;
     display: none;
-
-    width: @panelWidth;
     height: @panelHeight;
-
-    position: fixed;
-    bottom: @panelPosition;
-    right: @panelPosition;
-
-    z-index: 9999;
     padding: @spacing;
+    width: @panelWidth;
+    z-index: 9999;
 
-    &.active {
+    &.tota11y-active {
         display: block;
     }
-}
-
-.no-select {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
