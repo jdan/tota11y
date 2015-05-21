@@ -1,6 +1,11 @@
 @import "variables.less";
 
 @descriptionWidth: 200px;
+@pluginPadding: 12px;
+@controlMargin: 15px;
+@indicatorSize: 16px;
+
+@kaGreen: #639b24;
 
 .tota11y-toolbar {
     .tota11y-dark-color-scheme;
@@ -11,10 +16,10 @@
     z-index: 9999;
 
     &-toggle {
-        color: inherit !important;   // prevent global styles :(
+        color: inherit !important;
         display: block;
         font-size: @fontSize;
-        padding: @spacing;
+        padding: @pluginPadding;
         text-decoration: none !important;
     }
 
@@ -24,35 +29,56 @@
     &.tota11y-expanded &-body {
         display: block;
     }
+}
 
-    .tota11y-plugin {
-        .tota11y-no-select;
-        border-bottom: 1px solid @darkBorderColor;
+.tota11y-plugin {
+    .tota11y-no-select;
+    border-bottom: 1px solid @darkBorderColor;
 
-        &-label {
-            align-items: center;
-            display: flex;
-            padding: @spacing;
+    &-label {
+        align-items: center;
+        display: flex;
+        padding: @pluginPadding @pluginPadding @pluginPadding 0;
+        margin: 0;
 
-            &:hover {
-                cursor: pointer;
-            }
+        &:hover {
+            cursor: pointer;
         }
+    }
 
-        &-controls {
-            margin-right: @spacing;
-        }
+    &-control {
+        margin: 0 @controlMargin;
+    }
 
-        &-title {
-            font-size: @fontSize;
-            font-weight: bold;
-        }
+    &-checkbox {
+        display: none;
+    }
 
-        &-description {
-            font-size: @fontSizeSmall;
-            font-style: italic;
-            width: @descriptionWidth;
-            margin-right: 3px;
-        }
+    &-indicator {
+        border-radius: @indicatorSize;
+        border: 1px solid @lightBorderColor;
+        color: transparent;
+        font-size: 12px;
+        height: @indicatorSize;
+        line-height: @indicatorSize;
+        padding: 0 0 0 1px;
+        width: @indicatorSize;
+    }
+    &-checkbox:checked + &-indicator {
+        background-color: @kaGreen;
+        border-color: @kaGreen;
+        color: white;
+    }
+
+    &-title {
+        font-size: @fontSize;
+        font-weight: bold;
+    }
+
+    &-description {
+        font-size: @fontSizeSmall;
+        font-style: italic;
+        width: @descriptionWidth;
+        margin-right: 3px;
     }
 }
