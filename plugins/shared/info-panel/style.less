@@ -11,23 +11,20 @@
 @panelPadding: 10px;
 
 .tota11y-info {
-    .dark-color-scheme;
+    .tota11y-dark-color-scheme;
     .position(fixed, auto, @panelPosition, @panelPosition, auto);
 
     border-radius: @borderRadius;
-    height: @panelHeight;
-    padding: @spacing;
-    width: @panelWidth;
     z-index: 9999;
 
     &-title, &-body {
-        padding: @spacing @spacing 0;
+        padding: @panelPadding @panelPadding 0;
     }
 
     &-tabs {
         display: flex;
         margin: 0;
-        padding: 0;
+        padding: 0 0 @panelPadding;
     }
 
     &-tab {
