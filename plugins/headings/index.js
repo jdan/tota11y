@@ -21,18 +21,24 @@ const ERRORS = {
 
     // This error accepts two arguments to display a relevant error message
     NONCONSECUTIVE_HEADER(prevLevel, currLevel) {
-        // TODO: don't suggest h1 :)
         let _tag = (level) => `<code>&lt;h${level}&gt;</code>`;
+        let description = `
+            This document contains an ${_tag(currLevel)} tag directly
+            following an ${_tag(prevLevel)}. In order to maintain a consistent
+            outline of the page for assistive technologies, reduce the gap in
+            the heading level by upgrading the this tag to an
+            ${_tag(prevLevel+1)}`;
+
+        // Suggest upgrading the tag to the same level as `prevLevel` iff
+        // `prevLevel` is not 1
+        if (prevLevel !== 1) {
+            description += ` or ${_tag(prevLevel)}`
+        }
+
         return {
             title: `Nonconsecutive heading level used
                     (h${prevLevel} &rarr; h${currLevel})`,
-            description: `
-                This document contains a ${_tag(currLevel)} tag directly
-                following a ${_tag(prevLevel)} tag. In order to maintain a
-                consistent outline of the page for assistive technologies,
-                reduce the gap in the heading level by either upgrading the
-                level of this tag to a ${_tag(prevLevel+1)} or
-                ${_tag(prevLevel)}.`
+            description: description + "."
         };
     }
 };
