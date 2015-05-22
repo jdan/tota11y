@@ -2,7 +2,6 @@
 
 @panelBodyWidth: 350px;
 @panelBodyHeight: 220px;
-@panelPosition: 15px;
 
 @tabHoverColor: #555;
 @tabActiveColor: @white;
@@ -12,7 +11,7 @@
 
 .tota11y-info {
     .tota11y-dark-color-scheme;
-    .position(fixed, auto, @panelPosition, @panelPosition, auto);
+    .position(fixed, auto, @viewportEdgePadding, @viewportEdgePadding, auto);
 
     border-radius: @borderRadius;
     z-index: 9999;
