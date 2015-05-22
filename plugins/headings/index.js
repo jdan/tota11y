@@ -73,6 +73,7 @@ class HeadingsPlugin extends Plugin {
                 h1Count++;
             }
 
+            // Check for any violations
             if (i === 0 && level !== 1) {
                 error = ERRORS.FIRST_NOT_H1;
             } else if (h1Count > 1) {
@@ -81,8 +82,7 @@ class HeadingsPlugin extends Plugin {
                 error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level);
             }
 
-            prevLevel = level;
-
+            // Render the entry in the outline for the "Summary" tab
             let $item = $(outlineItemTemplate({
                 level: level,
                 text: $el.text()
@@ -91,20 +91,12 @@ class HeadingsPlugin extends Plugin {
             });
             $outline.append($item);
 
-/*
-            $root.find("> li").on("mouseenter", (e) => {
-                    e.stopPropagation();
-                    $highlight && $highlight.remove();
-                    $highlight = annotate.highlight(tree.$el);
-                }).on("mouseleave", (e) => {
-                    e.stopPropagation();
-                    $highlight.remove();
-                });*/
-
             if (error) {
                 $item.addClass("level-error");
                 this.panel.addError(error.title, error.description, $el);
             }
+
+            prevLevel = level;
         });
 
         return $outline;
