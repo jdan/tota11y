@@ -1,0 +1,30 @@
+@import "../../less/variables.less";
+
+.tota11y-heading {
+    &-outline {
+        color: @darkGray;
+        font-size: 14px;
+    }
+
+    &-outline-entry {
+        margin-bottom: 5px;
+    }
+
+    &-outline-level {
+        box-sizing: border-box;
+        margin-right: 5px;
+        margin-bottom: 8px;
+        font-size: 10px;
+        padding: 2px 3px;
+        position: relative;
+        top: -2px;
+        background-color: #b9eda9;
+        border: 1px solid #9ecd90;
+        cursor: default;
+    }
+
+    &-outline-entry.level-error &-outline-level {
+        background-color: rgb(255, 174, 174);
+        border-color: rgb(255, 109, 109);
+    }
+}
