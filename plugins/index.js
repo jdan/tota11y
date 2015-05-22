@@ -5,12 +5,12 @@
  */
 
 var AltTextPlugin = require("./alt-text");
-var HeadersPlugin = require("./headers");
+var HeadingsPlugin = require("./headings");
 var LabelsPlugin = require("./labels");
 var LandmarksPlugin = require("./landmarks");
 
 module.exports = [
-    new HeadersPlugin(),
+    new HeadingsPlugin(),
     new AltTextPlugin(),
     new LabelsPlugin(),
     new LandmarksPlugin(),
