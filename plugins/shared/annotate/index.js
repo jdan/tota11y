@@ -64,12 +64,33 @@ module.exports = (namespace) => {
         },
 
         // Highlights a given jQuery element by placing a translucent
-        // rectangle directly over it.
+        // rectangle directly over it
         highlight($el) {
             let $highlight = createAnnotation($el, "tota11y-highlight");
             return $highlight.css({
                 width: $el.outerWidth(true),    // include margins
                 height: $el.outerHeight(true)
+            });
+        },
+
+        // Toggles a highlight on a given jQuery element `$el` when `$trigger`
+        // is hovered (mouseenter/mouseleave) or focused (focus/blur)
+        toggleHighlight($el, $trigger) {
+            let $highlight;
+
+            $trigger.on("mouseenter focus", () => {
+                if ($highlight) {
+                    $highlight.remove();
+                }
+
+                $highlight = this.highlight($el);
+            });
+
+            $trigger.on("mouseleave blur", () => {
+                if ($highlight) {
+                    $highlight.remove();
+                    $highlight = null;
+                }
             });
         },
 

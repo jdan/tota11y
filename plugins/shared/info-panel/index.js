@@ -127,12 +127,7 @@ class InfoPanel {
                 $errors.append($error);
 
                 // Highlight the violating element on hover
-                let $highlight;
-                $error.hover(() => {
-                    $highlight = annotate.highlight(error.$el);
-                }, () => {
-                    $highlight.remove();
-                });
+                annotate.toggleHighlight(error.$el, $error);
             });
 
             $activeTab = addTab("Errors", $errors);

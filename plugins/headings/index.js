@@ -95,12 +95,7 @@ class HeadingsPlugin extends Plugin {
             $outline.append($item);
 
             // Highlight the heading element on hover
-            let $highlight;
-            $item.hover(() => {
-                $highlight = annotate.highlight($el);
-            }, () => {
-                $highlight.remove();
-            });
+            annotate.toggleHighlight($el, $item);
 
             if (error) {
                 $item.addClass("level-error");
