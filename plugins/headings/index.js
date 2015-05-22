@@ -32,7 +32,7 @@ const ERRORS = {
         // Suggest upgrading the tag to the same level as `prevLevel` iff
         // `prevLevel` is not 1
         if (prevLevel !== 1) {
-            description += ` or ${_tag(prevLevel)}`
+            description += ` or ${_tag(prevLevel)}`;
         }
 
         return {
