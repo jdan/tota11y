@@ -151,6 +151,12 @@ class InfoPanel {
             $activeTab.trigger("activate");
         }
 
+        // Wire up the dismiss button
+        this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
+            e.preventDefault();
+            this.destroy();
+        });
+
         // Append the info panel to the body. In reality we'll likely want it
         // directly adjacent to the toolbar.
         $("body").append(this.$el);

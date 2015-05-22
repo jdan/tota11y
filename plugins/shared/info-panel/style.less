@@ -16,6 +16,20 @@
     border-radius: @borderRadius;
     z-index: 9999;
 
+    &-dismiss {
+        float: right;
+    }
+
+    &-dismiss-trigger {
+        font-size: 25px;
+        line-height: 20px;
+
+        &, &:hover, &:focus {
+            color: inherit;
+            text-decoration: none;
+        }
+    }
+
     &-title, &-body {
         padding: @panelPadding @panelPadding 0;
     }
