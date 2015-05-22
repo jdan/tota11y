@@ -16,10 +16,10 @@
 
 let $ = require("jquery");
 let annotate = require("../annotate")("info-panel");
+
 let template = require("./template.handlebars");
 let errorTemplate = require("./error.handlebars");
 let tabTemplate = require("./tab.handlebars");
-
 require("./style.less");
 
 class InfoPanel {

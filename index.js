@@ -9,7 +9,7 @@ var $ = require("jquery");
 var plugins = require("./plugins");
 var toolbarTemplate = require("./templates/toolbar.handlebars");
 
-require("./less/toolbar.less");
+require("./less/tota11y.less");
 
 class Toolbar {
     appendTo($el) {
