@@ -130,7 +130,6 @@ class InfoPanel {
                 let $highlight;
                 $error
                     .on("mouseenter", () => {
-                        console.log('pls')
                         $highlight = annotate.highlight(error.$el);
                     })
                     .on("mouseleave", () => {
