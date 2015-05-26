@@ -74,6 +74,9 @@ class HeadingsPlugin extends Plugin {
             }
 
             // Check for any violations
+            // NOTE: These violations do not overlap, but as we add more, we
+            // may want to separate the conditionals here to report multiple
+            // errors on the same tag.
             if (i === 0 && level !== 1) {
                 error = ERRORS.FIRST_NOT_H1;
             } else if (h1Count > 1) {
