@@ -10,12 +10,14 @@
  */
 
 let $ = require("jquery");
+let InfoPanel = require("./shared/info-panel");
 let template = require("../templates/plugin.handlebars");
 let id = 1;
 
 class Plugin {
     constructor() {
         this.id = id++;
+        this.panel = new InfoPanel(this.getTitle());
     }
 
     getTitle() {
@@ -64,14 +66,17 @@ class Plugin {
             if (id === this.id) {
                 if ($checkbox.is(":checked")) {
                     this.run();
+                    this.panel.render();
                 } else {
                     this.cleanup();
+                    this.panel.destroy();
                 }
             // If we are an active plugin that the user switched from, we
             // uncheck ourselves and clean up.
             } else if ($checkbox.is(":checked")) {
                 $checkbox.attr("checked", false);
                 this.cleanup();
+                this.panel.destroy();
             }
         });
 

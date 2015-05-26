@@ -70,6 +70,11 @@ class InfoPanel {
     }
 
     render() {
+        // Destroy the existing info panel to prevent double-renders
+        this.$el && this.$el.remove();
+
+        let hasContent = false;
+
         this.$el = $(template({
             title: this.title,
         }));
@@ -142,6 +147,10 @@ class InfoPanel {
 
         if ($activeTab) {
             $activeTab.trigger("activate");
+            // hasContent is technically coupled to $activeTab, since if there
+            // is no $activeTab then there is no content. This behavior may
+            // change in the future.
+            hasContent = true;
         }
 
         // Wire up the dismiss button
@@ -150,14 +159,22 @@ class InfoPanel {
             this.destroy();
         });
 
-        // Append the info panel to the body. In reality we'll likely want it
-        // directly adjacent to the toolbar.
-        $("body").append(this.$el);
+        if (hasContent) {
+            // Append the info panel to the body. In reality we'll likely want it
+            // directly adjacent to the toolbar.
+            $("body").append(this.$el);
+        }
+
         return this.$el;
     }
 
     destroy() {
-        this.$el.remove();
+        // Reset contents
+        this.about = null;
+        this.summary = null;
+        this.errors = [];
+
+        this.$el && this.$el.remove();
     }
 }
 

@@ -5,7 +5,6 @@
 let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("headers");
-let InfoPanel = require("../shared/info-panel");
 
 let outlineItemTemplate = require("./outline-item.handlebars");
 require("./style.less");
@@ -109,16 +108,14 @@ class HeadingsPlugin extends Plugin {
     }
 
     run() {
-        this.panel = new InfoPanel(this.getTitle());
         let $headings = $("h1, h2, h3, h4, h5, h6");
         let $outline = this.outline($headings);
 
-        this.panel.setSummary($outline).setAbout("Headings plugin").render();
+        this.panel.setSummary($outline).setAbout("Headings plugin");
     }
 
     cleanup() {
         annotate.removeAll();
-        this.panel.destroy();
     }
 }
 
