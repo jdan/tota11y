@@ -8,6 +8,7 @@
   },
   "author": "Jordan Scales <scalesjordan@gmail.com>",
   "devDependencies": {
+    "accessibility-developer-tools": "^2.7.0",
     "autoprefixer-loader": "^1.2.0",
     "babel-core": "^5.0.12",
     "babel-loader": "^5.0.0",
