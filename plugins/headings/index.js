@@ -98,7 +98,7 @@ class HeadingsPlugin extends Plugin {
 
             if (error) {
                 $item.addClass("level-error");
-                this.panel.addError(error.title, error.description, $el);
+                this.error(error.title, error.description, $el);
             }
 
             prevLevel = level;
@@ -111,7 +111,8 @@ class HeadingsPlugin extends Plugin {
         let $headings = $("h1, h2, h3, h4, h5, h6");
         let $outline = this.outline($headings);
 
-        this.panel.setSummary($outline).setAbout("Headings plugin");
+        this.about("Headings plugin");
+        this.summary($outline);
     }
 
     cleanup() {

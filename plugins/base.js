@@ -29,6 +29,25 @@ class Plugin {
     }
 
     /**
+     * Methods that communicate directly with the info panel
+     */
+
+    // Populates the info panel's "Summary" tab
+    summary($html) {
+        return this.panel.setSummary($html);
+    }
+
+    // Populates the info panel's "About" tab
+    about($html) {
+        return this.panel.setAbout($html);
+    }
+
+    // Adds an entry to the info panel's "Errors" tab
+    error(title, description, $el) {
+        return this.panel.addError(title, description, $el);
+    }
+
+    /**
      * Renders the plugin view.
      */
     render() {
