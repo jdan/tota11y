@@ -8,10 +8,10 @@ let annotate = require("../shared/annotate")("labels");
 let audit = require("../shared/audit");
 let InfoPanel = require("../shared/info-panel");
 
+let errorTemplate = require("./error-template.handlebars");
 require("./style.less");
 
-const HIGHLIGHT_CLASS = "tota11y-label-highlight";
-const RULE_NAME = "controlsWithoutLabel";
+const LABEL_CLASS = "tota11y-label-error";
 
 class LabelsPlugin extends Plugin {
     getTitle() {
@@ -22,28 +22,32 @@ class LabelsPlugin extends Plugin {
         return "Identifies inputs with missing labels";
     }
 
+    errorMessage($el) {
+        return errorTemplate({
+            placeholder: $el.prop("placeholder"),
+            id: $el.prop("id"),
+            tagName: $el.prop("tagName").toLowerCase()
+        });
+    }
+
     run() {
-        this.panel = new InfoPanel(this.getTitle());
         let result = audit("controlsWithoutLabel");
 
         if (result.result === "FAIL") {
             result.elements.forEach((element) => {
                 let $el = $(element);
 
-                annotate.highlight($el).addClass(HIGHLIGHT_CLASS);
-                this.panel.addError(
+                annotate.label($el, "!!").addClass(LABEL_CLASS);
+                this.error(
                     "Input is missing a label",
-                    "Wrap this in a label tag",
+                    this.errorMessage($el),
                     $el);
             });
         }
-
-        this.panel.render();
     }
 
     cleanup() {
         annotate.removeAll();
-        this.panel.destroy();
     }
 }
 

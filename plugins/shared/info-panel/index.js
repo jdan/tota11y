@@ -23,7 +23,7 @@ let tabTemplate = require("./tab.handlebars");
 require("./style.less");
 
 class InfoPanel {
-    constructor(title="Plugin") {
+    constructor(title) {
         this.title = title;
         this.about = null;
         this.summary = null;
@@ -69,6 +69,39 @@ class InfoPanel {
         return this;
     }
 
+    _addTab(title, html) {
+        // Create and append a tab marker
+        let $tab = $(tabTemplate({title}));
+        this.$el.find(".tota11y-info-tabs").append($tab);
+
+        // Create and append the tab content
+        let $section = $("<div>")
+            .addClass("tota11y-info-section")
+            .html(html);
+        this.$el.find(".tota11y-info-sections").append($section);
+
+        // Register an "activate" event for the tab, which switches the
+        // tab's associated content to be visible, and changes the
+        // appearance of the newly-active tab marker
+        $tab.on("activate", () => {
+            this.$el.find(".tota11y-info-tab.active")
+                .removeClass("active");
+            this.$el.find(".tota11y-info-section.active")
+                .removeClass("active");
+
+            $tab.addClass("active");
+            $section.addClass("active");
+        });
+
+        // Activate the tab when its anchor is clicked
+        $tab.on("click", (e) => {
+            e.preventDefault();
+            $tab.trigger("activate");
+        });
+
+        return $tab;
+    }
+
     render() {
         // Destroy the existing info panel to prevent double-renders
         this.$el && this.$el.remove();
@@ -79,48 +112,15 @@ class InfoPanel {
             title: this.title,
         }));
 
-        let addTab = (title, html) => {
-            // Create and append a tab marker
-            let $tab = $(tabTemplate({title}));
-            this.$el.find(".tota11y-info-tabs").append($tab);
-
-            // Create and append the tab content
-            let $section = $("<div>")
-                .addClass("tota11y-info-section")
-                .html(html);
-            this.$el.find(".tota11y-info-sections").append($section);
-
-            // Register an "activate" event for the tab, which switches the
-            // tab's associated content to be visible, and changes the
-            // appearance of the newly-active tab marker
-            $tab.on("activate", () => {
-                this.$el.find(".tota11y-info-tab.active")
-                    .removeClass("active");
-                this.$el.find(".tota11y-info-section.active")
-                    .removeClass("active");
-
-                $tab.addClass("active");
-                $section.addClass("active");
-            });
-
-            // Activate the tab when its anchor is clicked
-            $tab.on("click", (e) => {
-                e.preventDefault();
-                $tab.trigger("activate");
-            });
-
-            return $tab;
-        };
-
         // Add the appropriate tabs based on which information the info panel
         // was provided, then highlight the most important one.
         let $activeTab;
         if (this.about) {
-            $activeTab = addTab("About", this.about);
+            $activeTab = this._addTab("About", this.about);
         }
 
         if (this.summary) {
-            $activeTab = addTab("Summary", this.summary);
+            $activeTab = this._addTab("Summary", this.summary);
         }
 
         // TODO: Add errors and attach events
@@ -131,11 +131,18 @@ class InfoPanel {
                 let $error = $(errorTemplate(error));
                 $errors.append($error);
 
-                // Highlight the violating element on hover
-                annotate.toggleHighlight(error.$el, $error);
+                // Wire up the expand/collapse trigger
+                let $trigger = $error.find(".tota11y-info-error-trigger");
+                $trigger.click((e) => {
+                    e.preventDefault();
+                    $trigger.toggleClass("tota11y-collapsed");
+                });
+
+                // Highlight the violating element on hover/focus
+                annotate.toggleHighlight(error.$el, $trigger);
             });
 
-            $activeTab = addTab("Errors", $errors);
+            $activeTab = this._addTab("Errors", $errors);
 
             // Add a small badge next to the tab title
             let $badge = $("<div>")
@@ -160,8 +167,8 @@ class InfoPanel {
         });
 
         if (hasContent) {
-            // Append the info panel to the body. In reality we'll likely want it
-            // directly adjacent to the toolbar.
+            // Append the info panel to the body. In reality we'll likely want
+            // it directly adjacent to the toolbar.
             $("body").append(this.$el);
         }
 

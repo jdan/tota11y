@@ -5,14 +5,23 @@
 @controlMargin: 15px;
 @indicatorSize: 16px;
 
-@kaGreen: #639b24;
-
 .tota11y {
-    code {
+    pre, code {
         background-color: #ddd;
-        border-radius: 2px;
+        border: none;
+        border-radius: 0;
         color: inherit;
-        font: monospace;
+        font-family: monospace;
+        font-size: inherit;
+        line-height: inherit;
+    }
+
+    pre {
+        padding: 10px;
+    }
+
+    code {
+        border-radius: 2px;
         padding: 1px;
     }
 }
@@ -23,7 +32,7 @@
 
     border-top-left-radius: @borderRadius;
     border-top-right-radius: @borderRadius;
-    z-index: 9999;
+    z-index: 9998;
 
     &-toggle {
         color: inherit !important;

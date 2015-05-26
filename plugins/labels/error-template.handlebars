@@ -1,0 +1,28 @@
+{{#if placeholder}}
+    <p>
+        The <code>placeholder</code> attribute is not guaranteed to be read by
+        assistive technologies. You should provide a label.
+    </p>
+{{/if}}
+
+{{#if id}}
+    <p>
+        The simplest way to do so is by creating a <code>&lt;label&gt;</code>
+        tag with a <code>for</code> attribute like so:
+    </p>
+
+    <pre><code>&lt;label for="{{id}}"&gt;
+    Label text here...
+&lt;/label&gt;</code></pre>
+{{else}}
+    <p>
+        You can give this element an <code>id</code> attribute and build a
+        <code>&lt;label&gt;</code> with a corresponding <code>for</code>
+        attribute like so:
+
+        <pre><code>&lt;label for="my-input"&gt;
+    Label text here...
+&lt;/label&gt;
+&lt;{{tagName}} id="my-input"&gt;</code></pre>
+    </p>
+{{/if}}
