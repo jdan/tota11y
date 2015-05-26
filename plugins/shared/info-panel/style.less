@@ -12,6 +12,7 @@
 .tota11y-info {
     .tota11y-dark-color-scheme;
     .position(fixed, auto, @viewportEdgePadding, @viewportEdgePadding, auto);
+    .tota11y-no-select;
 
     border-radius: @borderRadius;
     z-index: @z-index--UI;
@@ -32,6 +33,10 @@
 
     &-title, &-body {
         padding: @panelPadding @panelPadding 0;
+    }
+
+    &-title:hover {
+        cursor: move;
     }
 
     &-tabs {

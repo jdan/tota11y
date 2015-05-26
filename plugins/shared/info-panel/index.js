@@ -165,16 +165,59 @@ class InfoPanel {
             hasContent = true;
         }
 
-        // Wire up the dismiss button
-        this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
-            e.preventDefault();
-            this.destroy();
-        });
-
         if (hasContent) {
+            // Wire up the dismiss button
+            this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
+                e.preventDefault();
+                this.destroy();
+            });
+
             // Append the info panel to the body. In reality we'll likely want
             // it directly adjacent to the toolbar.
             $("body").append(this.$el);
+
+            // Wire up draggable surface
+            let $draggable = this.$el.find(".tota11y-info-title");
+            let isDragging = false;
+
+            // Variables for the starting positions of the mouse and panel
+            let initMouseX, initMouseY;
+            let initPanelRight = parseInt(this.$el.css("right"));
+            let initPanelBottom = parseInt(this.$el.css("bottom"));
+
+            $draggable
+                .on("mousedown", (e) => {
+                    e.preventDefault();
+
+                    // Start dragging, and record an initial mouse coords
+                    isDragging = true;
+                    initMouseX = e.pageX;
+                    initMouseY = e.pageY;
+                })
+                .on("mouseup", (e) => {
+                    e.preventDefault();
+
+                    // Stop dragging, and set new starting coords for the
+                    // panel
+                    isDragging = false;
+                    initPanelRight = parseInt(this.$el.css("right"));
+                    initPanelBottom = parseInt(this.$el.css("bottom"));
+                });
+
+            $(window).on("mousemove", (e) => {
+                if (!isDragging) {
+                    return;
+                }
+                e.preventDefault();
+
+                let deltaX = e.pageX - initMouseX;
+                let deltaY = e.pageY - initMouseY;
+
+                this.$el.css({
+                    bottom: initPanelBottom - deltaY,
+                    right: initPanelRight - deltaX
+                });
+            });
         }
 
         return this.$el;
