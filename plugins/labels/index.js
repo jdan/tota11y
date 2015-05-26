@@ -6,7 +6,6 @@ let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("labels");
 let audit = require("../shared/audit");
-let InfoPanel = require("../shared/info-panel");
 
 let errorTemplate = require("./error-template.handlebars");
 require("./style.less");
