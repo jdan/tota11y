@@ -127,7 +127,7 @@ class InfoPanel {
         if (this.errors.length > 0) {
             let $errors = $("<ul>").addClass("tota11y-info-errors");
 
-            this.errors.forEach((error) => {
+            this.errors.forEach((error, i) => {
                 let $error = $(errorTemplate(error));
                 $errors.append($error);
 
@@ -137,6 +137,11 @@ class InfoPanel {
                     e.preventDefault();
                     $trigger.toggleClass("tota11y-collapsed");
                 });
+
+                // Expand the first violation
+                if (i === 0) {
+                    $trigger.toggleClass("tota11y-collapsed");
+                }
 
                 // Highlight the violating element on hover/focus
                 annotate.toggleHighlight(error.$el, $trigger);
