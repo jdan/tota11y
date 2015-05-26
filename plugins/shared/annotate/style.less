@@ -1,3 +1,5 @@
+@import "../../../less/variables.less";
+
 @tagPadding: 3px;
 @tooltipPadding: 10px;
 @fontSize: 11px;
@@ -15,13 +17,13 @@
     font-family: Arial;
     font-size: @fontSize;
     padding: @tagPadding;
-    z-index: 9998;
+    z-index: @z-index--labels;
 }
 
 .tota11y-highlight {
     .tota11y-annotation;
     background-color: rgba(120, 130, 200, 0.2);
-    z-index: 9997;
+    z-index: @z-index--highlights;
 }
 
 .tota11y-tooltipped {
