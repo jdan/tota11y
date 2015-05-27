@@ -34,10 +34,9 @@ class LabelsPlugin extends Plugin {
                 let $el = $(element);
                 let title = "Input is missing a label";
 
-                annotate.label($el, "!!")
-                    .addClass("tota11y-label-error")
-                    .attr("data-expanded", title);
-
+                // Place an error label on the element and register it as an
+                // error in the info panel
+                annotate.errorLabel($el, title, "!!");
                 this.error(title, this.errorMessage($el), $el);
             });
         }

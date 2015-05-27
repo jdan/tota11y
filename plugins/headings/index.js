@@ -65,9 +65,6 @@ class HeadingsPlugin extends Plugin {
             let level = +$el.prop("tagName").slice(1);
             let error = null;
 
-            // Label the heading tag
-            let $label = annotate.label($el);
-
             if (level === 1) {
                 h1Count++;
             }
@@ -100,16 +97,19 @@ class HeadingsPlugin extends Plugin {
                 // Register an error to the info panel
                 this.error(error.title, error.description, $el);
 
-                // Mark the label as red and add some expanded text to it
+                // Place an error label on the heading tag
                 let contentSafeTitle = error.title.replace("&rarr;", "to");
-                $label
-                    .addClass("tota11y-label-error")
-                    .attr("data-expanded", contentSafeTitle);
+                annotate.errorLabel($el, contentSafeTitle);
 
                 // Mark the summary item as red
+                // Pretty hacky, since we're borrowing label styles for this
+                // summary tab
                 $item
                     .find(".tota11y-heading-outline-level")
                     .addClass("tota11y-label-error");
+            } else {
+                // Label the heading tag
+                annotate.label($el);
             }
 
             prevLevel = level;

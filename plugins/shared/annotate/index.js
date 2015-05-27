@@ -63,6 +63,14 @@ module.exports = (namespace) => {
             return $label.text(text);
         },
 
+        // Places a special error label on an element that, when hovered,
+        // displays an expanded error message
+        errorLabel($el, expanded, labelText) {
+            return this.label($el, labelText)
+                .addClass("tota11y-label-error")
+                .attr("data-expanded", expanded);
+        },
+
         // Highlights a given jQuery element by placing a translucent
         // rectangle directly over it
         highlight($el) {
