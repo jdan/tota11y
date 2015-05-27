@@ -66,7 +66,7 @@ class HeadingsPlugin extends Plugin {
             let error = null;
 
             // Label the heading tag
-            annotate.label($el);
+            let $label = annotate.label($el);
 
             if (level === 1) {
                 h1Count++;
@@ -97,8 +97,19 @@ class HeadingsPlugin extends Plugin {
             annotate.toggleHighlight($el, $item);
 
             if (error) {
-                $item.addClass("level-error");
+                // Register an error to the info panel
                 this.error(error.title, error.description, $el);
+
+                // Mark the label as red and add some expanded text to it
+                let contentSafeTitle = error.title.replace("&rarr;", "to");
+                $label
+                    .addClass("tota11y-label-error")
+                    .attr("data-expanded", contentSafeTitle);
+
+                // Mark the summary item as red
+                $item
+                    .find(".tota11y-heading-outline-level")
+                    .addClass("tota11y-label-error");
             }
 
             prevLevel = level;
