@@ -4,13 +4,13 @@
  * Annotations are namespaced, meaning you would normally include this
  * package like so:
  *
- *     var annotate = require("./annotate")("headers");
+ *     let annotate = require("./annotate")("headers");
  *
  * This allows plugins to easily maintain their annotations, rather than
  * keeping track of an extra class name elsewhere.
  */
 
-var $ = require("jquery");
+let $ = require("jquery");
 
 require("./style.less");
 

@@ -11,20 +11,11 @@
     }
 
     &-outline-level {
+        .position(relative, -2px, auto, auto, auto);
         background-color: #b9eda9;
-        border: 1px solid #9ecd90;
-        box-sizing: border-box;
-        cursor: default;
-        font-size: 10px;
         margin-bottom: 8px;
         margin-right: 5px;
         padding: 2px 3px;
-        position: relative;
-        top: -2px;
-    }
-
-    &-outline-entry.level-error &-outline-level {
-        background-color: rgb(255, 174, 174);
-        border-color: rgb(255, 109, 109);
+        pointer-events: none;
     }
 }
