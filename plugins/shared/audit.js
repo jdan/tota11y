@@ -12,6 +12,9 @@ function createWhitelist(ruleName) {
     var config = new axs.AuditConfiguration();
     config.showUnsupportedRulesWarning = false;
 
+    // Ignore elements that are part of the toolbar
+    config.ignoreSelectors(ruleName, ".tota11y *");
+
     allRuleNames().forEach((name) => {
         if (name !== ruleName) {
             config.ignoreSelectors(name, "*");
