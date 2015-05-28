@@ -123,7 +123,6 @@ class InfoPanel {
             $activeTab = this._addTab("Summary", this.summary);
         }
 
-        // TODO: Add errors and attach events
         if (this.errors.length > 0) {
             let $errors = $("<ul>").addClass("tota11y-info-errors");
 
@@ -138,13 +137,23 @@ class InfoPanel {
                     $trigger.toggleClass("tota11y-collapsed");
                 });
 
+                // Wire up the scroll-to-error button
+                let $scroll = $error.find(".tota11y-info-error-scroll");
+                $scroll.click((e) => {
+                    e.preventDefault();
+                    $(document).scrollTop(error.$el.offset().top - 80);
+                });
+
                 // Expand the first violation
                 if (i === 0) {
                     $trigger.toggleClass("tota11y-collapsed");
                 }
 
-                // Highlight the violating element on hover/focus
+                // Highlight the violating element on hover/focus. We do it
+                // for both $trigger and $scroll to allow users to see the
+                // highlight when scrolling to the element with the button.
                 annotate.toggleHighlight(error.$el, $trigger);
+                annotate.toggleHighlight(error.$el, $scroll);
             });
 
             $activeTab = this._addTab("Errors", $errors);
