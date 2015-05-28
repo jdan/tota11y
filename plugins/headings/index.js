@@ -110,6 +110,11 @@ class HeadingsPlugin extends Plugin {
             } else {
                 // Label the heading tag
                 annotate.label($el);
+
+                // Mark the summary item as green
+                $item
+                    .find(".tota11y-heading-outline-level")
+                    .addClass("tota11y-label-success");
             }
 
             prevLevel = level;
