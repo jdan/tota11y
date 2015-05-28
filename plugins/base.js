@@ -30,6 +30,7 @@ class Plugin {
 
     /**
      * Methods that communicate directly with the info panel
+     * TODO: Consider names like `setSummary` and `addError`
      */
 
     // Populates the info panel's "Summary" tab
