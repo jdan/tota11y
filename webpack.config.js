@@ -11,8 +11,7 @@ module.exports = {
         loaders: [
             { test: /\.js$/, exclude: /node_modules/, loader: "babel" },
             { test: /\.handlebars$/, loader: "handlebars" },
-            { test: /\.css$/, loader: "style!css" },
-            { test: /\.less$/, loader: "style!css!autoprefixer?{browsers:['> 5%']}!less" }
+            { test: /\.less$/, loader: "style!css!autoprefixer?{browsers:['> 1%']}!less" }
         ]
     }
 };
