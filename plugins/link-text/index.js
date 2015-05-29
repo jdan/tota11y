@@ -26,7 +26,6 @@ class LinkTextPlugin extends Plugin {
         if (test.result === "FAIL") {
             test.elements.forEach((el, i) => {
                 let $el = $(el);
-                let title = "Link text is unclear";
                 let description = `
                     The text <i>"${$el.text()}"</i> is unclear without context
                     and may be confusing to screen readers. Consider
@@ -35,8 +34,9 @@ class LinkTextPlugin extends Plugin {
                 `;
                 // TODO: A "show me how" link may be even more helpful
 
-                annotate.errorLabel($el, title, "!!");
-                this.error(title, description, $el);
+                annotate.errorLabel(
+                    $el, `Link text "${$el.text()}" is unclear`, "");
+                this.error("Link text is unclear", description, $el);
             });
         }
     }

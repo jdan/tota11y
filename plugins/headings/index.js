@@ -99,7 +99,7 @@ class HeadingsPlugin extends Plugin {
 
                 // Place an error label on the heading tag
                 let contentSafeTitle = error.title.replace("&rarr;", "to");
-                annotate.errorLabel($el, contentSafeTitle);
+                annotate.errorLabel($el, contentSafeTitle, $el.prop("tagName").toLowerCase());
 
                 // Mark the summary item as red
                 // Pretty hacky, since we're borrowing label styles for this

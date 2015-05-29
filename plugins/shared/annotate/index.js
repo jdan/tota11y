@@ -12,6 +12,7 @@
 
 let $ = require("jquery");
 
+let errorLabelTemplate = require("./error-label.handlebars");
 require("./style.less");
 
 module.exports = (namespace) => {
@@ -65,10 +66,15 @@ module.exports = (namespace) => {
 
         // Places a special error label on an element that, when hovered,
         // displays an expanded error message
-        errorLabel($el, expanded, labelText) {
-            return this.label($el, labelText)
+        errorLabel($el, expanded, labelText=$el.prop("tagName").toLowerCase()) {
+            let innerHtml = errorLabelTemplate({
+                text: labelText
+            });
+
+            return this.label($el)
                 .addClass("tota11y-label-error")
-                .attr("data-expanded", expanded);
+                .attr("data-expanded", expanded)
+                .html(innerHtml);
         },
 
         // Highlights a given jQuery element by placing a translucent
