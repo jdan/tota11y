@@ -5,6 +5,10 @@
 @controlMargin: 15px;
 @indicatorSize: 16px;
 
+@togglePadding: 7px;
+@toggleCollapsedWidth: 35px;
+@toggleHeight: 25px;
+
 .tota11y {
     pre, code {
         background-color: #ddd;
@@ -38,8 +42,14 @@
         color: inherit !important;
         display: block;
         font-size: @fontSize;
-        padding: @pluginPadding;
+        padding: @togglePadding;
         text-decoration: none !important;
+    }
+
+    &-logo {
+        width: @toggleCollapsedWidth;
+        height: @toggleHeight;
+        margin: 0 auto;
     }
 
     &-body {
