@@ -2,17 +2,17 @@
  * A plugin to label all ARIA landmark roles
  */
 
-var $ = require("jquery");
-var Plugin = require("../base");
-var annotate = require("../shared/annotate")("landmarks");
+let $ = require("jquery");
+let Plugin = require("../base");
+let annotate = require("../shared/annotate")("landmarks");
 
 class LandmarksPlugin extends Plugin {
     getTitle() {
-        return "Landmarks"
+        return "Landmarks";
     }
 
     getDescription() {
-        return "Labels all ARIA landmarks"
+        return "Labels all ARIA landmarks";
     }
 
     run() {

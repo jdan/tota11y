@@ -9,10 +9,12 @@ let ContrastPlugin = require("./contrast");
 let HeadingsPlugin = require("./headings");
 let LabelsPlugin = require("./labels");
 let LandmarksPlugin = require("./landmarks");
+let LinkTextPlugin = require("./link-text");
 
 module.exports = [
     new HeadingsPlugin(),
     new ContrastPlugin(),
+    new LinkTextPlugin(),
     new AltTextPlugin(),
     new LabelsPlugin(),
     new LandmarksPlugin(),
