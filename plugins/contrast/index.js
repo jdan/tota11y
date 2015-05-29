@@ -33,8 +33,9 @@ class ContrastPlugin extends Plugin {
             }
 
             // Ignore invisible elements
-            if (!axs.utils.elementIsVisible(el)) {
-                return;
+            if (axs.utils.elementIsTransparent(el) ||
+                axs.utils.elementHasZeroArea(el)) {
+                    return;
             }
 
             let style = window.getComputedStyle(el);
