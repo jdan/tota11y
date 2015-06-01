@@ -26,6 +26,8 @@ class LandmarksPlugin extends Plugin {
         $regions.each(function() {
             annotate.label($(this), $(this).attr("role"));
         });
+
+        annotate.render();
     }
 
     cleanup() {

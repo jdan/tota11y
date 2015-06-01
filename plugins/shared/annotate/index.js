@@ -20,25 +20,35 @@ module.exports = (namespace) => {
     // namespace
     const ANNOTATION_CLASS = "tota11y-annotation-" + namespace;
 
+    // A queue of {$annotation, $parent}'s that is populated by
+    // `createAnnotation` and emptired by the `render()` method.
+    //
+    // Annotations are queued to reduce reflows.
+    let queue = [];
+
     // Register a new annotation to a given jQuery element
     let createAnnotation = ($el, className) => {
         // Create a position an annotation relative to its offset parent.
         // We also store the element its annotation so we can reposition when
         // the window resizes.
         let $annotation = $("<div>")
-            .addClass("tota11y")
+            .addClass("tota11y")    // tota11y base class for styling
             .addClass(ANNOTATION_CLASS)
             .addClass(className)
             .css($el.position())
             .data({$el});
 
-        // Append the annotation to the element's closest ancestor that is
-        // positioned
-        $el.offsetParent().append($annotation);
+        // Append an object to the queue. We'll add the annotation to the DOM
+        // later to reduce reflows.
+        queue.push({
+            $annotation: $annotation,
+            $parent: $el.offsetParent()
+        });
 
         return $annotation;
     };
 
+    // Handle resizes by repositioning all annotations in bulk
     $(window).resize(() => {
         let $annotations = $("." + ANNOTATION_CLASS);
 
@@ -82,10 +92,15 @@ module.exports = (namespace) => {
         // rectangle directly over it
         highlight($el) {
             let $highlight = createAnnotation($el, "tota11y-highlight");
-            return $highlight.css({
+            $highlight.css({
                 width: $el.outerWidth(true),    // include margins
                 height: $el.outerHeight(true)
             });
+
+            // Highlights render right away
+            this.render();
+
+            return $highlight;
         },
 
         // Toggles a highlight on a given jQuery element `$el` when `$trigger`
@@ -107,6 +122,19 @@ module.exports = (namespace) => {
                     $highlight = null;
                 }
             });
+        },
+
+        // Mount all annotations to the DOM in sequence. This is done by
+        // picking items off the queue, where each item consists of the
+        // annotation and the node to which we'll append it.
+        render() {
+            queue.forEach((item) => {
+                // Append the annotation to the element's closest ancestor
+                // that is positioned
+                item.$parent.append(item.$annotation);
+            });
+
+            queue = [];
         },
 
         removeAll() {

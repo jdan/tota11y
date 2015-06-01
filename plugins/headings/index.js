@@ -10,6 +10,7 @@ let outlineItemTemplate = require("./outline-item.handlebars");
 require("./style.less");
 
 const ERRORS = {
+    // TODO: descriptions for these
     FIRST_NOT_H1: {
         title: "First heading is not an &lt;h1&gt;"
     },
@@ -99,7 +100,10 @@ class HeadingsPlugin extends Plugin {
 
                 // Place an error label on the heading tag
                 let contentSafeTitle = error.title.replace("&rarr;", "to");
-                annotate.errorLabel($el, contentSafeTitle, $el.prop("tagName").toLowerCase());
+                annotate.errorLabel(
+                    $el,
+                    contentSafeTitle,
+                    $el.prop("tagName").toLowerCase());
 
                 // Mark the summary item as red
                 // Pretty hacky, since we're borrowing label styles for this
@@ -109,7 +113,7 @@ class HeadingsPlugin extends Plugin {
                     .addClass("tota11y-label-error");
             } else {
                 // Label the heading tag
-                annotate.label($el);
+                annotate.label($el).addClass("tota11y-label-success");
 
                 // Mark the summary item as green
                 $item
@@ -129,6 +133,8 @@ class HeadingsPlugin extends Plugin {
 
         this.about("Headings plugin");
         this.summary($outline);
+
+        annotate.render();
     }
 
     cleanup() {

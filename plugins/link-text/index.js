@@ -39,6 +39,8 @@ class LinkTextPlugin extends Plugin {
                 this.error("Link text is unclear", description, $el);
             });
         }
+
+        annotate.render();
     }
 
     cleanup() {

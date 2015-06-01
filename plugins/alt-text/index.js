@@ -31,6 +31,8 @@ class AltTextPlugin extends Plugin {
 
             $highlight.append($inner);
         });
+
+        annotate.render();
     }
 
     cleanup() {

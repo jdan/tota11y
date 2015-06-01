@@ -30,8 +30,9 @@ class ContrastPlugin extends Plugin {
             options.style).AA;
 
         // We'll suggest colors at an "AA" level.
-        // 3.0 for large fonts, 4.5 for small fonts
-        let requiredRatio = axs.utils.isLargeFont(options.style) ? 3.0 : 4.5;
+        // 3.0 for large fonts, 4.5 for small fonts.
+        let requiredRatio = axs.utils.isLargeFont(options.style) ?
+            "3.0" : "4.5";  // Use strings to prevent rounding
 
         let templateData = {
             fgColorHex: axs.utils.colorToString(options.fgColor),
@@ -108,6 +109,8 @@ class ContrastPlugin extends Plugin {
 
             seenColors.add(entry);
         });
+
+        annotate.render();
     }
 
     cleanup() {
