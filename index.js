@@ -4,6 +4,9 @@
  * Builds and mounts the toolbar.
  */
 
+// Require the base tota11y styles right away so they can be overwritten
+require("./less/tota11y.less");
+
 var $ = require("jquery");
 
 var plugins = require("./plugins");
@@ -11,8 +14,6 @@ var toolbarTemplate = require("./templates/toolbar.handlebars");
 
 // Chrome Accessibility Developer Tools - required once as a global
 require("script!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js");
-
-require("./less/tota11y.less");
 
 class Toolbar {
     appendTo($el) {

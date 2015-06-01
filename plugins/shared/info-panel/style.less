@@ -9,6 +9,11 @@
 @tabHeight: 30px;
 @panelPadding: 10px;
 
+@dismissFontSize: 25px;
+@chevornFontSize: 20px;
+@scrollTriggerFontSize: 18px;
+@descriptionFontSize: 13px;
+
 .tota11y-info {
     .tota11y-dark-color-scheme;
     .position(fixed, auto, @viewportEdgePadding, @viewportEdgePadding, auto);
@@ -22,8 +27,8 @@
     }
 
     &-dismiss-trigger {
-        font-size: 25px;
-        line-height: 20px;
+        font-size: @dismissFontSize;
+        line-height: @dismissFontSize;
     }
 
     &-title, &-body {
@@ -104,7 +109,7 @@
             @height: 14px;
 
             display: inline-block;
-            font-size: 20px;
+            font-size: @chevornFontSize;
             height: @height;
             line-height: @height;
             margin-right: 3px;
@@ -122,16 +127,14 @@
         }
 
         &-scroll {
-            @fontSize: 18px;
-
             float: right;
-            font-size: @fontSize;
-            line-height: @fontSize;
+            font-size: @scrollTriggerFontSize;
+            line-height: @scrollTriggerFontSize;
             transform: rotate(45deg);
         }
 
         &-description {
-            font-size: 13px;
+            font-size: @descriptionFontSize;
             padding: 10px 0 0;
         }
         &-trigger.tota11y-collapsed &-description {

@@ -26,6 +26,7 @@ module.exports = (namespace) => {
         // We also store the element its annotation so we can reposition when
         // the window resizes.
         let $annotation = $("<div>")
+            .addClass("tota11y")
             .addClass(ANNOTATION_CLASS)
             .addClass(className)
             .css($el.position())
