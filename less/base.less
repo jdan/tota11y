@@ -1,0 +1,33 @@
+/**
+ * Base styles for tota11y to make sure things look consistent under
+ * reasonable circumstances.
+ */
+
+@import "variables.less";
+
+.tota11y {
+    pre, code {
+        background-color: @lighterGray;
+        border: none;
+        border-radius: 0;
+        color: inherit;
+        font-family: monospace;
+        font-size: inherit;
+        line-height: inherit;
+    }
+
+    pre {
+        padding: 10px;
+    }
+
+    code {
+        border-radius: 2px;
+        padding: 1px;
+    }
+
+    a, a:hover, a:focus {
+        background-color: inherit;
+        color: inherit;
+        text-decoration: none;
+    }
+}

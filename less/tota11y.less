@@ -1,4 +1,5 @@
 @import "variables.less";
+@import "base.less";
 
 @descriptionWidth: 200px;
 @pluginPadding: 12px;
@@ -9,41 +10,19 @@
 @toggleCollapsedWidth: 35px;
 @toggleHeight: 25px;
 
-.tota11y {
-    pre, code {
-        background-color: #ddd;
-        border: none;
-        border-radius: 0;
-        color: inherit;
-        font-family: monospace;
-        font-size: inherit;
-        line-height: inherit;
-    }
-
-    pre {
-        padding: 10px;
-    }
-
-    code {
-        border-radius: 2px;
-        padding: 1px;
-    }
-}
-
 .tota11y-toolbar {
     .tota11y-dark-color-scheme;
     .position(fixed, auto, auto, 0, @viewportEdgePadding);
 
     border-top-left-radius: @borderRadius;
     border-top-right-radius: @borderRadius;
+    overflow: hidden;
     z-index: @z-index--UI;
 
     &-toggle {
-        color: inherit !important;
         display: block;
         font-size: @fontSize;
         padding: @togglePadding;
-        text-decoration: none !important;
     }
 
     &-logo {

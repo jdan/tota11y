@@ -1,5 +1,15 @@
 var path = require("path");
+var postcss = require("postcss");
 var webpack = require("webpack");
+
+// PostCSS plugin to append !important to every CSS rule
+var veryimportant = postcss.plugin("veryimportant", function() {
+    return function(css) {
+        css.eachDecl(function (decl) {
+            decl.important = true;
+        });
+    };
+});
 
 module.exports = {
     entry: "./index.js",
@@ -11,7 +21,11 @@ module.exports = {
         loaders: [
             { test: /\.js$/, exclude: /node_modules/, loader: "babel" },
             { test: /\.handlebars$/, loader: "handlebars" },
-            { test: /\.less$/, loader: "style!css!autoprefixer?{browsers:['> 1%']}!less" }
+            {
+                test: /\.less$/,
+                loader: "style!css!postcss!autoprefixer?{browsers:['> 1%']}!less"
+            }
         ]
-    }
+    },
+    postcss: [veryimportant]
 };

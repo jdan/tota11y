@@ -24,11 +24,6 @@
     &-dismiss-trigger {
         font-size: 25px;
         line-height: 20px;
-
-        &, &:hover, &:focus {
-            color: inherit;
-            text-decoration: none;
-        }
     }
 
     &-title, &-body {
@@ -56,18 +51,6 @@
         &-anchor {
             .position(absolute, 0, 0, 0, 0);
             text-align: center;
-
-            // Overwrite any external colors and disable text underlining.
-            // We'll add text underlining only on the contained <span> which
-            // has the class `&-text`.
-            &, &:hover, &:focus {
-                color: inherit !important;
-                text-decoration: none !important;
-            }
-
-            &:hover &-text, &:focus &-text {
-                text-decoration: underline !important;
-            }
         }
 
         &.active {
@@ -114,13 +97,7 @@
         margin-bottom: 10px;
 
         &-trigger {
-            color: inherit;
             display: block;
-
-            &:hover, &:focus {
-                color: inherit;
-                text-decoration: none;
-            }
         }
 
         &-chevron {
@@ -147,11 +124,9 @@
         &-scroll {
             @fontSize: 18px;
 
-            color: inherit !important;
             float: right;
             font-size: @fontSize;
             line-height: @fontSize;
-            text-decoration: none !important;
             transform: rotate(45deg);
         }
 
