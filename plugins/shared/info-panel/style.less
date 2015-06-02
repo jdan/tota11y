@@ -47,7 +47,6 @@
 
     &-tab {
         height: @tabHeight;
-        line-height: @tabHeight;
         list-style: none;
         position: relative;
         text-align: center;
@@ -56,6 +55,10 @@
         &-anchor {
             .position(absolute, 0, 0, 0, 0);
             text-align: center;
+
+            &-text {
+                line-height: @tabHeight;
+            }
         }
 
         &.active {
