@@ -71,9 +71,9 @@ class ContrastPlugin extends Plugin {
                     return;
             }
 
-            let style = window.getComputedStyle(el);
-            let fgColor = axs.utils.getFgColor(style, el);
+            let style = getComputedStyle(el);
             let bgColor = axs.utils.getBgColor(style, el);
+            let fgColor = axs.utils.getFgColor(style, el, bgColor);
             let contrastRatio = axs.utils.calculateContrastRatio(
                 fgColor, bgColor).toFixed(2);
 
