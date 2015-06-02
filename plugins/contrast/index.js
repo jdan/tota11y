@@ -28,7 +28,7 @@ class ContrastPlugin extends Plugin {
             }
 
             // Ignore elements that are part of the tota11y UI
-            if ($.contains($(".tota11y")[0], el)) {
+            if ($(el).parents(".tota11y").length > 0) {
                 return;
             }
 
