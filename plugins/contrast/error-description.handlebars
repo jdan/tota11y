@@ -1,0 +1,33 @@
+<p>
+    The color combination
+    <span class="tota11y-color-hexes">{{fgColorHex}}/{{bgColorHex}}</span>
+    has a contrast ratio of <strong>{{contrastRatio}}</strong>, which is not
+    sufficient. At this size, you will need a ratio of at least
+    <strong>{{requiredRatio}}</strong>.
+</p>
+
+<p>
+    Consider using the following foreground/background combination:
+</p>
+
+<div class="tota11y-contrast-suggestion">
+    <span class="tota11y-color-hexes">
+        {{suggestedFgColorHex}}/{{suggestedBgColorHex}}
+    </span>
+
+    <span class="tota11y-swatches">
+        <span
+            class="tota11y-swatch"
+            style="background-color: {{suggestedFgColorHex}}">
+        </span>
+        /
+        <span
+            class="tota11y-swatch"
+            style="background-color: {{suggestedBgColorHex}}">
+        </span>
+    </span>
+
+    has a ratio of
+
+    <strong>{{suggestedColorsRatio}}</strong>
+</div>
