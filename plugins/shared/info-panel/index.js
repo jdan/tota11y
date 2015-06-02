@@ -174,6 +174,9 @@ class InfoPanel {
             hasContent = true;
         }
 
+        let panelRightPx = 10;
+        let panelBottomPx = 10;
+
         if (hasContent) {
             // Wire up the dismiss button
             this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
@@ -191,26 +194,25 @@ class InfoPanel {
 
             // Variables for the starting positions of the mouse and panel
             let initMouseX, initMouseY;
-            let initPanelRight = parseInt(this.$el.css("right"));
-            let initPanelBottom = parseInt(this.$el.css("bottom"));
+            let initPanelRight, initPanelBottom;
 
             $draggable
                 .on("mousedown", (e) => {
                     e.preventDefault();
 
-                    // Start dragging, and record an initial mouse coords
+                    // Start dragging, and record initial mouse and panel
+                    // positions
                     isDragging = true;
+
                     initMouseX = e.pageX;
                     initMouseY = e.pageY;
+
+                    initPanelRight = panelRightPx;
+                    initPanelBottom = panelBottomPx;
                 })
                 .on("mouseup", (e) => {
                     e.preventDefault();
-
-                    // Stop dragging, and set new starting coords for the
-                    // panel
                     isDragging = false;
-                    initPanelRight = parseInt(this.$el.css("right"));
-                    initPanelBottom = parseInt(this.$el.css("bottom"));
                 });
 
             $(window).on("mousemove", (e) => {
@@ -222,14 +224,20 @@ class InfoPanel {
                 let deltaX = e.pageX - initMouseX;
                 let deltaY = e.pageY - initMouseY;
 
+                panelRightPx = initPanelRight - deltaX;
+                panelBottomPx = initPanelBottom - deltaY;
+
                 this.$el.css({
-                    bottom: initPanelBottom - deltaY,
-                    right: initPanelRight - deltaX
+                    right: panelRightPx,
+                    bottom: panelBottomPx
                 });
             });
         }
 
-        return this.$el;
+        return this.$el.css({
+            right: panelRightPx,
+            bottom: panelBottomPx
+        });
     }
 
     destroy() {
