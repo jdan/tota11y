@@ -22,6 +22,8 @@ let errorTemplate = require("./error.handlebars");
 let tabTemplate = require("./tab.handlebars");
 require("./style.less");
 
+const INITIAL_PANEL_MARGIN_PX = 10;
+
 class InfoPanel {
     constructor(title) {
         this.title = title;
@@ -102,6 +104,75 @@ class InfoPanel {
         return $tab;
     }
 
+    /**
+     * Positions the info panel and sets up event listeners to make the
+     * panel draggable
+     */
+    initPositioning() {
+        let panelRightPx = INITIAL_PANEL_MARGIN_PX;
+        let panelBottomPx = INITIAL_PANEL_MARGIN_PX;
+
+        // Wire up the dismiss button
+        this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
+            e.preventDefault();
+            this.destroy();
+        });
+
+        // Append the info panel to the body. In reality we'll likely want
+        // it directly adjacent to the toolbar.
+        $("body").append(this.$el);
+
+        // Wire up draggable surface
+        let $draggable = this.$el.find(".tota11y-info-title");
+        let isDragging = false;
+
+        // Variables for the starting positions of the mouse and panel
+        let initMouseX, initMouseY;
+        let initPanelRight, initPanelBottom;
+
+        $draggable
+            .on("mousedown", (e) => {
+                e.preventDefault();
+
+                // Start dragging, and record initial mouse and panel
+                // positions
+                isDragging = true;
+
+                initMouseX = e.pageX;
+                initMouseY = e.pageY;
+
+                initPanelRight = panelRightPx;
+                initPanelBottom = panelBottomPx;
+            })
+            .on("mouseup", (e) => {
+                e.preventDefault();
+                isDragging = false;
+            });
+
+        $(window).on("mousemove", (e) => {
+            if (!isDragging) {
+                return;
+            }
+            e.preventDefault();
+
+            let deltaX = e.pageX - initMouseX;
+            let deltaY = e.pageY - initMouseY;
+
+            panelRightPx = initPanelRight - deltaX;
+            panelBottomPx = initPanelBottom - deltaY;
+
+            this.$el.css({
+                right: panelRightPx,
+                bottom: panelBottomPx
+            });
+        });
+
+        this.$el.css({
+            right: panelRightPx,
+            bottom: panelBottomPx
+        });
+    }
+
     render() {
         // Destroy the existing info panel to prevent double-renders
         this.$el && this.$el.remove();
@@ -174,70 +245,11 @@ class InfoPanel {
             hasContent = true;
         }
 
-        let panelRightPx = 10;
-        let panelBottomPx = 10;
-
         if (hasContent) {
-            // Wire up the dismiss button
-            this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
-                e.preventDefault();
-                this.destroy();
-            });
-
-            // Append the info panel to the body. In reality we'll likely want
-            // it directly adjacent to the toolbar.
-            $("body").append(this.$el);
-
-            // Wire up draggable surface
-            let $draggable = this.$el.find(".tota11y-info-title");
-            let isDragging = false;
-
-            // Variables for the starting positions of the mouse and panel
-            let initMouseX, initMouseY;
-            let initPanelRight, initPanelBottom;
-
-            $draggable
-                .on("mousedown", (e) => {
-                    e.preventDefault();
-
-                    // Start dragging, and record initial mouse and panel
-                    // positions
-                    isDragging = true;
-
-                    initMouseX = e.pageX;
-                    initMouseY = e.pageY;
-
-                    initPanelRight = panelRightPx;
-                    initPanelBottom = panelBottomPx;
-                })
-                .on("mouseup", (e) => {
-                    e.preventDefault();
-                    isDragging = false;
-                });
-
-            $(window).on("mousemove", (e) => {
-                if (!isDragging) {
-                    return;
-                }
-                e.preventDefault();
-
-                let deltaX = e.pageX - initMouseX;
-                let deltaY = e.pageY - initMouseY;
-
-                panelRightPx = initPanelRight - deltaX;
-                panelBottomPx = initPanelBottom - deltaY;
-
-                this.$el.css({
-                    right: panelRightPx,
-                    bottom: panelBottomPx
-                });
-            });
+            this.initPositioning();
         }
 
-        return this.$el.css({
-            right: panelRightPx,
-            bottom: panelBottomPx
-        });
+        return this.$el;
     }
 
     destroy() {
