@@ -11,11 +11,11 @@ require("./style.less");
 
 const ERRORS = {
     FIRST_NOT_H1: {
-        title: "First heading is not an <h1>"
+        title: "First heading is not an &lt;h1&gt;"
     },
 
     MULTIPLE_H1: {
-        title: "<h1> used when one is already present"
+        title: "&lt;h1&gt; used when one is already present"
     },
 
     // This error accepts two arguments to display a relevant error message

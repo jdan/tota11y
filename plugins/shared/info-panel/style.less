@@ -63,11 +63,14 @@
 
         &.active {
             background-color: @tabActiveColor;
-            color: @darkGray;
 
             &:hover {
                 background-color: @tabActiveColor;
             }
+        }
+
+        &.active &-anchor-text {
+            color: @darkGray;
         }
 
         &:hover {
@@ -84,8 +87,11 @@
     &-section {
         .position(absolute, 0, 0, 0, 0);
 
+        & * {
+            color: @darkGray;
+        }
+
         background-color: @white;
-        color: @darkGray;
         display: none;
         overflow-y: scroll;
         padding: @panelPadding;
