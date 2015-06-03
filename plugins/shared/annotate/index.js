@@ -98,12 +98,12 @@ module.exports = (namespace) => {
         // displays an expanded error message
         errorLabel($el, expanded, labelText=$el.prop("tagName").toLowerCase()) {
             let innerHtml = errorLabelTemplate({
-                text: labelText
+                text: labelText,
+                detail: expanded
             });
 
             return this.label($el)
                 .addClass("tota11y-label-error")
-                .attr("data-expanded", expanded)
                 .html(innerHtml);
         },
 

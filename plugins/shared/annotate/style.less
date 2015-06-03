@@ -8,19 +8,10 @@
 .tota11y-label {
     background-color: rgb(255, 232, 0);
     border: 1px solid rgba(0, 0, 0, 0.1);
-    color: @darkGray;
     cursor: default;
-    font-size: @fontSize;
     padding: @tagPadding;
     position: absolute;
     z-index: @z-index--labels;
-
-    &:hover::after {
-        content: attr(data-expanded);
-        clear: both;
-        display: block;
-        max-width: @expandedDescriptionWidth;
-    }
 
     &-error {
         background-color: rgb(255, 174, 174);
@@ -36,6 +27,25 @@
 
     &-success {
         background-color: #b9eda9;
+    }
+
+    // Label font styles
+    &, &-text, &-detail {
+        color: @darkGray;
+        font-size: @fontSize;
+    }
+
+    &-text {
+        float: left;
+    }
+
+    &-detail {
+        clear: both;
+        display: none;
+        max-width: @expandedDescriptionWidth;
+    }
+    &:hover &-detail {
+        display: block;
     }
 }
 
