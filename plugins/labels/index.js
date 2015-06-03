@@ -40,8 +40,6 @@ class LabelsPlugin extends Plugin {
                 this.error(title, this.errorMessage($el), $el);
             });
         }
-
-        annotate.render();
     }
 
     cleanup() {

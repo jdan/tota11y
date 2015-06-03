@@ -133,8 +133,6 @@ class HeadingsPlugin extends Plugin {
 
         this.about("Headings plugin");
         this.summary($outline);
-
-        annotate.render();
     }
 
     cleanup() {

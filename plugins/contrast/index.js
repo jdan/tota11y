@@ -109,8 +109,6 @@ class ContrastPlugin extends Plugin {
 
             seenColors.add(entry);
         });
-
-        annotate.render();
     }
 
     cleanup() {

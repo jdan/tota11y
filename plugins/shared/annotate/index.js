@@ -20,12 +20,6 @@ module.exports = (namespace) => {
     // namespace
     const ANNOTATION_CLASS = "tota11y-annotation-" + namespace;
 
-    // A queue of {$annotation, $parent}'s that is populated by
-    // `createAnnotation` and emptired by the `render()` method.
-    //
-    // Annotations are queued to reduce reflows.
-    let queue = [];
-
     // Register a new annotation to a given jQuery element
     let createAnnotation = ($el, className) => {
         // Create a position an annotation relative to its offset parent.
@@ -47,6 +41,29 @@ module.exports = (namespace) => {
 
         return $annotation;
     };
+
+    // A queue of {$annotation, $parent}'s that is populated by
+    // `createAnnotation` and emptired by the `render()` method.
+    //
+    // Annotations are queued to reduce reflows.
+    let queue = [];
+
+    // Mount all annotations to the DOM in sequence. This is done by
+    // picking items off the queue, where each item consists of the
+    // annotation and the node to which we'll append it.
+    function render() {
+        if (queue.length > 0) {
+            queue.forEach((item) => {
+                // Append the annotation to the element's closest ancestor
+                // that is positioned
+                item.$parent.append(item.$annotation);
+            });
+            queue = [];
+        }
+
+        window.requestAnimationFrame(render);
+    }
+    window.requestAnimationFrame(render);
 
     // Handle resizes by repositioning all annotations in bulk
     $(window).resize(() => {
@@ -97,9 +114,6 @@ module.exports = (namespace) => {
                 height: $el.outerHeight(true)
             });
 
-            // Highlights render right away
-            this.render();
-
             return $highlight;
         },
 
@@ -122,19 +136,6 @@ module.exports = (namespace) => {
                     $highlight = null;
                 }
             });
-        },
-
-        // Mount all annotations to the DOM in sequence. This is done by
-        // picking items off the queue, where each item consists of the
-        // annotation and the node to which we'll append it.
-        render() {
-            queue.forEach((item) => {
-                // Append the annotation to the element's closest ancestor
-                // that is positioned
-                item.$parent.append(item.$annotation);
-            });
-
-            queue = [];
         },
 
         removeAll() {
