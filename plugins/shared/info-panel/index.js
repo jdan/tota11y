@@ -23,6 +23,7 @@ let tabTemplate = require("./tab.handlebars");
 require("./style.less");
 
 const INITIAL_PANEL_MARGIN_PX = 10;
+const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 
 class InfoPanel {
     constructor(title) {
@@ -36,39 +37,33 @@ class InfoPanel {
 
     /**
      * Sets the title of the info panel
-     * (chainable)
      */
     setTitle(title) {
         this.title = title;
-        return this;
     }
 
     /**
      * Sets the contents of the about section as HTML
-     * (chainable)
      */
     setAbout(about) {
         this.about = about;
-        return this;
     }
 
     /**
      * Sets the contents of the summary section as HTML
-     * (chainable)
      */
     setSummary(summary) {
         this.summary = summary;
-        return this;
     }
 
     /**
      * Adds an error to the errors tab. Also receives a jQuery element to
      * highlight on hover.
-     * (chainable)
      */
     addError(title, description, $el) {
-        this.errors.push({title, description, $el});
-        return this;
+        let error = {title, description, $el};
+        this.errors.push(error);
+        return error;
     }
 
     _addTab(title, html) {
@@ -205,8 +200,20 @@ class InfoPanel {
                 let $trigger = $error.find(".tota11y-info-error-trigger");
                 $trigger.click((e) => {
                     e.preventDefault();
-                    $trigger.toggleClass("tota11y-collapsed");
+                    $trigger.toggleClass(COLLAPSED_CLASS_NAME);
                 });
+
+                // Attach a function to the original error object to open
+                // this error so it can be done externally. We'll use this to
+                // access error entries in the info panel from labels.
+                error.show = () => {
+                    // Show info panel if closed?
+                    $trigger.removeClass(COLLAPSED_CLASS_NAME);
+
+                    // Scroll to error
+                    let $scrollParent = $trigger.parents(".tota11y-info-section");
+                    $scrollParent.scrollTop($trigger.offset().top);
+                };
 
                 // Wire up the scroll-to-error button
                 let $scroll = $error.find(".tota11y-info-error-scroll");
@@ -217,7 +224,7 @@ class InfoPanel {
 
                 // Expand the first violation
                 if (i === 0) {
-                    $trigger.toggleClass("tota11y-collapsed");
+                    $trigger.toggleClass(COLLAPSED_CLASS_NAME);
                 }
 
                 // Highlight the violating element on hover/focus. We do it

@@ -96,13 +96,15 @@ class HeadingsPlugin extends Plugin {
 
             if (error) {
                 // Register an error to the info panel
-                this.error(error.title, error.description, $el);
+                let errorEntry = this.error(
+                    error.title, error.description, $el);
 
                 // Place an error label on the heading tag
                 annotate.errorLabel(
                     $el,
+                    $el.prop("tagName").toLowerCase(),
                     error.title,
-                    $el.prop("tagName").toLowerCase());
+                    errorEntry);
 
                 // Mark the summary item as red
                 // Pretty hacky, since we're borrowing label styles for this

@@ -35,7 +35,7 @@ class LinkTextPlugin extends Plugin {
                 // TODO: A "show me how" link may be even more helpful
 
                 annotate.errorLabel(
-                    $el, `Link text "${$el.text()}" is unclear`, "");
+                    $el, "", `Link text "${$el.text()}" is unclear`);
                 this.error("Link text is unclear", description, $el);
             });
         }

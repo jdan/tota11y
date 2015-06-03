@@ -2,7 +2,7 @@
 
 @tagPadding: 3px;
 @tooltipPadding: 10px;
-@fontSize: 11px;
+@fontSize: 12px;
 @expandedDescriptionWidth: 300px;
 
 .tota11y-label {
@@ -19,9 +19,8 @@
         &-icon {
             display: block;
             float: left;
-            height: 14px;
             margin-right: 3px;
-            width: 12px;
+            width: @fontSize;
         }
     }
 
@@ -30,7 +29,7 @@
     }
 
     // Label font styles
-    &, &-text, &-detail {
+    &, &-text, &-detail, &-link, &-help {
         color: @darkGray;
         font-size: @fontSize;
     }
@@ -46,6 +45,18 @@
     }
     &:hover &-detail {
         display: block;
+    }
+
+    &-help {
+        float: left;
+        margin-left: 5px;
+    }
+
+    &-link {
+        &:hover, &:focus {
+            opacity: 0.6;
+            text-decoration: underline;
+        }
     }
 }
 

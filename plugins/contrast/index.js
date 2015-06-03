@@ -95,8 +95,8 @@ class ContrastPlugin extends Plugin {
                 // We display errors multiple times for emphasis
                 annotate.errorLabel(
                     $(el),
-                    "This contrast is insufficient at this size.",
-                    contrastRatio);
+                    contrastRatio,
+                    "This contrast is insufficient at this size.");
 
                 if (!seenColors.has(entry)) {
                     // We do not show duplicates in the errors panel, however,

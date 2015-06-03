@@ -94,17 +94,30 @@ module.exports = (namespace) => {
             return $label.text(text);
         },
 
-        // Places a special error label on an element that, when hovered,
-        // displays an expanded error message
-        errorLabel($el, expanded, labelText=$el.prop("tagName").toLowerCase()) {
-            let innerHtml = errorLabelTemplate({
-                text: labelText,
+        // Places a special label on an element that, when hovered, displays
+        // an expanded error message.
+        //
+        // This method also accepts an optional `errorEntry`, which
+        // corresponds to the object returned from `InfoPanel.addError`. This
+        // object will contain a "show()" method when the info panel is
+        // rendered, allowing us to externally open the entry in the info
+        // panel corresponding to this error.
+        errorLabel($el, text, expanded, errorEntry) {
+            let $innerHtml = $(errorLabelTemplate({
+                text: text,
                 detail: expanded
-            });
+            }));
+
+            if (errorEntry) {
+                $innerHtml.find(".tota11y-label-link").click((e) => {
+                    e.preventDefault();
+                    errorEntry.show();
+                });
+            }
 
             return this.label($el)
                 .addClass("tota11y-label-error")
-                .html(innerHtml);
+                .html($innerHtml);
         },
 
         // Highlights a given jQuery element by placing a translucent
