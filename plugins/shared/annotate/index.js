@@ -48,17 +48,19 @@ module.exports = (namespace) => {
     // Annotations are queued to reduce reflows.
     let queue = [];
 
+    // To maintain a high framerate, we'll only render `RENDER_CHUNK_SIZE`
+    // annotations per frame.
+    //
+    // NOTE: A value of "20" consistently hits 60fps on facebook.com
+    const RENDER_CHUNK_SIZE = 20;
+
     // Mount all annotations to the DOM in sequence. This is done by
     // picking items off the queue, where each item consists of the
     // annotation and the node to which we'll append it.
     function render() {
-        if (queue.length > 0) {
-            queue.forEach((item) => {
-                // Append the annotation to the element's closest ancestor
-                // that is positioned
-                item.$parent.append(item.$annotation);
-            });
-            queue = [];
+        for (let i = 0; queue.length > 0 && i < RENDER_CHUNK_SIZE; i++) {
+            let item = queue.shift();
+            item.$parent.append(item.$annotation);
         }
 
         window.requestAnimationFrame(render);
@@ -109,12 +111,10 @@ module.exports = (namespace) => {
         // rectangle directly over it
         highlight($el) {
             let $highlight = createAnnotation($el, "tota11y-highlight");
-            $highlight.css({
+            return $highlight.css({
                 width: $el.outerWidth(true),    // include margins
                 height: $el.outerHeight(true)
             });
-
-            return $highlight;
         },
 
         // Toggles a highlight on a given jQuery element `$el` when `$trigger`
