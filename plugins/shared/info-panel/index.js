@@ -24,6 +24,7 @@ require("./style.less");
 
 const INITIAL_PANEL_MARGIN_PX = 10;
 const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
+const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 
 class InfoPanel {
     constructor(title) {
@@ -103,14 +104,14 @@ class InfoPanel {
      * Positions the info panel and sets up event listeners to make the
      * panel draggable
      */
-    initPositioning() {
+    initAndPosition() {
         let panelRightPx = INITIAL_PANEL_MARGIN_PX;
         let panelBottomPx = INITIAL_PANEL_MARGIN_PX;
 
         // Wire up the dismiss button
         this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
             e.preventDefault();
-            this.destroy();
+            this.$el.addClass(HIDDEN_CLASS_NAME);
         });
 
         // Append the info panel to the body. In reality we'll likely want
@@ -207,12 +208,17 @@ class InfoPanel {
                 // this error so it can be done externally. We'll use this to
                 // access error entries in the info panel from labels.
                 error.show = () => {
-                    // Show info panel if closed?
+                    // Make sure info panel is visible
+                    this.$el.removeClass(HIDDEN_CLASS_NAME);
+
+                    // Open the error entry
                     $trigger.removeClass(COLLAPSED_CLASS_NAME);
 
-                    // Scroll to error
-                    let $scrollParent = $trigger.parents(".tota11y-info-section");
-                    $scrollParent.scrollTop($trigger.offset().top);
+                    // Scroll to the error entry
+                    let $scrollParent = $trigger.parents(
+                        ".tota11y-info-section");
+
+                    $scrollParent[0].scrollTop = $trigger[0].offsetTop - 10;
                 };
 
                 // Wire up the scroll-to-error button
@@ -253,7 +259,7 @@ class InfoPanel {
         }
 
         if (hasContent) {
-            this.initPositioning();
+            this.initAndPosition();
         }
 
         return this.$el;
@@ -265,7 +271,12 @@ class InfoPanel {
         this.summary = null;
         this.errors = [];
 
+        // Remove the element
         this.$el && this.$el.remove();
+        this.$el = null;
+
+        // Remove the annotations
+        annotate.removeAll();
     }
 }
 

@@ -4,7 +4,7 @@
 
 let $ = require("jquery");
 let Plugin = require("../base");
-let annotate = require("../shared/annotate")("headers");
+let annotate = require("../shared/annotate")("headings");
 
 let outlineItemTemplate = require("./outline-item.handlebars");
 require("./style.less");
