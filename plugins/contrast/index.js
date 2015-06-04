@@ -44,16 +44,16 @@ class ContrastPlugin extends Plugin {
             suggestedColorsRatio: suggestedColors.contrast
         };
 
-        this.error(
+        return this.error(
             titleTemplate(templateData),
             descriptionTemplate(templateData),
             $(el));
     }
 
     run() {
-        // A set of fg/bg color pairs that we have already seen so that we
-        // do not report them more than once
-        let seenColors = new Set();
+        // A map of fg/bg color pairs that we have already seen to the error
+        // entry currently present in the info panel
+        let seenColors = {};
 
         $("*").each((i, el) => {
             // Only check elements with a direct text descendant
@@ -86,28 +86,39 @@ class ContrastPlugin extends Plugin {
             if (!axs.utils.isLowContrast(contrastRatio, style)) {
                 // For acceptable contrast values, we don't show ratios if
                 // they have been presented already
-                if (!seenColors.has(entry)) {
+                if (!seenColors[entry]) {
                     annotate
                         .label($(el), contrastRatio)
                         .addClass("tota11y-label-success");
+
+                    // Add the entry to the seenColors map. We don't have an
+                    // error to associate it with, so we'll just give it the
+                    // value of `true`.
+                    seenColors[entry] = true;
                 }
             } else {
-                // We display errors multiple times for emphasis
+                if (!seenColors[entry]) {
+                    // We do not show duplicates in the errors panel, however,
+                    // to keep the output from being overwhelming
+                    let errorEntry = this._registerError(
+                        {fgColor, bgColor, contrastRatio, style},
+                        el);
+
+                    seenColors[entry] = errorEntry;
+                }
+
+                // We display errors multiple times for emphasis. Each error
+                // will point back to the entry in the info panel for that
+                // particular color combination.
+                //
+                // TODO: The error entry in the info panel will only highlight
+                // the first element with that color combination
                 annotate.errorLabel(
                     $(el),
                     contrastRatio,
-                    "This contrast is insufficient at this size.");
-
-                if (!seenColors.has(entry)) {
-                    // We do not show duplicates in the errors panel, however,
-                    // to keep the output from being overwhelming
-                    this._registerError(
-                        {fgColor, bgColor, contrastRatio, style},
-                        el);
-                }
+                    "This contrast is insufficient at this size.",
+                    seenColors[entry]);
             }
-
-            seenColors.add(entry);
         });
     }
 
