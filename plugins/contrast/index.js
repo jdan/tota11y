@@ -78,34 +78,34 @@ class ContrastPlugin extends Plugin {
             let requiredRatio = axs.utils.isLargeFont(style) ?
                 "3.0" : "4.5";
 
-            // Build a value for our `seenColors` map and report the color
+            // Build a key for our `seenColors` map and report the color
             // if we have not seen it yet
-            let entry = axs.utils.colorToString(fgColor) + "/" +
+            let key = axs.utils.colorToString(fgColor) + "/" +
                         axs.utils.colorToString(bgColor) + "/" +
                         requiredRatio;
 
             if (!axs.utils.isLowContrast(contrastRatio, style)) {
                 // For acceptable contrast values, we don't show ratios if
                 // they have been presented already
-                if (!seenColors[entry]) {
+                if (!seenColors[key]) {
                     annotate
                         .label($(el), contrastRatio)
                         .addClass("tota11y-label-success");
 
-                    // Add the entry to the seenColors map. We don't have an
+                    // Add the key to the seenColors map. We don't have an
                     // error to associate it with, so we'll just give it the
                     // value of `true`.
-                    seenColors[entry] = true;
+                    seenColors[key] = true;
                 }
             } else {
-                if (!seenColors[entry]) {
+                if (!seenColors[key]) {
                     // We do not show duplicates in the errors panel, however,
                     // to keep the output from being overwhelming
-                    let errorEntry = this._registerError(
+                    let error = this._registerError(
                         {fgColor, bgColor, contrastRatio, style, requiredRatio},
                         el);
 
-                    seenColors[entry] = errorEntry;
+                    seenColors[key] = error;
                 }
 
                 // We display errors multiple times for emphasis. Each error
@@ -118,7 +118,7 @@ class ContrastPlugin extends Plugin {
                     $(el),
                     contrastRatio,
                     "This contrast is insufficient at this size.",
-                    seenColors[entry]);
+                    seenColors[key]);
             }
         });
     }
