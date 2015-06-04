@@ -195,6 +195,10 @@ class InfoPanel {
         if (this.errors.length > 0) {
             let $errors = $("<ul>").addClass("tota11y-info-errors");
 
+            // Store a reference to the "Errors" tab so we can switch to it
+            // later
+            let $errorsTab;
+
             this.errors.forEach((error, i) => {
                 let $error = $(errorTemplate(error));
                 $errors.append($error);
@@ -216,6 +220,9 @@ class InfoPanel {
 
                     // Open the error entry
                     $trigger.removeClass(COLLAPSED_CLASS_NAME);
+
+                    // Switch to the "Errors" tab
+                    $errorsTab.trigger("activate");
 
                     // Scroll to the error entry
                     let $scrollParent = $trigger.parents(
@@ -250,7 +257,7 @@ class InfoPanel {
                 annotate.toggleHighlight(error.$el, $scroll);
             });
 
-            $activeTab = this._addTab("Errors", $errors);
+            $errorsTab = $activeTab = this._addTab("Errors", $errors);
 
             // Add a small badge next to the tab title
             let $badge = $("<div>")
