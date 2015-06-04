@@ -15,6 +15,11 @@ let $ = require("jquery");
 let errorLabelTemplate = require("./error-label.handlebars");
 require("./style.less");
 
+// For very small (or zero-area) elements, highlights are not very useful.
+// This constant declares highlights to be at least `MIN_HIGHLIGHT_SIZE` tall
+// and across.
+const MIN_HIGHLIGHT_SIZE = 25;
+
 module.exports = (namespace) => {
     // The class that will be applied to any annotation generated in this
     // namespace
@@ -125,8 +130,9 @@ module.exports = (namespace) => {
         highlight($el) {
             let $highlight = createAnnotation($el, "tota11y-highlight");
             return $highlight.css({
-                width: $el.outerWidth(true),    // include margins
-                height: $el.outerHeight(true)
+                // include margins
+                width: Math.max(MIN_HIGHLIGHT_SIZE, $el.outerWidth(true)),
+                height: Math.max(MIN_HIGHLIGHT_SIZE, $el.outerHeight(true))
             });
         },
 
