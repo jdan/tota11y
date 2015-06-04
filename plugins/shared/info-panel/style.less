@@ -65,20 +65,17 @@
             }
         }
 
-        &.active {
-            background-color: @tabActiveColor;
+        &:hover {
+            background-color: @tabHoverColor;
+        }
 
-            &:hover {
-                background-color: @tabActiveColor;
-            }
+        &.active, &.active:hover {
+            // Active tabs do not have a hover state
+            background-color: @tabActiveColor;
         }
 
         &.active &-anchor-text {
             color: @darkGray;
-        }
-
-        &:hover {
-            background-color: @tabHoverColor;
         }
     }
 
@@ -116,6 +113,10 @@
 
         &-trigger {
             display: block;
+
+            &.trigger-highlight {
+                background-color: @highlightColor;
+            }
         }
 
         &-chevron {

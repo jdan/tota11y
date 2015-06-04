@@ -71,7 +71,9 @@ class Plugin {
 
         let $checkbox = $plugin.find(".tota11y-plugin-checkbox");
 
-        $checkbox.click(() => {
+        $checkbox.click((e) => {
+            e.stopPropagation();
+
             // Trigger a `plugin-switched` event on the container, which will
             // be dispatched to all plugins. We include this plugin's ID to
             // determine if we should enable or disable the plugin listening

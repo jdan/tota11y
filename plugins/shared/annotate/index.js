@@ -116,7 +116,14 @@ module.exports = (namespace) => {
             if (errorEntry) {
                 $innerHtml.find(".tota11y-label-link").click((e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     errorEntry.show();
+                });
+
+                $innerHtml.hover(() => {
+                    errorEntry.$trigger.addClass("trigger-highlight");
+                }, () => {
+                    errorEntry.$trigger.removeClass("trigger-highlight");
                 });
             }
 

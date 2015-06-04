@@ -94,6 +94,7 @@ class InfoPanel {
         // Activate the tab when its anchor is clicked
         $tab.on("click", (e) => {
             e.preventDefault();
+            e.stopPropagation();
             $tab.trigger("activate");
         });
 
@@ -111,6 +112,7 @@ class InfoPanel {
         // Wire up the dismiss button
         this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
             e.preventDefault();
+            e.stopPropagation();
             this.$el.addClass(HIDDEN_CLASS_NAME);
         });
 
@@ -201,6 +203,7 @@ class InfoPanel {
                 let $trigger = $error.find(".tota11y-info-error-trigger");
                 $trigger.click((e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
                 });
 
@@ -217,14 +220,21 @@ class InfoPanel {
                     // Scroll to the error entry
                     let $scrollParent = $trigger.parents(
                         ".tota11y-info-section");
-
                     $scrollParent[0].scrollTop = $trigger[0].offsetTop - 10;
                 };
+
+                // Attach the `$trigger` as well so can access it externally.
+                // We use this to highlight the trigger when hovering over
+                // inline error labels.
+                error.$trigger = $trigger;
 
                 // Wire up the scroll-to-error button
                 let $scroll = $error.find(".tota11y-info-error-scroll");
                 $scroll.click((e) => {
                     e.preventDefault();
+                    e.stopPropagation();
+
+                    // TODO: This attempts to scroll to fixed elements
                     $(document).scrollTop(error.$el.offset().top - 80);
                 });
 

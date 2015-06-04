@@ -20,7 +20,9 @@ class Toolbar {
         var $toolbar = $(toolbarTemplate());
         $el.append($toolbar);
 
-        $toolbar.find(".tota11y-toolbar-toggle").click(() => {
+        $toolbar.find(".tota11y-toolbar-toggle").click((e) => {
+            e.preventDefault();
+            e.stopPropagation();
             $toolbar.toggleClass("tota11y-expanded")
         });
 
