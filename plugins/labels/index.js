@@ -36,8 +36,8 @@ class LabelsPlugin extends Plugin {
 
                 // Place an error label on the element and register it as an
                 // error in the info panel
-                annotate.errorLabel($el, "", title);
-                this.error(title, this.errorMessage($el), $el);
+                let entry = this.error(title, this.errorMessage($el), $el);
+                annotate.errorLabel($el, "", title, entry);
             });
         }
     }
