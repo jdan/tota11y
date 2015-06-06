@@ -12,9 +12,23 @@ require("./style.less");
 const ERRORS = {
     // TODO: descriptions for these
     FIRST_NOT_H1: {
-        title: "First heading is not an &lt;h1&gt;"
+        title: "First heading is not an &lt;h1&gt;",
+        description: `
+
+        `;
     },
 
+    // This error is currently unused.
+    //
+    // The HTML5 outlining algorithm[1] enables the use of "sectioning roots"
+    // to support multiple <h1> tags when embedded inside of containers like
+    // <section> or <article>. There are currently "no known implementations
+    // of the outline algorithm in graphical browsers or assistive technology
+    // user agents" [2], so we instead simply "use heading rank (h1-h6) to
+    // convey document structure." [2].
+    //
+    // [1]: http://www.w3.org/html/wg/drafts/html/master/semantics.html#outline
+    // [2]: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Sections_and_Outlines_of_an_HTML5_document#The_HTML5_Outline_Algorithm
     MULTIPLE_H1: {
         title: "&lt;h1&gt; used when one is already present"
     },
@@ -53,22 +67,14 @@ class HeadingsPlugin extends Plugin {
     }
 
     // Computes an outline of the page and reports any violations.
-    //
-    // TODO: We'll want to use an outline algorithm as defined here:
-    // http://www.w3.org/html/wg/drafts/html/master/semantics.html#outlines
     outline($headings) {
         let $outline = $("<div>").addClass("tota11y-heading-outline");
 
         let prevLevel;
-        let h1Count = 0;
         $headings.each((i, el) => {
             let $el = $(el);
             let level = +$el.prop("tagName").slice(1);
             let error = null;
-
-            if (level === 1) {
-                h1Count++;
-            }
 
             // Check for any violations
             // NOTE: These violations do not overlap, but as we add more, we
@@ -76,11 +82,11 @@ class HeadingsPlugin extends Plugin {
             // errors on the same tag.
             if (i === 0 && level !== 1) {
                 error = ERRORS.FIRST_NOT_H1;
-            } else if (h1Count > 1) {
-                error = ERRORS.MULTIPLE_H1;
             } else if (prevLevel && level - prevLevel > 1) {
                 error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level);
             }
+
+            prevLevel = level;
 
             // Render the entry in the outline for the "Summary" tab
             let $item = $(outlineItemTemplate({
@@ -96,7 +102,7 @@ class HeadingsPlugin extends Plugin {
 
             if (error) {
                 // Register an error to the info panel
-                let errorEntry = this.error(
+                let infoPanelError = this.error(
                     error.title, error.description, $el);
 
                 // Place an error label on the heading tag
@@ -104,7 +110,7 @@ class HeadingsPlugin extends Plugin {
                     $el,
                     $el.prop("tagName").toLowerCase(),
                     error.title,
-                    errorEntry);
+                    infoPanelError);
 
                 // Mark the summary item as red
                 // Pretty hacky, since we're borrowing label styles for this
@@ -121,8 +127,6 @@ class HeadingsPlugin extends Plugin {
                     .find(".tota11y-heading-outline-level")
                     .addClass("tota11y-label-success");
             }
-
-            prevLevel = level;
         });
 
         return $outline;
@@ -130,9 +134,9 @@ class HeadingsPlugin extends Plugin {
 
     run() {
         let $headings = $("h1, h2, h3, h4, h5, h6");
+        // `this.outline` has the side-effect of also reporting violations
         let $outline = this.outline($headings);
 
-        this.about("Headings plugin");
         this.summary($outline);
     }
 
