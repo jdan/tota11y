@@ -10,12 +10,16 @@ let outlineItemTemplate = require("./outline-item.handlebars");
 require("./style.less");
 
 const ERRORS = {
-    // TODO: descriptions for these
-    FIRST_NOT_H1: {
-        title: "First heading is not an &lt;h1&gt;",
-        description: `
-
-        `;
+    FIRST_NOT_H1(level) {
+        return {
+            title: "First heading is not an &lt;h1&gt;",
+            description: `
+                To give your document a proper structure for assistive
+                technologies, it is important to lay out your headings
+                beginning with an <code>&lt;h1&gt;</code>. We found an
+                <code>&lt;h${level}&gt;</code> instead.
+            `
+        };
     },
 
     // This error is currently unused.
@@ -50,8 +54,10 @@ const ERRORS = {
         }
 
         return {
-            title: `Nonconsecutive heading level used
-                    (h${prevLevel} &rarr; h${currLevel})`,
+            title: `
+                Nonconsecutive heading level used (h${prevLevel} &rarr;
+                h${currLevel})
+            `,
             description: description + "."
         };
     }
@@ -74,14 +80,14 @@ class HeadingsPlugin extends Plugin {
         $headings.each((i, el) => {
             let $el = $(el);
             let level = +$el.prop("tagName").slice(1);
-            let error = null;
+            let error;
 
             // Check for any violations
             // NOTE: These violations do not overlap, but as we add more, we
             // may want to separate the conditionals here to report multiple
             // errors on the same tag.
             if (i === 0 && level !== 1) {
-                error = ERRORS.FIRST_NOT_H1;
+                error = ERRORS.FIRST_NOT_H1(level);
             } else if (prevLevel && level - prevLevel > 1) {
                 error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level);
             }

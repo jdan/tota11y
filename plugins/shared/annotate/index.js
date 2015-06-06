@@ -37,6 +37,9 @@ module.exports = (namespace) => {
             .css($el.position())
             .data({$el});
 
+        // TODO: We can invoke a requestAnimationFrame(render) here to limit
+        // the amount of times we run that timer
+
         // Append an object to the queue. We'll add the annotation to the DOM
         // later to reduce reflows.
         queue.push({
