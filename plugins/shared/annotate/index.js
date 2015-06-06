@@ -43,7 +43,7 @@ module.exports = (namespace) => {
     };
 
     // A queue of {$annotation, $parent}'s that is populated by
-    // `createAnnotation` and emptired by the `render()` method.
+    // `createAnnotation` and emptied by the `render()` method.
     //
     // Annotations are queued to reduce reflows.
     let queue = [];
