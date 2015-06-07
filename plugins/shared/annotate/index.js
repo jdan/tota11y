@@ -99,7 +99,7 @@ module.exports = (namespace) => {
         // element. By default, this label contains the element's tagName.
         label($el, text=$el.prop("tagName").toLowerCase()) {
             let $label = createAnnotation($el, "tota11y-label");
-            return $label.text(text);
+            return $label.html(text);
         },
 
         // Places a special label on an element that, when hovered, displays
@@ -113,7 +113,8 @@ module.exports = (namespace) => {
         errorLabel($el, text, expanded, errorEntry) {
             let $innerHtml = $(errorLabelTemplate({
                 text: text,
-                detail: expanded
+                detail: expanded,
+                hasErrorEntry: !!errorEntry
             }));
 
             if (errorEntry) {
