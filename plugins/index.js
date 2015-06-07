@@ -15,7 +15,7 @@ module.exports = [
     new HeadingsPlugin(),
     new ContrastPlugin(),
     new LinkTextPlugin(),
-    new AltTextPlugin(),
     new LabelsPlugin(),
+    new AltTextPlugin(),
     new LandmarksPlugin(),
 ];

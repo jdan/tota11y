@@ -20,8 +20,8 @@ class LabelsPlugin extends Plugin {
 
     errorMessage($el) {
         return errorTemplate({
-            placeholder: $el.prop("placeholder"),
-            id: $el.prop("id"),
+            placeholder: $el.attr("placeholder"),
+            id: $el.attr("id"),
             tagName: $el.prop("tagName").toLowerCase()
         });
     }

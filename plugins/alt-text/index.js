@@ -1,12 +1,12 @@
 /**
- * A plugin to visualize alt-text for images.
+ * A plugin to check for valid alternative representations for images
  */
 
-var $ = require("jquery");
-var Plugin = require("../base");
-var annotate = require("../shared/annotate")("alt-text");
+let $ = require("jquery");
+let Plugin = require("../base");
+let annotate = require("../shared/annotate")("alt-text");
 
-require("./style.less");
+let errorTemplate = require("./error.handlebars");
 
 class AltTextPlugin extends Plugin {
     getTitle() {
@@ -14,22 +14,33 @@ class AltTextPlugin extends Plugin {
     }
 
     getDescription() {
-        return "Displays alt-text in place of images";
+        return "Annotates images without alt text";
     }
 
     run() {
-        $("img").each(function() {
-            var $highlight = annotate.highlight($(this));
-            var altText = $(this).prop("alt");
-            var $inner = $("<div>").addClass("highlight-inner");
+        $("img").each((i, el) => {
+            let $el = $(el);
 
-            if (altText) {
-                $inner.text(altText);
+            if ($el.attr("alt") === "" || $el.attr("role") === "presentation") {
+                // Presentation images are fine.
+                //
+                // We'll label them as "decorative" to point out to users
+                // that they do not explicitly convey information.
+                annotate.label($el, "&#x2713; decorative")
+                    .addClass("tota11y-label-success");
+
+            } else if ($el.attr("alt")) {
+                // Image has proper alt text
+                // TODO: aria-label, etc from axs.properties.alternative
+                annotate.label($el, "&#x2713;")
+                    .addClass("tota11y-label-success");
+
             } else {
-                $inner.addClass("header-violation").text("!");
-            }
+                annotate.label($el, "&#x2717;")
+                    .addClass("tota11y-label-error");
 
-            $highlight.append($inner);
+                this.error("Image is missing alt text", errorTemplate(), $el);
+            }
         });
     }
 

@@ -9,14 +9,17 @@
 
     // A reset of all styles in tota11y elements
     &, & * {
+        background: none;
         border: none;
         box-sizing: border-box;
         color: @white;
         font-family: Arial;
-        font-size: 14px;
+        font-size: @fontSize;
         font-style: normal;
         font-weight: 400;
         line-height: 1.35;
+        margin: 0;
+        padding: 0;
         text-align: left;
         text-shadow: none;
     }
@@ -38,6 +41,7 @@
 
     pre {
         padding: 10px;
+        margin: 0 0 10px;
     }
 
     code {
