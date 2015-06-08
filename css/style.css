@@ -1,0 +1,97 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.red, .heading:hover .red {
+    background-color: #db0f0f;
+    color: #db0f0f;
+}
+.orange, .heading:hover .orange {
+    background-color: #ffb710;
+    color: #ffb710;
+}
+.yellow, .heading:hover .yellow {
+    background-color: #f5d800;
+    color: #f5d800;
+}
+.green, .heading:hover .green {
+    background-color: #56d516;
+    color: #56d516;
+}
+.blue, .heading:hover .blue {
+    background-color: #139fb4;
+    color: #139fb4;
+}
+.indigo, .heading:hover .indigo {
+    background-color: #1251af;
+    color: #1251af;
+}
+.violet, .heading:hover .violet {
+    background-color: #5c12af;
+    color: #5c12af;
+}
+
+.heading {
+    background-color: #333333;
+    padding: 60px;
+}
+
+.title {
+    text-align: center;
+}
+.title > span {
+    background-color: inherit !important;
+    color: #ffffff;
+    font-size: 60px;
+    margin: 0;
+    padding: 0;
+    transition: color ease-in-out 200ms;
+}
+
+.logo {
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+    width: 200px;
+    height: 200px;
+    z-index: 1;
+}
+
+.backdrop,
+.emblem {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.backdrop {
+    transform: rotate(45deg);
+}
+.emblem {
+    transform: scaleX(-1);
+}
+.ray {
+    display: block;
+    float: left;
+    width: 14.2857142857%;
+    height: 100%;
+    padding: 0;
+    transition: transform ease-in-out 200ms;
+}
+.heading:hover .ray {
+    transform: translateY(0);
+}
+.ray:nth-child(2n) {
+    transform: translateY(-105%);
+}
+.ray:nth-child(2n+1) {
+    transform: translateY(105%);
+}
+.glasses {
+    width: 85%;
+    margin: 7.5% auto;
+}
