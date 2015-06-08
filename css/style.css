@@ -1,8 +1,12 @@
 body {
     color: #333;
-    font: 19px/1.4 "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font: 19px/1.6 "Lato", "Helvetica Neue", Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 .red, .heading:hover .red {
@@ -47,6 +51,21 @@ hr {
     border-bottom: 1px solid;
     width: 120px;
     margin: 60px auto;
+}
+
+a, a:hover {
+    color: inherit;
+    text-decoration: underline;
+}
+
+code {
+    background-color: #eee;
+}
+
+pre code {
+    display: block;
+    overflow-x: scroll;
+    padding: 15px;
 }
 
 .heading {
@@ -129,11 +148,13 @@ hr {
     width: 1px;
 }
 
-
-
 .main-content {
-    margin: 40px auto;
-    width: 600px;
+    margin: 40px auto 80px;
+    width: 900px;
+}
+
+.intro {
+    margin-bottom: 40px;
 }
 
 .description {
@@ -145,8 +166,69 @@ hr {
     color: #777;
 }
 
+
+.clear {
+    clear: both;
+}
+
+.text, .image {
+    float: left;
+}
+
+.text {
+    width: 500px;
+    margin-right: 60px;
+}
+
+.image {
+    margin-top: 30px;
+    width: 340px;
+}
+.image img {
+    width: 100%;
+}
+
+
+
+
+@media(max-width: 900px) {
+    .main-content {
+        width: 600px;
+    }
+
+    .image, .text {
+        float: none;
+        margin: 50px auto 0;
+    }
+
+    .text {
+        width: 100%;
+    }
+
+    .image {
+        width: 70%;
+    }
+}
+
 @media(max-width: 600px) {
     .main-content {
-        width: 100%;
+        margin: 40px 30px;
+        width: auto;
+    }
+
+    hr {
+        margin: 30px auto;
+    }
+
+    .image, .text {
+        margin: 20px auto 0;
+    }
+
+    .image {
+        width: 80%;
+    }
+
+    .no-mini, .tota11y-toolbar {
+        display: none;
     }
 }

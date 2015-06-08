@@ -34,7 +34,7 @@
     </header>
 
     <main role="main" class="main-content">
-        <section>
+        <section class="intro">
             <p class="center description">
                 an accessibility visualization toolkit
             </p>
@@ -47,29 +47,129 @@
         <hr class="green">
 
         <section>
-            <h2>About</h2>
-            <p>
-                tota11y helps visualize how your site performs with assistive
-                technologies.
-            </p>
+            <div class="text">
+                <h2>About</h2>
+                <p>
+                    tota11y helps visualize how your site performs with assistive
+                    technologies.
+                </p>
 
-            <p>
-                The process of testing for accessibility is often tedious and
-                confusing. In many cases, developers must have some prior
-                accessibility knowledge in order to make sense of the results.
-            </p>
+                <p>
+                    The process of testing for accessibility is often tedious and
+                    confusing. In many cases, developers must have some prior
+                    accessibility knowledge in order to make sense of the results.
+                </p>
 
-            <p>
-                Instead, tota11y aims to reduce this barrier of entry by
-                helping visualize accessibility violations (and successes),
-                while educating developers on best practices.
-            </p>
+                <p>
+                    Instead, tota11y aims to reduce this barrier of entry by
+                    helping visualize accessibility violations (and successes),
+                    while educating on best practices.
+                </p>
+            </div>
+
+            <div class="image">
+                <img src="/img/label-error.png" alt="">
+            </div>
+
+            <br class="clear">
         </section>
 
         <hr class="violet">
 
         <section>
-            <h2>How</h2>
+            <div class="text">
+                <h2>How it works</h2>
+
+                <p>
+                    tota11y is a single JavaScript file that inserts a small
+                    button in the bottom corner of your document.
+                    <span class="no-mini">(It's on this very page.)</span>
+                </p>
+
+                <p>
+                    The toolbar consists of several <a href="https://github.com/Khan/tota11y/tree/master/plugins">plugins</a> that
+                    each provide their own functionality.
+                </p>
+
+                <p>
+                    Many of these plugins "annotate" elements on the page.
+                    Sometimes to show their existence, other times to point
+                    out when something's wrong.
+                </p>
+            </div>
+
+            <div class="image">
+                <img src="/img/wikipedia.png">
+            </div>
+
+            <br class="clear">
+        </section>
+
+        <hr class="orange">
+
+        <section>
+            <div class="text">
+                <h2>Easy and informative</h2>
+
+                <p>
+                    tota11y makes it easy to spot some of the most common
+                    accessibility violations made by page authors today.
+                </p>
+
+                <p>
+                    Beyond simply pointing out errors, many tota11y plugins
+                    also suggest ways to fix these violations - specificially
+                    tailored to your document.
+                </p>
+            </div>
+
+            <div class="image">
+                <img src="/img/contrast.png">
+            </div>
+
+            <br class="clear">
+        </section>
+
+        <hr class="blue">
+
+        <section>
+            <h2>Installation</h2>
+
+            <p>
+                First, <a href="https://github.com/Khan/tota11y/releases/latest">
+                grab a copy of tota11y</a>.
+            </p>
+
+            <p>
+                Then simply include at the bottom of your <code>&lt;body&gt;</code>
+                tag like so:
+            </p>
+
+            <pre><code>&lt;script src="tota11y.min.js"&gt;&lt;/script&gt;</code></pre>
+
+            <p>
+                Alternative, you can build tota11y from source following the
+                instructions on our <a href="http://github.com/Khan/tota11y">GitHub</a>
+                page.
+            </p>
+
+            <br class="clear">
+        </section>
+
+        <hr class="red">
+
+        <section>
+            <h2>Special Thanks</h2>
+
+            <p>
+                Many of tota11y's features come straight from <a href="https://github.com/GoogleChrome/accessibility-developer-tools">Google Chrome's
+                Accessibility Developer Tools</a>. We use this library heavily
+                at <a href="http://khanacademy.org">Khan Academy</a>.
+            </p>
+
+            <p>
+                The awesome glasses in our logo were created by <a href="https://thenounproject.com/Kyle/">Kyle Scott</a> and are licensed under <a href="http://creativecommons.org/licenses/by/3.0/us/legalcode">Creative Commons by 3.0 US</a>.
+            </p>
         </section>
     </main>
 
