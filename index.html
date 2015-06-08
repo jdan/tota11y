@@ -2,7 +2,12 @@
 <html>
 <head>
     <meta charset="utf-8">
+
+    <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="Shortcut Icon" type="image/x-icon" href="/img/favicon.png">
+
+    <title>tota11y – an a11y visualization toolkit</title>
 </head>
 <body>
     <header class="heading">
@@ -18,15 +23,55 @@
             </div>
             <div class="emblem">
                 <div class="glasses">
-                    <img src="/img/glasses.svg" />
+                    <img alt="tota11y logo" src="/img/glasses.svg" />
                 </div>
             </div>
         </div>
 
-        <h1 class="title">
+        <h1 class="center title">
             <span class="red">t</span><span class="orange">o</span><span class="yellow">t</span><span class="green">a</span><span class="blue">1</span><span class="indigo">1</span><span class="violet">y</span>
         </h1>
     </header>
+
+    <main role="main" class="main-content">
+        <section>
+            <p class="center description">
+                an accessibility visualization toolkit
+            </p>
+            <p class="center yourfriends">from your friends at</p>
+            <a href="http://khanacademy.org">
+                <img class="block-center" alt="Khan Academy" width="270" src="/img/khan-academy.png" />
+            </a>
+        </section>
+
+        <hr class="green">
+
+        <section>
+            <h2>About</h2>
+            <p>
+                tota11y helps visualize how your site performs with assistive
+                technologies.
+            </p>
+
+            <p>
+                The process of testing for accessibility is often tedious and
+                confusing. In many cases, developers must have some prior
+                accessibility knowledge in order to make sense of the results.
+            </p>
+
+            <p>
+                Instead, tota11y aims to reduce this barrier of entry by
+                helping visualize accessibility violations (and successes),
+                while educating developers on best practices.
+            </p>
+        </section>
+
+        <hr class="violet">
+
+        <section>
+            <h2>How</h2>
+        </section>
+    </main>
 
     <script src="/js/tota11y.min.js"></script>
 </body>
