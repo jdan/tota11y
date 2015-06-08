@@ -98,9 +98,8 @@ class HeadingsPlugin extends Plugin {
             let $item = $(outlineItemTemplate({
                 level: level,
                 text: $el.text()
-            })).css({
-                "margin-left": 20 * (level - 1)
-            });
+            }));
+
             $outline.append($item);
 
             // Highlight the heading element on hover
