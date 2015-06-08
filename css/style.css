@@ -193,6 +193,36 @@ pre code {
     width: 100%;
 }
 
+.playground {
+    background-color: #f2f2f2;
+    padding: 25px;
+}
+
+.playground input {
+    font-size: 20px;
+    margin-left: 10px;
+}
+
+.playground hr {
+    margin: 40px auto;
+    width: 80%;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.playground .light-text {
+    color: #888;
+}
+
+.playground .light-button {
+    background-color: #139fb4;
+    display: inline-block;
+    color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
 .social {
     margin-top: 60px;
     text-align: center;

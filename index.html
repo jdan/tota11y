@@ -41,6 +41,7 @@
             <p class="center yourfriends">from your friends at</p>
             <a href="http://khanacademy.org">
                 <img class="block-center" alt="Khan Academy" width="270" src="./img/khan-academy.png" />
+                <span class="sr-only">Khan Academy</span>
             </a>
         </section>
 
@@ -132,6 +133,90 @@
 
         <hr class="blue">
 
+        <section class="no-mini">
+            <h2>Try it!</h2>
+
+            <p>
+                tota11y can be found in the bottom left corner of this page.
+                Here are some  UI elements to try it on.
+            </p>
+
+            <span class="sr-only">
+                The following UI elements are intentionally inaccessible for
+                demonstration purposes.
+            </span>
+
+            <div class="playground">
+                <!-- links -->
+                <div>
+                    Here's an <a href="javascript:void 0">informative link
+                    about something</a>. Here's another that simply says
+                    <a href="javascript:void 0">click here</a>, which is not
+                    helpful to a screen reader.
+                </div>
+
+                <hr>
+
+                <!-- inputs -->
+                <p>
+                    Here's an input without an explicit label:
+                </p>
+
+                Username: <input>
+
+                <p>
+                    Here's one that tries to get by with a placeholder.
+                </p>
+
+                Email <input id="email-input" placeholder="input@example.com">
+
+                <p>
+                    This one looks good.
+                </p>
+
+                <label>
+                    Password:
+                    <input type="password" placeholder="password">
+                </label>
+
+                <hr>
+
+                <!-- contrast -->
+                <p>
+                    On this background,
+                    <span class="light-text">this text</span>
+                    is too light.
+                </p>
+
+                <a class="light-button" href="javascript:void 0">A button</a>
+
+                <hr>
+
+                <!-- images -->
+                <p>
+                    This image has no alt attribute, and a screen-reader will
+                    likely read off its filename.
+                </p>
+
+                <img src="./img/toy-car.jpg">
+
+                <p>
+                    This image has <em>empty</em> alt text, meaning the screen
+                    reader will interpret it as decorative.
+                </p>
+
+                <img src="./img/vine.png" alt="">
+
+                <p>
+                    This image has proper alt text.
+                </p>
+
+                <img src="./img/snowman.jpg" alt="A 3D-rendered snowman with a red scarf on a snowy hill">
+            </div>
+        </section>
+
+        <hr class="red no-mini">
+
         <section>
             <h2>Installation</h2>
 
@@ -160,7 +245,7 @@
             <br class="clear">
         </section>
 
-        <hr class="red">
+        <hr class="indigo">
 
         <section>
             <h2>Special thanks</h2>
