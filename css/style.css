@@ -223,6 +223,19 @@ pre code {
     text-decoration: none;
 }
 
+.bookmarklet {
+    border-radius: 5px;
+    border: 3px solid #333;
+    display: inline-block;
+    font-weight: bold;
+    margin: 10px 0;
+    padding: 10px 25px;
+    text-decoration: none;
+}
+.bookmarklet:hover, .bookmarklet:focus {
+    text-decoration: none;
+}
+
 .social {
     margin-top: 60px;
     text-align: center;
