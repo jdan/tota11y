@@ -92,27 +92,26 @@ pre code {
 
 .logo {
     border-radius: 50%;
-    position: relative;
-    overflow: hidden;
-    margin: 0 auto;
-    width: 200px;
     height: 200px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    width: 200px;
     z-index: 1;
 }
 
 .backdrop,
 .emblem {
-    position: absolute;
-    top: 0;
     bottom: 0;
     left: 0;
+    position: absolute;
     right: 0;
+    top: 0;
 }
 .backdrop {
     transform: rotate(45deg);
-}
-.emblem {
-    transform: scaleX(-1);
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
 }
 .ray {
     display: block;
@@ -121,20 +120,26 @@ pre code {
     height: 100%;
     padding: 0;
     transition: transform ease-in-out 200ms;
+    -webkit-transition: transform ease-in-out 200ms;
 }
 .heading:hover .ray {
     transform: translateY(0);
+    -webkit-transform: translateY(0);
+    -ms-transform: translateY(0);
 }
 .ray:nth-child(2n) {
     transform: translateY(-105%);
+    -webkit-transform: translateY(-105%);
+    -ms-transform: translateY(-105%);
 }
 .ray:nth-child(2n+1) {
     transform: translateY(105%);
+    -webkit-transform: translateY(105%);
+    -ms-transform: translateY(105%);
 }
 .glasses {
     width: 85%;
     margin: 7.5% auto;
-    transform: scaleX(-1);
 }
 
 .sr-only {
