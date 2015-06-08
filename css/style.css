@@ -216,12 +216,6 @@ iframe {
     overflow: hidden;
 }
 
-.follow-btn iframe {
-    width: 136px !important;
-}
-
-
-
 
 @media(max-width: 900px) {
     .main-content {
