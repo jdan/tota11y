@@ -193,6 +193,33 @@ pre code {
     width: 100%;
 }
 
+.social {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.social-buttons {
+    display: inline-block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.social-buttons li {
+    display: inline-block;
+    padding: 5px;
+    line-height: 1;
+}
+
+iframe {
+    border: 0;
+    overflow: hidden;
+}
+
+.follow-btn iframe {
+    width: 136px !important;
+}
+
 
 
 
