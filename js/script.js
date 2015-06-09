@@ -17,7 +17,7 @@ if (/chrome/.test(navigator.userAgent.toLowerCase())) {
 
     request.onload = function() {
         if (request.status >= 200 && request.status < 400) {
-            var bookmarklet = "javascript:" + request.responseText;
+            var bookmarklet = "javascript:" + encodeURI(request.responseText);
             document.querySelector(".bookmarklet").href = bookmarklet;
         }
     };
