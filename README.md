@@ -32,10 +32,10 @@ You can perform manual testing with tota11y using the following:
 
 ```
 npm test
-``
+```
 
-This will open http://localhost:8080/webpack-dev-server/ in your browser. This
-page will automatically update as you make changes.
+This will open `http://localhost:8080/webpack-dev-server/` in your browser,
+which will automatically update as you make changes.
 
 ## Special thanks
 
