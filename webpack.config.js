@@ -13,7 +13,7 @@ var veryimportant = postcss.plugin("veryimportant", function() {
 
 module.exports = {
     entry: {
-        app: ["webpack/hot/dev-server", "./index.js"]
+        app: "./index.js"
     },
     output: {
         path: path.join(__dirname, "build"),
