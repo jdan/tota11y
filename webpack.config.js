@@ -16,7 +16,7 @@ module.exports = {
         app: ["webpack/hot/dev-server", "./index.js"]
     },
     output: {
-        path: path.join(__dirname, "dist"),
+        path: path.join(__dirname, "build"),
         filename: "tota11y.min.js"
     },
     module: {
