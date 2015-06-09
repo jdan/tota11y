@@ -10,7 +10,7 @@ document.addEventListener("touchstart", function(e) {
     }
 });
 
-if (/chrome/.test(navigator.userAgent.toLowerCase())) {
+if (/chrome|safari/.test(navigator.userAgent.toLowerCase())) {
     // Load the bookmarklet
     var request = new XMLHttpRequest();
     request.open("GET", "./js/tota11y.min.js", true);
