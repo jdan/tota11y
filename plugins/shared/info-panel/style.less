@@ -11,7 +11,6 @@
 
 @dismissFontSize: 25px;
 @chevornFontSize: 20px;
-@scrollTriggerFontSize: 18px;
 @descriptionFontSize: 13px;
 
 .tota11y-info {
@@ -142,9 +141,32 @@
 
         &-scroll {
             float: right;
-            font-size: @scrollTriggerFontSize;
-            line-height: @scrollTriggerFontSize;
-            transform: rotate(45deg);
+            margin-top: 3px;
+            padding-left: 5px;
+
+            // Styling for both the lens and handle
+            &-glyph {
+                border-color: @darkGray;
+            }
+            &:hover &-glyph {
+                border-color: @lightGray;
+            }
+
+            &-lens {
+                @radius: 8px;
+                border: 1px solid;
+                border-radius: 50%;
+                height: @radius;
+                width: @radius;
+            }
+
+            &-handle {
+                border-left: 1px solid;
+                height: 7px;
+                // A transform to rotate it and line it up with the lens
+                transform: translateX(-2px) translateY(-2px) rotate(45deg);
+                width: 1px;
+            }
         }
 
         &-description {
