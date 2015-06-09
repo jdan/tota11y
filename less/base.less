@@ -6,7 +6,6 @@
 @import "variables.less";
 
 .tota11y {
-
     // A reset of all styles in tota11y elements
     &, & * {
         border: none;
@@ -21,6 +20,13 @@
         padding: 0;
         text-align: left;
         text-shadow: none;
+    }
+
+    // This applies to all styles within .tota11y, meaning it excludes items
+    // like annotations
+    & * {
+        height: auto;
+        width: auto;
     }
 
     strong {

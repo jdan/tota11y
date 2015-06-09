@@ -26,9 +26,14 @@
     }
 
     &-logo {
-        width: @toggleCollapsedWidth;
         height: @toggleHeight;
         margin: 0 auto;
+        text-align: center;
+        width: @toggleCollapsedWidth;
+
+        & svg {
+            height: @toggleHeight;
+        }
     }
 
     &-body {
