@@ -12,10 +12,12 @@ var veryimportant = postcss.plugin("veryimportant", function() {
 });
 
 module.exports = {
-    entry: "./index.js",
+    entry: {
+        app: ["webpack/hot/dev-server", "./index.js"]
+    },
     output: {
         path: path.join(__dirname, "dist"),
-        filename: "tota11y.js"
+        filename: "tota11y.min.js"
     },
     module: {
         loaders: [
