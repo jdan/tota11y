@@ -1,0 +1,3 @@
+[submodule "tota11y"]
+	path = tota11y
+	url = git://github.com/Khan/tota11y.git
