@@ -27,7 +27,7 @@
   },
   "scripts": {
     "build": "webpack -p",
-    "test": "webpack-dev-server --hot"
+    "test": "open http://localhost:8080/webpack-dev-server/ && webpack-dev-server --hot"
   },
   "license": "MIT"
 }

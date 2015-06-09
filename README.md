@@ -4,9 +4,12 @@ An accessibility visualization toolkit
 
 <img src="http://khan.github.io/tota11y/img/tota11y-logo.png" alt="tota11y logo" width="200">
 
+[Try tota11y in your browser](http://khan.github.io/tota11y/#Try-it), or
+[read about why we build tota11y](http://engineering.khanacademy.org/posts/tota11y.htm).
+
 ## Installation
 
-First, [grab the latest copy of tota11y](https://github.com/Khan/tota11y/releases/latest).
+First, [grab the latest release of tota11y](https://github.com/Khan/tota11y/releases/latest).
 
 Then, include it right before `</body>` like so:
 
@@ -20,14 +23,19 @@ You can build tota11y with:
 
 ```
 npm install
-webpack
+npm run build
 ```
 
-Or, productionized (minified + dead-code elimination):
+## Testing
+
+You can perform manual testing with tota11y using the following:
 
 ```
-webpack -p
-```
+npm test
+``
+
+This will open http://localhost:8080/webpack-dev-server/ in your browser. This
+page will automatically update as you make changes.
 
 ## Special thanks
 
