@@ -5,7 +5,7 @@ An accessibility visualization toolkit
 <img src="http://khan.github.io/tota11y/img/tota11y-logo.png" alt="tota11y logo" width="200">
 
 [Try tota11y in your browser](http://khan.github.io/tota11y/#Try-it), or
-[read about why we build tota11y](http://engineering.khanacademy.org/posts/tota11y.htm).
+[read why we built tota11y](http://engineering.khanacademy.org/posts/tota11y.htm).
 
 ## Installation
 
