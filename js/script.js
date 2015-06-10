@@ -9,7 +9,3 @@ document.addEventListener("touchstart", function(e) {
         heading.classList.add("touching");
     }
 });
-
-if (!/chrome|safari/.test(navigator.userAgent.toLowerCase())) {
-    document.querySelector(".bookmarklet-container").style.display = "none";
-}
