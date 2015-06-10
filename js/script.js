@@ -10,19 +10,6 @@ document.addEventListener("touchstart", function(e) {
     }
 });
 
-if (/chrome|safari/.test(navigator.userAgent.toLowerCase())) {
-    // Load the bookmarklet
-    var request = new XMLHttpRequest();
-    request.open("GET", "./tota11y/build/tota11y.min.js", true);
-
-    request.onload = function() {
-        if (request.status >= 200 && request.status < 400) {
-            var bookmarklet = "javascript:" + encodeURI(request.responseText);
-            document.querySelector(".bookmarklet").href = bookmarklet;
-        }
-    };
-
-    request.send();
-} else {
+if (!/chrome|safari/.test(navigator.userAgent.toLowerCase())) {
     document.querySelector(".bookmarklet-container").style.display = "none";
 }
