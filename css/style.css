@@ -73,6 +73,25 @@ pre code {
     padding: 60px 0 30px;
 }
 
+.github-link {
+    border-radius: 10px;
+    border: 2px solid white;
+    color: #fff;
+    display: inline-block;
+    padding: 10px;
+    position: absolute;
+    right: 25px;
+    text-align: center;
+    text-decoration: none;
+    top: 25px;
+    width: 120px;
+}
+.github-link:hover, .github-link:focus {
+    background-color: #fff;
+    color: #222;
+    text-decoration: none;
+}
+
 .center {
     text-align: center;
 }
