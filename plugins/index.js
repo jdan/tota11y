@@ -10,12 +10,14 @@ let HeadingsPlugin = require("./headings");
 let LabelsPlugin = require("./labels");
 let LandmarksPlugin = require("./landmarks");
 let LinkTextPlugin = require("./link-text");
+let UnsemanticButtonsPlugin = require("./unsemantic-buttons");
 
 module.exports = [
-    new HeadingsPlugin(),
+    new LabelsPlugin(),
     new ContrastPlugin(),
     new LinkTextPlugin(),
-    new LabelsPlugin(),
+    new HeadingsPlugin(),
+    new UnsemanticButtonsPlugin(),
     new AltTextPlugin(),
     new LandmarksPlugin(),
 ];

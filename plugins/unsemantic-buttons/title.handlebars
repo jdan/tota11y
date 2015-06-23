@@ -1,0 +1,10 @@
+{{#if missingHref}}
+    Anchor tag is missing an <code>href</code> attribute
+{{else}}{{#if focusableAndHasKeyEvent}}
+    {# We'll have an interesting description for this one #}
+    Button built using unsemantic elements
+{{else}}{{#if missingButtonRole}}
+    Clickable target is missing <code>role="button"</code> attribute
+{{else}}
+    Button built using unsemantic elements
+{{/if}}{{/if}}{{/if}}
