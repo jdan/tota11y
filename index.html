@@ -6,6 +6,20 @@
         body {
             font-family: Arial;
         }
+
+        .button {
+            display: block;
+            width: 140px;
+            text-align: center;
+            color: white;
+            background-color: #0d8294;
+            padding: 15px
+            border-radius: 10px;
+        }
+
+        #click-here-link {
+            outline: none;
+        }
     </style>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -41,7 +55,7 @@
             <h1>Hello, world!</h1>
             <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
             <p>
-                <a href="#">Click here</a> to see why. Or <a href="#">check out more demo pages</a> on my blog.
+                <a href="#" id="click-here-link">Click here</a> to see why. Or <a href="#">check out more demo pages</a> on my blog.
             </p>
             <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
 
@@ -53,6 +67,17 @@
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256" role="presentation">
                 <img width="40px" height="40px" src="http://s.gravatar.com/avatar/3517596df161030c3779c532f7844383?s=256">
             </p>
+
+            <p>
+                <span class="button" onclick="alert(1)">Button 1</span>
+                <div class="button" onclick="alert(1)" tabindex="-1">Button 2</div>
+                <span class="button" onclick="alert(1)" onkeydown="alert(1)">Button 3</span>
+                <div class="button" onclick="alert(1)" onkeydown="alert(1)" role="button">Button 4</div>
+                <a class="button" onclick="alert(1)">Button 5</a>
+                <a href="#" class="button" onclick="alert(1)">Button 5</a>
+
+
+
         </div>
     </div>
 
