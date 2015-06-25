@@ -3,26 +3,59 @@
  */
 
 let $ = require("jquery");
-let camelCase = require("lodash.camelcase");
-let difference = require("lodash.difference");
-let keys = require("lodash.keys");
-let pick = require("lodash.pick");
 let Plugin = require("../base");
-let annotate = require("../shared/annotate")("unsemantic-buttons");
+let annotate = require("../shared/annotate")("focus-styles");
 
-// An array of style attributes which provide a visual indication of
-// focus when changed
-const VISUAL_INDICATORS = [
+// A collection of tests to determine whether the given `style` and
+// `focusStyle` CSSDeclarations have substantial visual differences
+const VISUAL_INDICATOR_TESTS = [
     function outline(style, focusStyle) {
-        let hasFocusOutline = focusStyle.outlineStyle !== "none" &&
-            parseFloat(focusStyle.outlineWidth) !== "0";
+        // Fail if there are no differences in the element's outline
+        if (style.outline !== focusStyle.outline) {
+            return false;
+        }
 
-        return style.outline !== focusStyle.outline &&
-               hasFocusOutline;
+        // A focus outline that is not "none" is only valid if the outline
+        // also has a width
+        return focusStyle.outlineStyle !== "none" &&
+               parseFloat(focusStyle.outlineWidth) !== 0;
     },
 
     function textDecoration(style, focusStyle) {
+        // Fail if the text decoration (e.g. underline) does not change
         return style.textDecoration !== focusStyle.textDecoration;
+    },
+
+    function border(style, focusStyle) {
+        // Fail if the border does not change
+        if (style.border === focusStyle.border) {
+            return false;
+        }
+
+        // Now we check the top/right/bottom/left borders individually to
+        // ensure that (A) the border style is different and (B) the border
+        // width is not zero when focused
+        if (style.borderTop === focusStyle.borderTop ||
+                parseFloat(focusStyle.borderTopWidth) === 0) {
+            return false;
+        }
+
+        if (style.borderRight === focusStyle.borderRight ||
+                parseFloat(focusStyle.borderRightWidth) === 0) {
+            return false;
+        }
+
+        if (style.borderBottom === focusStyle.borderBottom ||
+                parseFloat(focusStyle.borderBottomWidth) === 0) {
+            return false;
+        }
+
+        if (style.borderLeft === focusStyle.borderLeft ||
+                parseFloat(focusStyle.borderLeftWidth) === 0) {
+            return false;
+        }
+
+        return true;
     }
 ];
 
@@ -53,7 +86,7 @@ class FocusStylesPlugin extends Plugin {
             let focusStyle = getComputedStyle(el);
 
             let passes = false;
-            VISUAL_INDICATORS.forEach((test) => {
+            VISUAL_INDICATOR_TESTS.forEach((test) => {
                 if (passes) return;
 
                 if (test(style, focusStyle)) {
@@ -66,7 +99,11 @@ class FocusStylesPlugin extends Plugin {
             }
         });
 
-        activeElement && activeElement.focus();
+        if (activeElement) {
+            activeElement.focus();
+        } else {
+            document.activeElement.blur();
+        }
     }
 
     cleanup() {
