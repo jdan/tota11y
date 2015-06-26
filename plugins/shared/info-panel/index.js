@@ -173,7 +173,9 @@ class InfoPanel {
 
     render() {
         // Destroy the existing info panel to prevent double-renders
-        this.$el && this.$el.remove();
+        if (this.$el) {
+            this.$el.remove();
+        }
 
         let hasContent = false;
 
@@ -289,8 +291,10 @@ class InfoPanel {
         this.errors = [];
 
         // Remove the element
-        this.$el && this.$el.remove();
-        this.$el = null;
+        if (this.$el) {
+            this.$el.remove();
+            this.$el = null;
+        }
 
         // Remove the annotations
         annotate.removeAll();

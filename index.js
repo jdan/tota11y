@@ -23,7 +23,7 @@ class Toolbar {
         $toolbar.find(".tota11y-toolbar-toggle").click((e) => {
             e.preventDefault();
             e.stopPropagation();
-            $toolbar.toggleClass("tota11y-expanded")
+            $toolbar.toggleClass("tota11y-expanded");
         });
 
         // Attach each plugin

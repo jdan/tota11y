@@ -25,6 +25,12 @@ module.exports = (namespace) => {
     // namespace
     const ANNOTATION_CLASS = "tota11y-annotation-" + namespace;
 
+    // A queue of {$annotation, $parent}'s that is populated by
+    // `createAnnotation` and emptied by the `render()` method.
+    //
+    // Annotations are queued to reduce reflows.
+    let queue = [];
+
     // Register a new annotation to a given jQuery element
     let createAnnotation = ($el, className) => {
         // Create a position an annotation relative to its offset parent.
@@ -49,12 +55,6 @@ module.exports = (namespace) => {
 
         return $annotation;
     };
-
-    // A queue of {$annotation, $parent}'s that is populated by
-    // `createAnnotation` and emptied by the `render()` method.
-    //
-    // Annotations are queued to reduce reflows.
-    let queue = [];
 
     // To maintain a high framerate, we'll only render `RENDER_CHUNK_SIZE`
     // annotations per frame.

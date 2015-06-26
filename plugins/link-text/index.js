@@ -24,7 +24,7 @@ class LinkTextPlugin extends Plugin {
         let test = audit("linkWithUnclearPurpose");
 
         if (test.result === "FAIL") {
-            test.elements.forEach((el, i) => {
+            test.elements.forEach((el) => {
                 let $el = $(el);
                 let description = `
                     The text <i>"${$el.text()}"</i> is unclear without context
