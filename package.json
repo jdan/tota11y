@@ -31,7 +31,7 @@
   },
   "scripts": {
     "build": "webpack -p",
-    "lint": "eslint index.js plugins",
+    "lint": "eslint index.js plugins test",
     "test": "mocha --compilers js:babel/register test/index.js"
   },
   "license": "MIT"
