@@ -1,0 +1,15 @@
+{
+    "env": {
+        "node": true,
+        "browser": true,
+        "es6": true
+    },
+    "rules": {
+        "strict": 0,
+        "comma-dangle": 0,
+        "no-underscore-dangle": 0
+    },
+    "globals": {
+        "axs": true
+    }
+}
