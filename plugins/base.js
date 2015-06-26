@@ -92,11 +92,11 @@ class Plugin {
         });
 
         // Listen for the `plugin-switched` event on the plugins container.
-        $el.on("plugin-switched", (e, _id) => {
+        $el.on("plugin-switched", (e, pluginId) => {
             // If we are the plugin that the user has interacted with, ignore
             // this step. We handle our own behavior before the event is
             // dispatched.
-            if (_id === this.id) {
+            if (pluginId === this.id) {
                 return;
 
             // If we are an active plugin that the user switched from, we
