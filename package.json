@@ -27,7 +27,9 @@
     "webpack-dev-server": "^1.9.0"
   },
   "scripts": {
-    "build": "webpack -p",
+    "build": "npm run prod && npm run dev",
+    "prod": "webpack -p",
+    "dev": "webpack -d --config webpack.config.dev.js",
     "lint": "eslint index.js plugins",
     "test": "open http://localhost:8080/webpack-dev-server/ && webpack-dev-server --hot"
   },
