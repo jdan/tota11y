@@ -45,7 +45,7 @@ const ERRORS = {
             This document contains an ${_tag(currLevel)} tag directly
             following an ${_tag(prevLevel)}. In order to maintain a consistent
             outline of the page for assistive technologies, reduce the gap in
-            the heading level by upgrading the this tag to an
+            the heading level by upgrading this tag to an
             ${_tag(prevLevel+1)}`;
 
         // Suggest upgrading the tag to the same level as `prevLevel` iff
