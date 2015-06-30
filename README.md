@@ -1,4 +1,4 @@
-# tota11y
+# tota11y [![Build Status](https://travis-ci.org/Khan/tota11y.svg?branch=master)](https://travis-ci.org/Khan/tota11y)
 
 An accessibility visualization toolkit
 
