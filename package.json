@@ -29,7 +29,7 @@
   "scripts": {
     "build": "npm run prod && npm run dev",
     "prod": "webpack -p",
-    "dev": "webpack -d --config webpack.config.dev.js",
+    "dev": "webpack -d --output-file=tota11y.js",
     "lint": "eslint index.js plugins",
     "test": "open http://localhost:8080/webpack-dev-server/ && webpack-dev-server --hot"
   },
