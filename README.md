@@ -23,19 +23,26 @@ You can build tota11y with:
 
 ```
 npm install
-npm run build
+npm run build   # or simply "npm build" on Windows systems
 ```
 
 ## Testing
 
-You can perform manual testing with tota11y using the following:
+You can run unit tests on tota11y with the following:
 
 ```
 npm test
 ```
 
-This will open `http://localhost:8080/webpack-dev-server/` in your browser,
-which will automatically update as you make changes.
+To perform manual testing as you work, you can run a live dev-server with the
+following:
+
+```
+npm run live-test   # or "npm live-test" on Windows systems
+```
+
+Then navigate to `http://localhost:8080/webpack-dev-server/test/`. This page
+will automatically reload with changes.
 
 ## Special thanks
 

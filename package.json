@@ -32,7 +32,8 @@
   "scripts": {
     "build": "webpack -p",
     "lint": "eslint index.js plugins test",
-    "test": "mocha --compilers js:babel/register test/*.js"
+    "test": "mocha --compilers js:babel/register test/*.js",
+    "live-test": "webpack-dev-server --hot --inline"
   },
   "license": "MIT"
 }
