@@ -13,7 +13,7 @@ First, [grab the latest release of tota11y](https://github.com/Khan/tota11y/rele
 
 Then, include it right before `</body>` like so:
 
-```
+```html
 <script src="tota11y.min.js"></script>
 ```
 
@@ -21,7 +21,7 @@ Then, include it right before `</body>` like so:
 
 You can build tota11y with:
 
-```
+```sh
 npm install
 npm run build   # or simply "npm build" on Windows systems
 ```
@@ -36,14 +36,14 @@ npm test
 
 Or lint with:
 
-```
+```sh
 npm run lint    # "npm lint" on Windows systems
 ```
 
 To perform manual testing as you work, you can run a live dev-server with the
 following:
 
-```
+```sh
 npm run live-test   # or "npm live-test" on Windows systems
 ```
 
