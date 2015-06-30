@@ -34,6 +34,12 @@ You can run unit tests on tota11y with the following:
 npm test
 ```
 
+Or lint with:
+
+```
+npm run lint    # "npm lint" on Windows systems
+```
+
 To perform manual testing as you work, you can run a live dev-server with the
 following:
 
