@@ -1,4 +1,4 @@
-# tota11y
+# tota11y [![Build Status](https://travis-ci.org/Khan/tota11y.svg?branch=master)](https://travis-ci.org/Khan/tota11y)
 
 An accessibility visualization toolkit
 
@@ -13,7 +13,7 @@ First, [grab the latest release of tota11y](https://github.com/Khan/tota11y/rele
 
 Then, include it right before `</body>` like so:
 
-```
+```html
 <script src="tota11y.min.js"></script>
 ```
 
@@ -21,21 +21,34 @@ Then, include it right before `</body>` like so:
 
 You can build tota11y with:
 
-```
+```sh
 npm install
-npm run build
+npm run build   # or simply "npm build" on Windows systems
 ```
 
 ## Testing
 
-You can perform manual testing with tota11y using the following:
+You can run unit tests on tota11y with the following:
 
 ```
 npm test
 ```
 
-This will open `http://localhost:8080/webpack-dev-server/` in your browser,
-which will automatically update as you make changes.
+Or lint with:
+
+```sh
+npm run lint    # "npm lint" on Windows systems
+```
+
+To perform manual testing as you work, you can run a live dev-server with the
+following:
+
+```sh
+npm run live-test   # or "npm live-test" on Windows systems
+```
+
+Then navigate to `http://localhost:8080/webpack-dev-server/test/`. This page
+will automatically reload with changes.
 
 ## Special thanks
 

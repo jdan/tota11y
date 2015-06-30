@@ -16,14 +16,7 @@ class LandmarksPlugin extends Plugin {
     }
 
     run() {
-        // Theoretically this could be written in pure CSS, if we were able
-        // to consistently place the label on top of the container with the
-        // role set.
-        //
-        // For now, we'll place the label with JavaScript.
-
-        const $regions = $("[role]");
-        $regions.each(function() {
+        $("[role]").each(function() {
             annotate.label($(this), $(this).attr("role"));
         });
     }

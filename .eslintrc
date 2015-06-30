@@ -2,13 +2,15 @@
     "env": {
         "node": true,
         "browser": true,
+        "mocha": true,
         "es6": true
     },
     "rules": {
-        "strict": 0,
         "comma-dangle": 0,
         "no-underscore-dangle": 0,
-        "space-infix-ops": 0
+        "quotes": [2, "double"],
+        "space-infix-ops": 0,
+        "strict": 0
     },
     "globals": {
         "axs": true
