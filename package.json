@@ -30,7 +30,9 @@
     "webpack-dev-server": "^1.9.0"
   },
   "scripts": {
-    "build": "webpack -p",
+    "build": "npm run prod && npm run dev",
+    "prod": "webpack -p",
+    "dev": "webpack -d --devtool hidden --output-file=tota11y.js",
     "lint": "eslint index.js plugins test",
     "test": "mocha --compilers js:babel/register test/*.js",
     "live-test": "webpack-dev-server --hot --inline"
