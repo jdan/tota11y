@@ -32,7 +32,7 @@
   "scripts": {
     "build": "npm run prod && npm run dev",
     "prod": "webpack -p",
-    "dev": "webpack -d --output-file=tota11y.js",
+    "dev": "webpack -d --devtool hidden --output-file=tota11y.js",
     "lint": "eslint index.js plugins test",
     "test": "mocha --compilers js:babel/register test/*.js",
     "live-test": "webpack-dev-server --hot --inline"
