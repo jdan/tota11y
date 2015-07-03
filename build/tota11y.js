@@ -11665,6 +11665,19 @@
 	        value: function run() {
 	            var _this = this;
 
+	            // Temporary parseColor proxy for FF, which offers "transparent" as a
+	            // default computed backgroundColor instead of `rgba(0, 0, 0, 0)`.
+	            //
+	            // https://github.com/GoogleChrome/accessibility-developer-tools/issues/180
+	            var _parseColor = axs.utils.parseColor;
+	            axs.utils.parseColor = function (colorString) {
+	                if (colorString === "transparent") {
+	                    return new axs.utils.Color(0, 0, 0, 0);
+	                } else {
+	                    return _parseColor(colorString);
+	                }
+	            };
+
 	            // A map of fg/bg color pairs that we have already seen to the error
 	            // entry currently present in the info panel
 	            var combinations = {};
@@ -11727,6 +11740,9 @@
 	                    annotate.errorLabel($(el), contrastRatio, "This contrast is insufficient at this size.", combinations[key]);
 	                }
 	            });
+
+	            // Restore the original `parseColor` method
+	            axs.utils.parseColor = _parseColor;
 	        }
 	    }, {
 	        key: "cleanup",
