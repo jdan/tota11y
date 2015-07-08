@@ -26,21 +26,21 @@ class LinkTextPlugin extends Plugin {
      * Original: https://github.com/GoogleChrome/accessibility-developer-tools/blob/9183b21cb0a02f5f04928f5cb7cb339b6bbc9ff8/src/audits/LinkWithUnclearPurpose.js#L55-67
      */
     isDescriptiveText(textContent) {
-        textContent = textContent.replace(/[^a-zA-Z ]/g, "");
         let stopWords = [
             "click", "tap", "go", "here", "learn", "more", "this", "page",
             "link", "about"
         ];
+        // Generate a regex to match each of the stopWords
+        let stopWordsRE = new RegExp(`\\b(${stopWords.join("|")})\\b`, "ig");
 
-        for (let i = 0; i < stopWords.length; i++) {
-            let stopwordRE = new RegExp("\\b" + stopWords[i] + "\\b", "ig");
-            textContent = textContent.replace(stopwordRE, "");
-            if (textContent.trim() === "") {
-                return false;
-            }
-        }
+        textContent = textContent
+            // Strip leading non-alphabetical characters
+            .replace(/[^a-zA-Z ]/g, "")
+            // Remove the stopWords
+            .replace(stopWordsRE, "");
 
-        return true;
+        // Return whether or not there is any text left
+        return textContent.trim() !== "";
     }
 
     /**
