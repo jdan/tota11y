@@ -36,6 +36,9 @@ class Toolbar {
 }
 
 $(function() {
+    // Attach the global `axs` object from Accessibility Developer Tools to $
+    $.axs = axs;
+
     var bar = new Toolbar();
 
     // TODO: Make this customizable
