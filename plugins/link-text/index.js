@@ -6,7 +6,6 @@
 let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("link-text");
-let audit = require("../shared/audit");
 
 class LinkTextPlugin extends Plugin {
     getTitle() {
@@ -27,17 +26,18 @@ class LinkTextPlugin extends Plugin {
      * Original: https://github.com/GoogleChrome/accessibility-developer-tools/blob/9183b21cb0a02f5f04928f5cb7cb339b6bbc9ff8/src/audits/LinkWithUnclearPurpose.js#L55-67
      */
     isDescriptiveText(textContent) {
-        textContent = textContent.replace(/[^a-zA-Z ]/g, '');
+        textContent = textContent.replace(/[^a-zA-Z ]/g, "");
         let stopWords = [
-            'click', 'tap', 'go', 'here', 'learn', 'more', 'this', 'page',
-            'link', 'about'
+            "click", "tap", "go", "here", "learn", "more", "this", "page",
+            "link", "about"
         ];
 
         for (let i = 0; i < stopWords.length; i++) {
-            let stopwordRE = new RegExp('\\b' + stopWords[i] + '\\b', 'ig');
-            textContent = textContent.replace(stopwordRE, '');
-            if (textContent.trim() == '')
+            let stopwordRE = new RegExp("\\b" + stopWords[i] + "\\b", "ig");
+            textContent = textContent.replace(stopwordRE, "");
+            if (textContent.trim() === "") {
                 return false;
+            }
         }
 
         return true;
