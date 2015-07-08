@@ -48,10 +48,10 @@ class LinkTextPlugin extends Plugin {
      * like `aria-label`) is unclear.
      */
     validateTextContent(el) {
-        let textContent = $.axs.properties.getTextFromDescendantContent(el);
+        let extractedText = $.axs.properties.getTextFromDescendantContent(el);
         return {
-            textContent: textContent,
-            result: this.isDescriptiveText(textContent),
+            extractedText: extractedText,
+            result: this.isDescriptiveText(extractedText),
         };
     }
 
@@ -61,17 +61,17 @@ class LinkTextPlugin extends Plugin {
      * are unclear.
      */
     validateAltText(el) {
-        let altTextContent = el.getAttribute("alt");
+        let altText = el.getAttribute("alt");
         return {
-            textContent: altTextContent,
-            result: this.isDescriptiveText(altTextContent),
+            extractedText: altText,
+            result: this.isDescriptiveText(altText),
         };
     }
 
-    reportError($el, description, textContent) {
+    reportError($el, description, content) {
         let entry = this.error("Link text is unclear", description, $el);
         annotate.errorLabel($el, "",
-            `Link text "${textContent}" is unclear`, entry);
+            `Link text "${content}" is unclear`, entry);
     }
 
     run() {
@@ -91,25 +91,25 @@ class LinkTextPlugin extends Plugin {
                 if (!report.result) {
                     let description = `
                         The alt text for this link's image,
-                        <i>"${report.textContent}"</i>, is unclear without
+                        <i>"${report.extractedText}"</i>, is unclear without
                         context and may be confusing to screen readers.
                         Consider providing more detailed alt text.
                     `;
 
-                    this.reportError($el, description, report.textContent);
+                    this.reportError($el, description, report.extractedText);
                 }
             } else {
                 let report = this.validateTextContent(el);
 
                 if (!report.result) {
                     let description = `
-                        The text <i>"${report.textContent}"</i> is unclear
+                        The text <i>"${report.extractedText}"</i> is unclear
                         without context and may be confusing to screen readers.
                         Consider rearranging the <code>&lt;a&gt;&lt;/a&gt;
                         </code> tags or including special screen reader text.
                     `;
 
-                    this.reportError($el, description, report.textContent);
+                    this.reportError($el, description, report.extractedText);
                 }
             }
         });
