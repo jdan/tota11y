@@ -20,6 +20,9 @@ let jsdom = require("jsdom");
 let m = require("module");
 let annotateStub = require("./annotate-stub");
 
+let axsSrc = fs.readFileSync(
+    "./node_modules/accessibility-developer-tools/dist/js/axs_testing.js",
+    "utf-8");
 let jquerySrc = fs.readFileSync(
     "./node_modules/jquery/dist/jquery.min.js", "utf-8");
 let jqueryExtSrc = fs.readFileSync(
@@ -30,7 +33,7 @@ exports.createDom = function(callback) {
     // JavaScript on the page.
     jsdom.env({
         html: "",
-        src: [jquerySrc, jqueryExtSrc],
+        src: [axsSrc, jquerySrc, jqueryExtSrc],
         done: function(errors, window) {
             // Overwrite the default module loader.
             //
