@@ -22,3 +22,6 @@ $.fn.labelText = function() {
 $.fn.expandedText = function() {
     return $(this).data("expanded-text");
 };
+
+// Bind the global `axs` object from Accessibility Developer Tools to jQuery
+$.axs = window.axs;
