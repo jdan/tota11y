@@ -194,12 +194,13 @@ class InfoPanel {
             $activeTab = this._addTab("Summary", this.summary);
         }
 
+        let $errorsTab;
+
         if (this.errors.length > 0) {
             let $errors = $("<ul>").addClass("tota11y-info-errors");
 
             // Store a reference to the "Errors" tab so we can switch to it
             // later
-            let $errorsTab;
 
             this.errors.forEach((error, i) => {
                 let $error = $(errorTemplate(error));
@@ -260,6 +261,20 @@ class InfoPanel {
             });
 
             $errorsTab = $activeTab = this._addTab("Errors", $errors);
+
+            // Add a small badge next to the tab title
+            let $badge = $("<div>")
+                .addClass("tota11y-info-error-count")
+                .text(this.errors.length);
+
+            $activeTab.find(".tota11y-info-tab-anchor").append($badge);
+        }
+
+        else if(this.errors.length === 0){
+            let $noerrors = $("<div>").addClass("tota11y-noerrors");
+            $noerrors.html("<p>&#10004;</p><div>Well done! All good.</div>"); // &#10004; is unicode format for correct tick mark
+
+            $errorsTab = $activeTab = this._addTab("Errors", $noerrors);
 
             // Add a small badge next to the tab title
             let $badge = $("<div>")
