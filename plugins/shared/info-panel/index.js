@@ -250,8 +250,9 @@ class InfoPanel {
                     $(document).scrollTop(error.$el.offset().top - 80);
                 });
 
-                // Expand the first violation
+                // Collapse the violation if not first
                 if (i === 0) {
+                    $desc.toggleClass(COLLAPSED_CLASS_NAME);
                     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
                 }
 
