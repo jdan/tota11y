@@ -1,3 +1,17 @@
+/*!
+ * tota11y v0.0.8
+ * http://khan.github.io/tota11y
+ * 
+ * Includes Accessibility Developer Tools
+ * http://github.com/GoogleChrome/accessibility-developer-tools
+ * 
+ * Copyright (c) 2015 Khan Academy
+ * Released under the MIT license
+ * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
+ * 
+ * Date: 2015-07-19
+ * 
+ */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
