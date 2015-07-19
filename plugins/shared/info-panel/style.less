@@ -172,10 +172,13 @@
         &-description {
             font-size: @descriptionFontSize;
             padding: 10px 0 0;
+            user-select: text;
+
+            &.tota11y-collapsed {
+                display: none
+            }
         }
-        &-trigger.tota11y-collapsed &-description {
-            display: none;
-        }
+
     }
 
     &-error-count {

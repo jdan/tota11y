@@ -207,10 +207,13 @@ class InfoPanel {
 
                 // Wire up the expand/collapse trigger
                 let $trigger = $error.find(".tota11y-info-error-trigger");
+                let $desc = $error.find(".tota11y-info-error-description");
+
                 $trigger.click((e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
+                    $desc.toggleClass(COLLAPSED_CLASS_NAME);
                 });
 
                 // Attach a function to the original error object to open
@@ -249,6 +252,7 @@ class InfoPanel {
 
                 // Expand the first violation
                 if (i === 0) {
+                    $desc.toggleClass(COLLAPSED_CLASS_NAME);
                     $trigger.toggleClass(COLLAPSED_CLASS_NAME);
                 }
 
