@@ -109,7 +109,7 @@ class HeadingsPlugin extends Plugin {
             if (error) {
                 // Register an error to the info panel
                 let infoPanelError = this.error(
-                    error.title, error.description, $el);
+                    error.title, $(error.description), $el);
 
                 // Place an error label on the heading tag
                 annotate.errorLabel(
