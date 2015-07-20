@@ -39,9 +39,25 @@ class ContrastPlugin extends Plugin {
             suggestedColorsRatio: suggestedColors.contrast
         };
 
+        let $description = $(descriptionTemplate(templateData));
+
+        // Add click handler to preview checkbox.
+        $description.find(".previewCb").click(function() {
+            console.log("Checkbox changed");
+            /*if(this.checked) {
+                // Set suggested colors.
+                $(el).css('color', suggestedColors.fg);
+                $(el).css('background-color', suggestedColors.bg);
+            } else {
+                // Set original colors.
+                $(el).css('color', fgColor);
+                $(el).css('background-color', bgColor);
+            }*/
+        });
+
         return this.error(
             titleTemplate(templateData),
-            descriptionTemplate(templateData),
+            $description.html(),
             $(el));
     }
 
