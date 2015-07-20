@@ -25,8 +25,7 @@ class ContrastPlugin extends Plugin {
         // Suggest colors at an "AA" level
         let suggestedColors = axs.utils.suggestColors(
             bgColor,
-            fgColor,
-            contrastRatio,
+            fgColor, contrastRatio,
             getComputedStyle(el)).AA;
 
         let templateData = {
@@ -39,25 +38,23 @@ class ContrastPlugin extends Plugin {
             suggestedColorsRatio: suggestedColors.contrast
         };
 
-        let $description = $(descriptionTemplate(templateData));
-
         // Add click handler to preview checkbox.
+        let $description = $(descriptionTemplate(templateData));
         $description.find(".previewCb").click(function() {
-            console.log("Checkbox changed");
-            /*if(this.checked) {
+            if(this.checked) {
                 // Set suggested colors.
                 $(el).css('color', suggestedColors.fg);
                 $(el).css('background-color', suggestedColors.bg);
             } else {
                 // Set original colors.
-                $(el).css('color', fgColor);
-                $(el).css('background-color', bgColor);
-            }*/
+                $(el).css('color', axs.utils.colorToString(fgColor));
+                $(el).css('background-color', axs.utils.colorToString(bgColor));
+            }
         });
 
         return this.error(
             titleTemplate(templateData),
-            $description.html(),
+            $description,
             $(el));
     }
 

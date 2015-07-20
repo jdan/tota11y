@@ -61,8 +61,8 @@ class InfoPanel {
      * Adds an error to the errors tab. Also receives a jQuery element to
      * highlight on hover.
      */
-    addError(title, description, $el) {
-        let error = {title, description, $el};
+    addError(title, $description, $el) {
+        let error = {title, $description, $el};
         this.errors.push(error);
         return error;
     }
@@ -203,6 +203,13 @@ class InfoPanel {
 
             this.errors.forEach((error, i) => {
                 let $error = $(errorTemplate(error));
+
+                // Insert description jQuery object into template.
+                // This is done so functionality can be inserted.
+                let $description = error.$description;
+                $error.find('.tota11y-info-error-description')
+                    .append($description);
+
                 $errors.append($error);
 
                 // Wire up the expand/collapse trigger
