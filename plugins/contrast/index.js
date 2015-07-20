@@ -39,9 +39,23 @@ class ContrastPlugin extends Plugin {
             suggestedColorsRatio: suggestedColors.contrast
         };
 
+        // Add click handler to preview checkbox.
+        let $description = $(descriptionTemplate(templateData));
+        $description.find(".previewCb").click(function() {
+            if (this.checked) {
+                // Set suggested colors.
+                $(el).css("color", suggestedColors.fg);
+                $(el).css("background-color", suggestedColors.bg);
+            } else {
+                // Set original colors.
+                $(el).css("color", axs.utils.colorToString(fgColor));
+                $(el).css("background-color", axs.utils.colorToString(bgColor));
+            }
+        });
+
         return this.error(
             titleTemplate(templateData),
-            descriptionTemplate(templateData),
+            $description,
             $(el));
     }
 
@@ -62,6 +76,10 @@ class ContrastPlugin extends Plugin {
         // A map of fg/bg color pairs that we have already seen to the error
         // entry currently present in the info panel
         let combinations = {};
+
+        // List of original colors for elements with insufficient contrast.
+        // Used to restore original colors in cleanup.
+        this.origColorsList = [];
 
         $("*").each((i, el) => {
             // Only check elements with a direct text descendant
@@ -118,6 +136,13 @@ class ContrastPlugin extends Plugin {
                         {fgColor, bgColor, contrastRatio, requiredRatio},
                         el);
 
+                    // Save original color so it can be restored on cleanup.
+                    this.origColorsList.push({
+                        $el: $(el),
+                        fg: axs.utils.colorToString(fgColor),
+                        bg: axs.utils.colorToString(bgColor)
+                    });
+
                     combinations[key] = error;
                 }
 
@@ -140,6 +165,12 @@ class ContrastPlugin extends Plugin {
     }
 
     cleanup() {
+        // Set all elements to original color.
+        for (let i = 0; i < this.origColorsList.length; i++) {
+            let item = this.origColorsList[i];
+            item.$el.css("color", item.fg);
+            item.$el.css("background-color", item.bg);
+        }
         annotate.removeAll();
     }
 }
