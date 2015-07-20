@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2015-07-19
+ * Date: 2015-07-20
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -10185,6 +10185,7 @@
 
 	                            // Open the error entry
 	                            $trigger.removeClass(COLLAPSED_CLASS_NAME);
+	                            $desc.removeClass(COLLAPSED_CLASS_NAME);
 
 	                            // Switch to the "Errors" tab
 	                            $errorsTab.trigger("activate");
