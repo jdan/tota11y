@@ -6,7 +6,7 @@
 let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("labels");
-let blinder = require("../../node_modules/color-blind/lib/blind").Blind;
+let blinder = require("color-blind/lib/blind").Blind;
 
 let titleTemplate = require("./error-title.handlebars");
 let descriptionTemplate = require("./error-description.handlebars");
