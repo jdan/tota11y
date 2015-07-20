@@ -7,31 +7,51 @@
 // Require the base tota11y styles right away so they can be overwritten
 require("./less/tota11y.less");
 
-var $ = require("jquery");
+let $ = require("jquery");
 
-var plugins = require("./plugins");
-var toolbarTemplate = require("./templates/toolbar.handlebars");
+let plugins = require("./plugins");
+let logoTemplate = require("./templates/logo.handlebars");
 
 // Chrome Accessibility Developer Tools - required once as a global
 require("script!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js");
 
 class Toolbar {
     appendTo($el) {
-        var $toolbar = $(toolbarTemplate());
-        $el.append($toolbar);
+        let $logo = $(logoTemplate());
 
-        $toolbar.find(".tota11y-toolbar-toggle").click((e) => {
+        // Attach each plugin
+        let $plugins = <div className="tota11y-plugins" />;
+        plugins.forEach((plugin) => {
+            // Mount the plugin to the list
+            plugin.appendTo($plugins);
+        });
+
+        let handleClick = (e) => {
             e.preventDefault();
             e.stopPropagation();
             $toolbar.toggleClass("tota11y-expanded");
-        });
+        };
 
-        // Attach each plugin
-        var $pluginsContainer = $toolbar.find(".tota11y-plugins");
-        plugins.forEach((plugin) => {
-            // Mount the plugin to the list
-            plugin.appendTo($pluginsContainer);
-        });
+        let $toggle = (
+            <a href="#"
+               className="tota11y-toolbar-toggle"
+               onClick={handleClick}>
+                <div className="tota11y-toolbar-logo">
+                    {$logo}
+                </div>
+            </a>
+        );
+
+        let $toolbar = (
+            <div className="tota11y tota11y-toolbar">
+                <div className="tota11y-toolbar-body">
+                    {$plugins}
+                </div>
+                {$toggle}
+            </div>
+        );
+
+        $el.append($toolbar);
     }
 }
 

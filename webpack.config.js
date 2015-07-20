@@ -26,7 +26,15 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.js$/, exclude: /node_modules/, loader: "babel", },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "babel",
+                query: {
+                    // Transpile JSX into calls to "E()"
+                    jsxPragma: "E",
+                },
+            },
             { test: /\.handlebars$/, loader: "handlebars", },
             {
                 test: /\.less$/,
@@ -35,12 +43,20 @@ module.exports = {
         ],
     },
     plugins: [
+        // Add a banner to our bundles with a version number, date, and
+        // license info
         new webpack.BannerPlugin(
             bannerTemplate({
                 version: require("./package.json").version,
                 date: new Date().toISOString().slice(0, 10),
             }),
             {entryOnly: true}),
+
+        // Make the JSX pragma function "E" available everywhere without the
+        // need to use "require"
+        new webpack.ProvidePlugin({
+            "E": "./element",
+        }),
     ],
     postcss: [veryimportant],
 };
