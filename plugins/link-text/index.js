@@ -69,7 +69,7 @@ class LinkTextPlugin extends Plugin {
     }
 
     reportError($el, description, content) {
-        let entry = this.error("Link text is unclear", description, $el);
+        let entry = this.error("Link text is unclear", $(description), $el);
         annotate.errorLabel($el, "",
             `Link text "${content}" is unclear`, entry);
     }
