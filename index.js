@@ -18,6 +18,7 @@ require("script!./node_modules/accessibility-developer-tools/dist/js/axs_testing
 class Toolbar {
     appendTo($el) {
         let $logo = $(logoTemplate());
+        let $toolbar;
 
         // Attach each plugin
         let $plugins = <div className="tota11y-plugins" />;
@@ -42,7 +43,7 @@ class Toolbar {
             </a>
         );
 
-        let $toolbar = (
+        $toolbar = (
             <div className="tota11y tota11y-toolbar">
                 <div className="tota11y-toolbar-body">
                     {$plugins}
