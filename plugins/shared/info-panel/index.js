@@ -225,6 +225,7 @@ class InfoPanel {
 
                     // Open the error entry
                     $trigger.removeClass(COLLAPSED_CLASS_NAME);
+                    $desc.removeClass(COLLAPSED_CLASS_NAME);
 
                     // Switch to the "Errors" tab
                     $errorsTab.trigger("activate");
