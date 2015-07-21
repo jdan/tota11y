@@ -20,3 +20,55 @@
 .tota11y-color-hexes {
     font-family: monospace;
 }
+
+.tota11y-blindness {
+    width: 11px !important;
+    height: 11px !important;
+    display: inline-block;
+    
+    > .tota11y-cone {
+        border-radius: 50%;
+        width: 5px !important;
+        height: 5px !important;
+        position: relative;
+        border: 1px solid rgba(0, 0, 0, 0.5);
+    }
+    
+    > .tota11y-short {
+        background-color: #00F;
+        left: 0px;
+        top: 0px;
+    }
+    
+    > .tota11y-medium {
+        background-color: #0F0;
+        margin-top: -5px;
+        left: 3px;
+        top: 5px;
+    }
+    
+    > .tota11y-long {
+        background-color: #F00;
+        margin-top: -5px;
+        top: 0px;
+        left: 6px;
+    }
+    
+    &.tota11y-protanopia {
+      > .tota11y-long {
+        background-color: transparent;
+      }
+    }
+    
+    &.tota11y-deuteranopia {
+      > .tota11y-medium {
+        background-color: transparent;
+      }
+    }
+    
+    &.tota11y-tritanopia {
+      > .tota11y-short {
+        background-color: transparent;
+      }
+    }
+}

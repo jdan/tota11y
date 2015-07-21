@@ -6,6 +6,7 @@
 let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("labels");
+let blinder = require("color-blind/lib/blind").Blind;
 
 let titleTemplate = require("./error-title.handlebars");
 let descriptionTemplate = require("./error-description.handlebars");
@@ -21,7 +22,7 @@ class ContrastPlugin extends Plugin {
         return "Labels elements with insufficient contrast";
     }
 
-    addError({fgColor, bgColor, contrastRatio, requiredRatio}, el) {
+    addError({fgColor, bgColor, blindness, contrastRatio, requiredRatio}, el) {
         // Suggest colors at an "AA" level
         let suggestedColors = axs.utils.suggestColors(
             bgColor,
@@ -36,13 +37,88 @@ class ContrastPlugin extends Plugin {
             requiredRatio: requiredRatio,
             suggestedFgColorHex: suggestedColors.fg,
             suggestedBgColorHex: suggestedColors.bg,
-            suggestedColorsRatio: suggestedColors.contrast
+            suggestedColorsRatio: suggestedColors.contrast,
+            blindness: blindness
         };
 
         return this.error(
             titleTemplate(templateData),
             descriptionTemplate(templateData),
             $(el));
+    }
+
+    blind(color, blindness) {
+        let alpha = color.alpha;
+        color = blinder({
+            R: color.red,
+            G: color.green,
+            B: color.blue
+        }, blindness, false);
+        return {
+            red: color.R | 0,
+            green: color.G | 0,
+            blue: color.B | 0,
+            alpha: alpha
+        };
+    }
+
+    runOneType(el, combinations, fgColor, bgColor, style, blindness, blindnessName) {
+        // Calculate required ratio based on size
+        // Using strings to prevent rounding
+        let requiredRatio = axs.utils.isLargeFont(style) ?
+            "3.0" : "4.5";
+
+        // Build a key for our `combinations` map and report the color
+        // if we have not seen it yet
+        let key = axs.utils.colorToString(fgColor) + "/" +
+                    axs.utils.colorToString(bgColor) + "/" +
+                    // blindness + "/" + // Overwhelming: report one at a time
+                    requiredRatio;
+
+        if (blindness !== null)
+        {
+            fgColor = this.blind(fgColor, blindness);
+            bgColor = this.blind(bgColor, blindness);
+        }
+        let contrastRatio = axs.utils.calculateContrastRatio(
+            fgColor, bgColor).toFixed(2);
+
+        if (!axs.utils.isLowContrast(contrastRatio, style)) {
+            // For acceptable contrast values, we don't show ratios if
+            // they have been presented already
+            if (!combinations[key]) {
+                annotate
+                    .label($(el), contrastRatio)
+                    .addClass("tota11y-label-success");
+
+                // Add the key to the combinations map. We don't have an
+                // error to associate it with, so we'll just give it the
+                // value of `true`.
+                combinations[key] = true;
+            }
+        } else {
+            if (!combinations[key]) {
+                // We do not show duplicates in the errors panel, however,
+                // to keep the output from being overwhelming
+                let error = this.addError(
+                    {fgColor, bgColor, blindness: blindnessName, contrastRatio, requiredRatio},
+                    el);
+
+                combinations[key] = error;
+            }
+
+            // We display errors multiple times for emphasis. Each error
+            // will point back to the entry in the info panel for that
+            // particular color combination.
+            //
+            // TODO: The error entry in the info panel will only highlight
+            // the first element with that color combination
+            annotate.errorLabel(
+                $(el),
+                contrastRatio,
+                "This contrast is insufficient at this size.",
+                combinations[key]);
+        }
     }
 
     run() {
@@ -62,6 +138,14 @@ class ContrastPlugin extends Plugin {
         // A map of fg/bg color pairs that we have already seen to the error
         // entry currently present in the info panel
         let combinations = {};
+
+        // [<internal name>, <name used on UI and in styles>]
+        let blindnesses = [
+            [null, "trichromat"],
+            ["protan", "protanopia"],
+            ["deutan", "deuteranopia"],
+            ["tritan", "tritanopia"]
+        ];
 
         $("*").each((i, el) => {
             // Only check elements with a direct text descendant
@@ -83,55 +167,9 @@ class ContrastPlugin extends Plugin {
             let style = getComputedStyle(el);
             let bgColor = axs.utils.getBgColor(style, el);
             let fgColor = axs.utils.getFgColor(style, el, bgColor);
-            let contrastRatio = axs.utils.calculateContrastRatio(
-                fgColor, bgColor).toFixed(2);
 
-            // Calculate required ratio based on size
-            // Using strings to prevent rounding
-            let requiredRatio = axs.utils.isLargeFont(style) ?
-                "3.0" : "4.5";
-
-            // Build a key for our `combinations` map and report the color
-            // if we have not seen it yet
-            let key = axs.utils.colorToString(fgColor) + "/" +
-                        axs.utils.colorToString(bgColor) + "/" +
-                        requiredRatio;
-
-            if (!axs.utils.isLowContrast(contrastRatio, style)) {
-                // For acceptable contrast values, we don't show ratios if
-                // they have been presented already
-                if (!combinations[key]) {
-                    annotate
-                        .label($(el), contrastRatio)
-                        .addClass("tota11y-label-success");
-
-                    // Add the key to the combinations map. We don't have an
-                    // error to associate it with, so we'll just give it the
-                    // value of `true`.
-                    combinations[key] = true;
-                }
-            } else {
-                if (!combinations[key]) {
-                    // We do not show duplicates in the errors panel, however,
-                    // to keep the output from being overwhelming
-                    let error = this.addError(
-                        {fgColor, bgColor, contrastRatio, requiredRatio},
-                        el);
-
-                    combinations[key] = error;
-                }
-
-                // We display errors multiple times for emphasis. Each error
-                // will point back to the entry in the info panel for that
-                // particular color combination.
-                //
-                // TODO: The error entry in the info panel will only highlight
-                // the first element with that color combination
-                annotate.errorLabel(
-                    $(el),
-                    contrastRatio,
-                    "This contrast is insufficient at this size.",
-                    combinations[key]);
+            for (var blindness of blindnesses) {
+                this.runOneType(el, combinations, fgColor, bgColor, style, blindness[0], blindness[1]);
             }
         });
 
