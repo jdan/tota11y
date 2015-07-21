@@ -9,7 +9,6 @@ let annotate = require("../shared/annotate")("headings");
 let outlineItemTemplate = require("./outline-item.handlebars");
 require("./style.less");
 
-/* eslint new-cap:0 */
 const ERRORS = {
     FIRST_NOT_H1(level) {
         return {
