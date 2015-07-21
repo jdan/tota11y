@@ -12,6 +12,9 @@
         "space-infix-ops": 0,
         "strict": 0
     },
+    "ecmaFeatures": {
+        "jsx": true,
+    },
     "globals": {
         "axs": true
     }
