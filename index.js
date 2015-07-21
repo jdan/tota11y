@@ -20,14 +20,35 @@ class Toolbar {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        // Attach each plugin
-        let $plugins = <div className="tota11y-plugins" />;
-        plugins.forEach((plugin) => {
-            // Mount the plugin to the list
-            plugin.appendTo($plugins);
-        });
+        let activePlugin = null;
+        let handlePluginClick = (plugin) => {
+            if (plugin === activePlugin) {
+                plugin.cleanup();
+                plugin.panel.destroy();
+                plugin.$checkbox.attr("checked", false);
 
-        let handleClick = (e) => {
+                activePlugin = null;
+            } else {
+                if (activePlugin) {
+                    activePlugin.cleanup();
+                    activePlugin.panel.destroy();
+                    activePlugin.$checkbox.attr("checked", false);
+                }
+
+                plugin.run();
+                plugin.panel.render();
+
+                activePlugin = plugin;
+            }
+        };
+
+        let $plugins = (
+            <div className="tota11y-plugins">
+                {plugins.map((plugin) => plugin.render(handlePluginClick))}
+            </div>
+        );
+
+        let handleToggleClick = (e) => {
             e.preventDefault();
             e.stopPropagation();
             $toolbar.toggleClass("tota11y-expanded");
@@ -36,7 +57,7 @@ class Toolbar {
         let $toggle = (
             <a href="#"
                className="tota11y-toolbar-toggle"
-               onClick={handleClick}>
+               onClick={handleToggleClick}>
                 <div className="tota11y-toolbar-logo">
                     {$logo}
                 </div>
