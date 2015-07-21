@@ -33,6 +33,7 @@ module.exports = {
                 query: {
                     // Transpile JSX into calls to "E()"
                     jsxPragma: "E",
+                    optional: ["es7.functionBind"],
                 },
             },
             { test: /\.handlebars$/, loader: "handlebars", },
