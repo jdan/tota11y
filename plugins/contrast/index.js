@@ -13,6 +13,7 @@ let descriptionTemplate = require("./error-description.handlebars");
 require("./style.less");
 
 class ContrastPlugin extends Plugin {
+
     getTitle() {
         return "Contrast";
     }
@@ -76,6 +77,10 @@ class ContrastPlugin extends Plugin {
         // entry currently present in the info panel
         let combinations = {};
 
+        // List of original colors for elements with insufficient contrast.
+        // Used to restore original colors in cleanup.
+        this.origColorsList = [];
+
         $("*").each((i, el) => {
             // Only check elements with a direct text descendant
             if (!axs.properties.hasDirectTextDescendant(el)) {
@@ -131,6 +136,13 @@ class ContrastPlugin extends Plugin {
                         {fgColor, bgColor, contrastRatio, requiredRatio},
                         el);
 
+                    // Save original color so it can be restored on cleanup.
+                    this.origColorsList.push({
+                        $el: $(el),
+                        fg: axs.utils.colorToString(fgColor),
+                        bg: axs.utils.colorToString(bgColor)
+                    });
+
                     combinations[key] = error;
                 }
 
@@ -153,6 +165,12 @@ class ContrastPlugin extends Plugin {
     }
 
     cleanup() {
+        // Set all elements to original color.
+        for(let i = 0; i < this.origColorsList.length; i++) {
+            let item = this.origColorsList[i];
+            item.$el.css('color', item.fg);
+            item.$el.css('background-color', item.bg);
+        }
         annotate.removeAll();
     }
 }
