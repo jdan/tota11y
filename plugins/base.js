@@ -50,7 +50,7 @@ class Plugin {
     /**
      * Renders the plugin view.
      */
-    render(onClick) {
+    render(clickHandler) {
         let templateData = {
             title: this.getTitle(),
             description: this.getDescription()
@@ -61,10 +61,31 @@ class Plugin {
         this.$checkbox = $plugin.find(".tota11y-plugin-checkbox");
         this.$checkbox.click((e) => {
             e.stopPropagation();
-            onClick(this);
+            clickHandler(this);
         });
 
         return $plugin;
+    }
+
+    /**
+     * Activate the plugin from the UI.
+     */
+    activate() {
+        this.run();
+        this.panel.render();
+    }
+
+    /**
+     * Deactivate the plugin from the UI.
+     */
+    deactivate() {
+        this.cleanup();
+        this.panel.destroy();
+
+        // If we toggle the plugin ourselves, the checkbox will already be
+        // unchecked. If another plugin becomes active, however, this method
+        // will be called and will uncheck the checkbox.
+        this.$checkbox.attr("checked", false);
     }
 }
 

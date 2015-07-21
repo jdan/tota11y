@@ -16,35 +16,41 @@ let logoTemplate = require("./templates/logo.handlebars");
 require("script!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js");
 
 class Toolbar {
+    /**
+     * Renders the toolbar and appends it the specified element.
+     */
     appendTo($el) {
         let $logo = $(logoTemplate());
         let $toolbar;
 
+        // Manages the state of the toolbar when a plugin is clicked, and
+        // toggles the appropriate plugins
         let activePlugin = null;
         let handlePluginClick = (plugin) => {
+            // If the plugin was already selected, toggle it off
             if (plugin === activePlugin) {
-                plugin.cleanup();
-                plugin.panel.destroy();
-                plugin.$checkbox.attr("checked", false);
-
+                plugin.deactivate();
                 activePlugin = null;
             } else {
+                // Deactivate the active plugin if there is one
                 if (activePlugin) {
-                    activePlugin.cleanup();
-                    activePlugin.panel.destroy();
-                    activePlugin.$checkbox.attr("checked", false);
+                    activePlugin.deactivate();
                 }
 
-                plugin.run();
-                plugin.panel.render();
-
+                // Activate the selected plugin
+                plugin.activate();
                 activePlugin = plugin;
             }
         };
 
         let $plugins = (
             <div className="tota11y-plugins">
-                {plugins.map((plugin) => plugin.render(handlePluginClick))}
+                {
+                    plugins.map((plugin) => {
+                        // Render each plugin with the click handler
+                        return plugin.render(handlePluginClick);
+                    })
+                }
             </div>
         );
 
