@@ -5,6 +5,7 @@
  */
 
 let AltTextPlugin = require("./alt-text");
+let ColorBlindContrastPlugin = require("./cbcontrast");
 let ContrastPlugin = require("./contrast");
 let HeadingsPlugin = require("./headings");
 let LabelsPlugin = require("./labels");
@@ -18,4 +19,5 @@ module.exports = [
     new LabelsPlugin(),
     new AltTextPlugin(),
     new LandmarksPlugin(),
+    new ColorBlindContrastPlugin()
 ];
