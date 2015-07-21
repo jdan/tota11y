@@ -15,10 +15,12 @@ const ERRORS = {
         return {
             title: "First heading is not an &lt;h1&gt;",
             description: `
-                To give your document a proper structure for assistive
-                technologies, it is important to lay out your headings
-                beginning with an <code>&lt;h1&gt;</code>. We found an
-                <code>&lt;h${level}&gt;</code> instead.
+                <div>
+                    To give your document a proper structure for assistive
+                    technologies, it is important to lay out your headings
+                    beginning with an <code>&lt;h1&gt;</code>. We found an
+                    <code>&lt;h${level}&gt;</code> instead.
+                </div>
             `
         };
     },
@@ -42,11 +44,12 @@ const ERRORS = {
     NONCONSECUTIVE_HEADER(prevLevel, currLevel) {
         let _tag = (level) => `<code>&lt;h${level}&gt;</code>`;
         let description = `
-            This document contains an ${_tag(currLevel)} tag directly
-            following an ${_tag(prevLevel)}. In order to maintain a consistent
-            outline of the page for assistive technologies, reduce the gap in
-            the heading level by upgrading this tag to an
-            ${_tag(prevLevel+1)}`;
+            <div>
+                This document contains an ${_tag(currLevel)} tag directly
+                following an ${_tag(prevLevel)}. In order to maintain a consistent
+                outline of the page for assistive technologies, reduce the gap in
+                the heading level by upgrading this tag to an
+                ${_tag(prevLevel+1)}`;
 
         // Suggest upgrading the tag to the same level as `prevLevel` iff
         // `prevLevel` is not 1
@@ -54,12 +57,14 @@ const ERRORS = {
             description += ` or ${_tag(prevLevel)}`;
         }
 
+        description += `.</div>`;
+
         return {
             title: `
                 Nonconsecutive heading level used (h${prevLevel} &rarr;
                 h${currLevel})
             `,
-            description: description + "."
+            description: description
         };
     }
 };

@@ -90,10 +90,12 @@ class LinkTextPlugin extends Plugin {
 
                 if (!report.result) {
                     let description = `
+                    <div>
                         The alt text for this link's image,
                         <i>"${report.extractedText}"</i>, is unclear without
                         context and may be confusing to screen readers.
                         Consider providing more detailed alt text.
+                    </div>
                     `;
 
                     this.reportError($el, description, report.extractedText);
@@ -103,10 +105,12 @@ class LinkTextPlugin extends Plugin {
 
                 if (!report.result) {
                     let description = `
-                        The text <i>"${report.extractedText}"</i> is unclear
-                        without context and may be confusing to screen readers.
-                        Consider rearranging the <code>&lt;a&gt;&lt;/a&gt;
-                        </code> tags or including special screen reader text.
+                        <div>
+                            The text <i>"${report.extractedText}"</i> is unclear
+                            without context and may be confusing to screen readers.
+                            Consider rearranging the <code>&lt;a&gt;&lt;/a&gt;
+                            </code> tags or including special screen reader text.
+                        </div>
                     `;
 
                     this.reportError($el, description, report.extractedText);
