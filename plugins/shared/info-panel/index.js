@@ -207,7 +207,7 @@ class InfoPanel {
                 // Insert description jQuery object into template.
                 // This is done so functionality can be inserted.
                 let $description = error.$description;
-                $error.find('.tota11y-info-error-description')
+                $error.find(".tota11y-info-error-description")
                     .append($description);
 
                 $errors.append($error);

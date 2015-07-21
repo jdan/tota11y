@@ -44,12 +44,12 @@ class ContrastPlugin extends Plugin {
         $description.find(".previewCb").click(function() {
             if(this.checked) {
                 // Set suggested colors.
-                $(el).css('color', suggestedColors.fg);
-                $(el).css('background-color', suggestedColors.bg);
+                $(el).css("color", suggestedColors.fg);
+                $(el).css("background-color", suggestedColors.bg);
             } else {
                 // Set original colors.
-                $(el).css('color', axs.utils.colorToString(fgColor));
-                $(el).css('background-color', axs.utils.colorToString(bgColor));
+                $(el).css("color", axs.utils.colorToString(fgColor));
+                $(el).css("background-color", axs.utils.colorToString(bgColor));
             }
         });
 
@@ -168,8 +168,8 @@ class ContrastPlugin extends Plugin {
         // Set all elements to original color.
         for(let i = 0; i < this.origColorsList.length; i++) {
             let item = this.origColorsList[i];
-            item.$el.css('color', item.fg);
-            item.$el.css('background-color', item.bg);
+            item.$el.css("color", item.fg);
+            item.$el.css("background-color", item.bg);
         }
         annotate.removeAll();
     }
