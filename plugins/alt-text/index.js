@@ -39,7 +39,7 @@ class AltTextPlugin extends Plugin {
                 annotate.label($el, "&#x2717;")
                     .addClass("tota11y-label-error");
 
-                this.error("Image is missing alt text", errorTemplate(), $el);
+                this.error("Image is missing alt text", $(errorTemplate()), $el);
             }
         });
     }

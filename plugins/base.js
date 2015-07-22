@@ -44,8 +44,8 @@ class Plugin {
     }
 
     // Adds an entry to the info panel's "Errors" tab
-    error(title, description, $el) {
-        return this.panel.addError(title, description, $el);
+    error(title, $description, $el) {
+        return this.panel.addError(title, $description, $el);
     }
 
     /**
