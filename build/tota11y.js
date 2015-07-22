@@ -1,5 +1,5 @@
 /*!
- * tota11y v0.0.8
+ * tota11y v0.0.9
  * http://khan.github.io/tota11y
  * 
  * Includes Accessibility Developer Tools
