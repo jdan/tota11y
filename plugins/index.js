@@ -11,11 +11,15 @@ let LabelsPlugin = require("./labels");
 let LandmarksPlugin = require("./landmarks");
 let LinkTextPlugin = require("./link-text");
 
-module.exports = [
-    new HeadingsPlugin(),
-    new ContrastPlugin(),
-    new LinkTextPlugin(),
-    new LabelsPlugin(),
-    new AltTextPlugin(),
-    new LandmarksPlugin(),
-];
+module.exports = {
+    default: [
+        new HeadingsPlugin(),
+        new ContrastPlugin(),
+        new LinkTextPlugin(),
+        new LabelsPlugin(),
+        new AltTextPlugin(),
+        new LandmarksPlugin(),
+    ],
+
+    experimental: [],
+};

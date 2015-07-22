@@ -48,14 +48,32 @@ class Toolbar {
         let $logo = $(logoTemplate());
         let $toolbar;
 
+        // TODO: <Plugin onClick={...} /> would be really nifty
+        let $defaultPlugins = plugins.default.map((plugin) => {
+            // Render each plugin with the bound click handler
+            return plugin.render(::this.handlePluginClick);
+        });
+
+        let $experimentalPlugins = null;
+        if (plugins.experimental.length) {
+            $experimentalPlugins = (
+                <div>
+                    <div className="tota11y-plugins-separator">
+                        Experimental
+                    </div>
+                    {
+                        plugins.experimental.map((plugin) => {
+                            return plugin.render(::this.handlePluginClick);
+                        })
+                    }
+                </div>
+            );
+        }
+
         let $plugins = (
             <div className="tota11y-plugins">
-                {
-                    plugins.map((plugin) => {
-                        // Render each plugin with the bound click handler
-                        return plugin.render(::this.handlePluginClick);
-                    })
-                }
+                {$defaultPlugins}
+                {$experimentalPlugins}
             </div>
         );
 
