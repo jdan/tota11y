@@ -13,33 +13,39 @@ function buildElement(type, props, ...children) {
     if (props === undefined) {
         // Type will be the text content, which can simply be returned here
         return type;
-    }
 
-    // Create a jQuery element
-    let $el = $("<" + type + ">");
+    // Is our element a Plugin?
+    } else if (type.render) {
+        // Render the plugin with the passed-in click handler
+        return type.render(props && props.onClick);
 
-    // Iterate through props
-    if (props !== null) {
-        for (let propName in props) {
-            // onClick gets turned into a jQuery event handler
-            // TODO: Handle props like onHover, onFocus, etc.
-            if (propName === "onClick") {
-                let handler = props[propName];
-                $el.click(handler);
-            } else {
-                let value = props[propName];
-                $el.prop(propName, value);
+    // Otherwise, build the element with jQuery
+    } else {
+        let $el = $("<" + type + ">");
+
+        // Iterate through props
+        if (props !== null) {
+            for (let propName in props) {
+                // onClick gets turned into a jQuery event handler
+                // TODO: Handle props like onHover, onFocus, etc.
+                if (propName === "onClick") {
+                    let handler = props[propName];
+                    $el.click(handler);
+                } else {
+                    let value = props[propName];
+                    $el.prop(propName, value);
+                }
             }
         }
+
+        // Recurse through the children and append each resulting element to
+        // the parent
+        children.forEach((child) => {
+            $el.append(buildElement(child));
+        });
+
+        return $el;
     }
-
-    // Recurse through the children and append each resulting element to the
-    // parent
-    children.forEach((child) => {
-        $el.append(buildElement(child));
-    });
-
-    return $el;
 }
 
 module.exports = buildElement;

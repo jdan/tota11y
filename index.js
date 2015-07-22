@@ -48,10 +48,9 @@ class Toolbar {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        // TODO: <Plugin onClick={...} /> would be really nifty
-        let $defaultPlugins = plugins.default.map((plugin) => {
+        let $defaultPlugins = plugins.default.map((Plugin) => {
             // Render each plugin with the bound click handler
-            return plugin.render(::this.handlePluginClick);
+            return <Plugin onClick={::this.handlePluginClick} />
         });
 
         let $experimentalPlugins = null;
@@ -62,8 +61,10 @@ class Toolbar {
                         Experimental
                     </div>
                     {
-                        plugins.experimental.map((plugin) => {
-                            return plugin.render(::this.handlePluginClick);
+                        plugins.experimental.map((Plugin) => {
+                            return (
+                                <Plugin onClick={::this.handlePluginClick} />
+                            );
                         })
                     }
                 </div>
