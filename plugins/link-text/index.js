@@ -73,8 +73,8 @@ class LinkTextPlugin extends Plugin {
         };
     }
 
-    reportError($el, description, content) {
-        let entry = this.error("Link text is unclear", $(description), $el);
+    reportError($el, $description, content) {
+        let entry = this.error("Link text is unclear", $description, $el);
         annotate.errorLabel($el, "",
             `Link text "${content}" is unclear`, entry);
     }
@@ -94,31 +94,40 @@ class LinkTextPlugin extends Plugin {
                 let report = this.validateAltText($el.find("> img")[0]);
 
                 if (!report.result) {
-                    let description = `
-                    <div>
-                        The alt text for this link's image,
-                        <i>"${report.extractedText}"</i>, is unclear without
-                        context and may be confusing to screen readers.
-                        Consider providing more detailed alt text.
-                    </div>
-                    `;
+                    let $description = (
+                        <div>
+                            The alt text for this link's image,
+                            {" "}
+                            <i>"{report.extractedText}"</i>,
+                            {" "}
+                            is unclear without context and may be confusing to
+                            screen readers. Consider providing more detailed
+                            alt text.
+                        </div>
+                    );
 
-                    this.reportError($el, description, report.extractedText);
+                    this.reportError($el, $description, report.extractedText);
                 }
             } else {
                 let report = this.validateTextContent(el);
 
                 if (!report.result) {
-                    let description = `
+                    let $description = (
                         <div>
-                            The text <i>"${report.extractedText}"</i> is unclear
-                            without context and may be confusing to screen readers.
-                            Consider rearranging the <code>&lt;a&gt;&lt;/a&gt;
-                            </code> tags or including special screen reader text.
+                            The text
+                            {" "}
+                            <i>"{report.extractedText}"</i>
+                            {" "}
+                            is unclear without context and may be confusing to
+                            screen readers. Consider rearranging the
+                            {" "}
+                            <code>{"&lt;a&gt;&lt;/a&gt;"}</code>
+                            {" "}
+                            tags or including special screen reader text.
                         </div>
-                    `;
+                    );
 
-                    this.reportError($el, description, report.extractedText);
+                    this.reportError($el, $description, report.extractedText);
                 }
             }
         });

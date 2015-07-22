@@ -55,7 +55,7 @@ module.exports = {
         // Make the JSX pragma function "E" available everywhere without the
         // need to use "require"
         new webpack.ProvidePlugin({
-            "E": "./element",
+            "E": path.join(__dirname, "element"),
         }),
     ],
     postcss: [veryimportant],
