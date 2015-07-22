@@ -13,7 +13,6 @@ let descriptionTemplate = require("./error-description.handlebars");
 require("./style.less");
 
 class ContrastPlugin extends Plugin {
-
     getTitle() {
         return "Contrast";
     }
@@ -26,7 +25,8 @@ class ContrastPlugin extends Plugin {
         // Suggest colors at an "AA" level
         let suggestedColors = axs.utils.suggestColors(
             bgColor,
-            fgColor, contrastRatio,
+            fgColor,
+            contrastRatio,
             getComputedStyle(el)).AA;
 
         let templateData = {
@@ -42,7 +42,7 @@ class ContrastPlugin extends Plugin {
         // Add click handler to preview checkbox.
         let $description = $(descriptionTemplate(templateData));
         $description.find(".previewCb").click(function() {
-            if(this.checked) {
+            if (this.checked) {
                 // Set suggested colors.
                 $(el).css("color", suggestedColors.fg);
                 $(el).css("background-color", suggestedColors.bg);
