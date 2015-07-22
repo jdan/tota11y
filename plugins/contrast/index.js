@@ -41,8 +41,8 @@ class ContrastPlugin extends Plugin {
 
         // Add click handler to preview checkbox.
         let $description = $(descriptionTemplate(templateData));
-        $description.find(".previewCb").click(function() {
-            if (this.checked) {
+        $description.find(".preview-contrast-fix").click((e) => {
+            if ($(e.target).prop("checked")) {
                 // Set suggested colors.
                 $(el).css("color", suggestedColors.fg);
                 $(el).css("background-color", suggestedColors.bg);
