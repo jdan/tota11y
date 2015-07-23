@@ -1,9 +1,14 @@
 /**
  * A function used by Babel to transpile JSX code into jQuery elements
  */
-let $ = require("jquery");
-
 function buildElement(type, props, ...children) {
+    // We need to require jQuery inside of this method because `require()`
+    // will work different after mocha's magic "before" method runs.
+    //
+    // This allows us to use the jQuery instance provided by our jsdom
+    // instance.
+    let $ = require("jquery");
+
     // Is our element a TextNode?
     if (props === undefined) {
         // Type will be the text content, which can simply be returned here
@@ -11,7 +16,7 @@ function buildElement(type, props, ...children) {
     }
 
     // Create a jQuery element
-    let $el = $(document.createElement(type));
+    let $el = $("<" + type + ">");
 
     // Iterate through props
     if (props !== null) {
