@@ -73,6 +73,58 @@ describe("Link text plugin", function() {
         assert(dom.$("#bad-image-link").hasLabel());
     });
 
+    it("should fail on empty links", function() {
+        dom.setHTML(`
+            <a href="#" id="empty-link"></a>
+        `);
+
+        plugin.run();
+
+        assert(dom.$("#empty-link").hasLabel());
+    });
+
+    it("should pass on empty links with aria-labels", function() {
+        dom.setHTML(`
+            <a href="#"
+               aria-label="this is a detailed description"
+               id="empty-link-with-label">
+            </a>
+
+            <a href="#"
+               aria-labelledby="link-description"
+               id="empty-link-with-labelledby">
+            </a>
+            <span id="link-description">This is a detailed description</span>
+        `);
+
+        plugin.run();
+
+        assert(!dom.$("#empty-link-with-label").hasLabel());
+        assert(!dom.$("#empty-link-with-labelledby").hasLabel());
+    });
+
+    it("should fail on links with unclear aria-labels", function() {
+        dom.setHTML(`
+            <a href="#"
+               aria-label="click here"
+               id="empty-link-with-unclear-label">
+                This is a longer description that will not be picked up
+            </a>
+
+            <a href="#"
+               aria-labelledby="link-description"
+               id="empty-link-with-unclear-labelledby">
+                This is a longer description that will not be picked up
+            </a>
+            <span id="link-description">Click here</span>
+        `);
+
+        plugin.run();
+
+        assert(dom.$("#empty-link-with-unclear-label").hasLabel());
+        assert(dom.$("#empty-link-with-unclear-labelledby").hasLabel());
+    });
+
     after(function() {
         dom.destroy();
     });
