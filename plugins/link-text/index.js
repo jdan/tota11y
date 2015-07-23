@@ -53,7 +53,7 @@ class LinkTextPlugin extends Plugin {
      * like `aria-label`) is unclear.
      */
     validateTextContent(el) {
-        let extractedText = $.axs.properties.getTextFromDescendantContent(el);
+        let extractedText = $.axs.properties.findTextAlternatives(el, {});
         return {
             extractedText: extractedText,
             result: this.isDescriptiveText(extractedText),
