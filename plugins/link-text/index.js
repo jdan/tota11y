@@ -48,37 +48,17 @@ class LinkTextPlugin extends Plugin {
         return textContent.trim() !== "";
     }
 
-    /**
-     * Checks whether or not the text content of an element (including things
-     * like `aria-label`) is unclear.
-     */
-    validateTextContent(el) {
-        let extractedText = $.axs.properties.findTextAlternatives(el, {});
-        return {
-            extractedText: extractedText,
-            result: this.isDescriptiveText(extractedText),
-        };
-    }
-
-    /**
-     * Checks if an image has descriptive alt text. This is used to determine
-     * whether or not image links (<a> tags with a single <img> descendant)
-     * are unclear.
-     */
-    validateAltText(el) {
-        let altText = el.getAttribute("alt");
-        return {
-            extractedText: altText,
-            result: this.isDescriptiveText(altText),
-        };
-    }
-
     reportError($el, $description, content) {
         let entry = this.error("Link text is unclear", $description, $el);
         annotate.errorLabel($el, "",
             `Link text "${content}" is unclear`, entry);
     }
 
+    /**
+     * We can call linkWithUnclearPurpose from ADT directly once the following
+     * issue has been resolved. There is some extra code here until then.
+     * https://github.com/GoogleChrome/accessibility-developer-tools/issues/156
+     */
     run() {
         $("a").each((i, el) => {
             let $el = $(el);
@@ -88,47 +68,41 @@ class LinkTextPlugin extends Plugin {
                 return;
             }
 
-            // If this anchor contains a single image, we will test the
-            // clarity of that image's alt text.
-            if ($el.find("> img").length === 1) {
-                let report = this.validateAltText($el.find("> img")[0]);
+            // Monkey-patch `matchSelector` for our jsdom testing environment,
+            // using jQuery for optimal browser support.
+            //
+            // https://github.com/GoogleChrome/accessibility-developer-tools/pull/189
+            $.axs.browserUtils.matchSelector = (el, selectorText) => {
+                return $(el).is(selectorText);
+            };
 
-                if (!report.result) {
-                    let $description = (
-                        <div>
-                            The alt text for this link's image,
-                            {" "}
-                            <i>"{report.extractedText}"</i>,
-                            {" "}
-                            is unclear without context and may be confusing to
-                            screen readers. Consider providing more detailed
-                            alt text.
-                        </div>
-                    );
+            // Extract the text alternatives for this element: including
+            // its text content, aria-label/labelledby, and alt text for
+            // images.
+            //
+            // TODO: Read from `alts` to determine where the text is coming
+            // from (for tailored error messages)
+            let alts = {};
+            let extractedText = $.axs.properties.findTextAlternatives(
+                el, alts);
 
-                    this.reportError($el, $description, report.extractedText);
-                }
-            } else {
-                let report = this.validateTextContent(el);
+            if (!this.isDescriptiveText(extractedText)) {
+                let $description = (
+                    <div>
+                        The text
+                        {" "}
+                        <i>"{extractedText}"</i>
+                        {" "}
+                        is unclear without context and may be confusing to
+                        screen readers. Consider rearranging the
+                        {" "}
+                        <code>{"&lt;a&gt;&lt;/a&gt;"}</code>
+                        {" "}
+                        tags or including special screen reader text.
+                    </div>
+                );
 
-                if (!report.result) {
-                    let $description = (
-                        <div>
-                            The text
-                            {" "}
-                            <i>"{report.extractedText}"</i>
-                            {" "}
-                            is unclear without context and may be confusing to
-                            screen readers. Consider rearranging the
-                            {" "}
-                            <code>{"&lt;a&gt;&lt;/a&gt;"}</code>
-                            {" "}
-                            tags or including special screen reader text.
-                        </div>
-                    );
-
-                    this.reportError($el, $description, report.extractedText);
-                }
+                this.reportError($el, $description, extractedText);
             }
         });
     }
