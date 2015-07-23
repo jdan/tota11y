@@ -72,8 +72,8 @@ class LinkTextPlugin extends Plugin {
             // using jQuery for optimal browser support.
             //
             // https://github.com/GoogleChrome/accessibility-developer-tools/pull/189
-            $.axs.browserUtils.matchSelector = (el, selectorText) => {
-                return $(el).is(selectorText);
+            $.axs.browserUtils.matchSelector = (node, selectorText) => {
+                return $(node).is(selectorText);
             };
 
             // Extract the text alternatives for this element: including

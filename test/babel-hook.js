@@ -11,4 +11,6 @@ require("babel/register")({
 });
 
 // Store our custom JSX transpile target as a global
+/* global E */
+/* eslint no-unused-vars:0, no-undef:0 */
 E = require("../element.js");
