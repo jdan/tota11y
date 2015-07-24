@@ -48,9 +48,9 @@ class Toolbar {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        let $defaultPlugins = plugins.default.map((Plugin) => {
+        let $defaultPlugins = plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
             // Render each plugin with the bound click handler
-            return <Plugin onClick={::this.handlePluginClick} />
+            return <Plugin onClick={::this.handlePluginClick} />;
         });
 
         let $experimentalPlugins = null;
@@ -61,7 +61,7 @@ class Toolbar {
                         Experimental
                     </div>
                     {
-                        plugins.experimental.map((Plugin) => {
+                        plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
                             return (
                                 <Plugin onClick={::this.handlePluginClick} />
                             );
