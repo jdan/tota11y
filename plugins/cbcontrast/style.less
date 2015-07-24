@@ -1,0 +1,61 @@
+.tota11y-swatches {
+    margin-left: 5px;
+    margin-right: 5px;
+    position: relative;
+    top: 1px;
+}
+
+.tota11y-swatch {
+    @size: 12px;
+    border: 1px solid #000;
+    display: inline-block;
+    height: @size;
+    width: @size;
+}
+
+.tota11y-color-hexes {
+    font-family: monospace;
+}
+
+.tota11y-blindness-base() {
+    content: "";
+    border-radius: 50%;
+    width: 5px !important;
+    height: 5px !important;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    display: block;
+}
+
+.tota11y-blindness {
+    .tota11y-blindness-base;
+    display: inline-block;
+    margin-right: 6px;
+    background-color: #0F0;
+    
+    &::before {
+        .tota11y-blindness-base;
+        background-color: #00F;
+        left: 2px;
+        top: -6px;
+    }
+    
+    &::after {
+        .tota11y-blindness-base;
+        background-color: #F00;
+        top: -6px;
+        left: 5px;
+    }
+    
+    &.tota11y-protanopia::after {
+      background-color: transparent;
+    }
+    
+    &.tota11y-deuteranopia {
+      background-color: transparent;
+    }
+    
+    &.tota11y-tritanopia::before {
+      background-color: transparent;
+    }
+}
