@@ -78,9 +78,11 @@ class HeadingsPlugin extends Plugin {
         return "Highlights headings (<h1>, <h2>, etc) and order violations";
     }
 
-    // Computes an outline of the page and reports any violations.
+    /**
+     * Computes an outline of the page and reports any violations.
+     */
     outline($headings) {
-        let $outline = $("<div>").addClass("tota11y-heading-outline");
+        let $items = [];
 
         let prevLevel;
         $headings.each((i, el) => {
@@ -106,7 +108,7 @@ class HeadingsPlugin extends Plugin {
                 text: $el.text()
             }));
 
-            $outline.append($item);
+            $items.push($item);
 
             // Highlight the heading element on hover
             annotate.toggleHighlight($el, $item);
@@ -140,15 +142,23 @@ class HeadingsPlugin extends Plugin {
             }
         });
 
-        return $outline;
+        return $items;
     }
 
     run() {
         let $headings = $("h1, h2, h3, h4, h5, h6");
         // `this.outline` has the side-effect of also reporting violations
-        let $outline = this.outline($headings);
+        let $items = this.outline($headings);
 
-        this.summary($outline);
+        if ($items.length) {
+            let $outline = (
+                <div className="tota11y-heading-outline">
+                    {$items}
+                </div>
+            );
+
+            this.summary($outline);
+        }
     }
 
     cleanup() {
