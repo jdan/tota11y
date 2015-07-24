@@ -9,13 +9,13 @@
  *     cleanup: code to run when the plugin is deactivated from the toolbar
  */
 
-let $ = require("jquery");
 let InfoPanel = require("./shared/info-panel");
-let template = require("../templates/plugin.handlebars");
+
+require("./style.less");
 
 class Plugin {
     constructor() {
-        this.panel = new InfoPanel(this.getTitle());
+        this.panel = new InfoPanel(this);
         this.$checkbox = null;
     }
 
@@ -51,20 +51,38 @@ class Plugin {
      * Renders the plugin view.
      */
     render(clickHandler) {
-        let templateData = {
-            title: this.getTitle(),
-            description: this.getDescription()
-        };
+        this.$checkbox = (
+            <input
+                className="tota11y-plugin-checkbox tota11y-sr-only"
+                type="checkbox"
+                onClick={() => clickHandler(this)} />
+        );
 
-        let $plugin = $(template(templateData));
+        let $switch = (
+            <label className="tota11y-plugin-switch">
+                {this.$checkbox}
+                <div aria-hidden="true"
+                     className="tota11y-plugin-indicator">
+                    &#x2713;
+                </div>
+                <div className="tota11y-plugin-info">
+                    <div className="tota11y-plugin-title">
+                        {this.getTitle()}
+                    </div>
+                    <div className="tota11y-plugin-description">
+                        {this.getDescription()}
+                    </div>
+                </div>
+            </label>
+        );
 
-        this.$checkbox = $plugin.find(".tota11y-plugin-checkbox");
-        this.$checkbox.click((e) => {
-            e.stopPropagation();
-            clickHandler(this);
-        });
+        let $el = (
+            <li role="menu-item" className="tota11y-plugin">
+                {$switch}
+            </li>
+        );
 
-        return $plugin;
+        return $el;
     }
 
     /**
@@ -82,10 +100,7 @@ class Plugin {
         this.cleanup();
         this.panel.destroy();
 
-        // If we toggle the plugin ourselves, the checkbox will already be
-        // unchecked. If another plugin becomes active, however, this method
-        // will be called and will uncheck the checkbox.
-        this.$checkbox.attr("checked", false);
+        this.$checkbox.prop("checked", false);
     }
 }
 

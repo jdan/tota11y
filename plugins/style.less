@@ -1,0 +1,71 @@
+@import "../less/variables.less";
+
+@descriptionWidth: 200px;
+@pluginPadding: 12px;
+@controlMargin: 15px;
+@indicatorSize: 16px;
+@indicatorFontSize: 13px;
+
+.tota11y-plugin {
+    .tota11y-no-select;
+    border-bottom: 1px solid @darkBorderColor;
+    list-style: none;
+
+    &-switch {
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+        padding: @pluginPadding @pluginPadding @pluginPadding 0;
+        margin: 0;
+    }
+
+    &-indicator {
+        margin: 0 @controlMargin;
+    }
+
+    &-indicator {
+        border-radius: @indicatorSize;
+        border: 1px solid @lightBorderColor;
+        color: transparent;
+        font-size: @indicatorFontSize;
+        height: @indicatorSize;
+        line-height: @indicatorSize;
+        padding: 0 0 0 1px;
+        width: @indicatorSize;
+    }
+
+    // Focus styles for the fake checkboxes
+    &-checkbox:focus + &-indicator {
+        @focusColor: darken(@kaGreen, 10%);
+
+        border-color: @kaGreen;
+        background-color: @focusColor;
+        color: @focusColor;
+    }
+
+    // Checked styles for the fake checkboxes
+    &-checkbox:checked + &-indicator {
+        background-color: @kaGreen;
+        border-color: @kaGreen;
+        color: white;
+    }
+
+    &-title {
+        font-weight: bold;
+    }
+
+    &-description {
+        font-size: @fontSizeSmall;
+        font-style: italic;
+        width: @descriptionWidth;
+        margin-right: 3px;
+    }
+}
+
+.tota11y-plugins {
+    &-separator {
+        font-size: 12px;
+        margin: 7px @controlMargin 0;
+        text-transform: uppercase;
+    }
+}

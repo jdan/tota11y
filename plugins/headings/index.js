@@ -74,7 +74,10 @@ class HeadingsPlugin extends Plugin {
     }
 
     getDescription() {
-        return "Highlights headings (<h1>, <h2>, etc) and order violations";
+        return `
+            Highlights headings (&lt;h1&gt;, &lt;h2&gt;, etc) and
+            order violations
+        `;
     }
 
     /**
