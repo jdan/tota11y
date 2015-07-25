@@ -8,6 +8,7 @@
 require("babel/register")({
     // Let babel know to transpile JSX into E(...)
     jsxPragma: "E",
+    optional: ["es7.functionBind"],
 });
 
 // Store our custom JSX transpile target as a global

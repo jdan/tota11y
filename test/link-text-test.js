@@ -1,5 +1,5 @@
 /**
- * Tests for the "Link text" plugin
+ * Tests for LinkTextPlugin
  */
 
 let assert = require("assert");

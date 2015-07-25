@@ -14,6 +14,8 @@ module.exports = () => {
                 "has-label": true,
                 "label-text": text,
             });
+
+            return $el;
         },
 
         errorLabel($el, text, expanded) {
@@ -23,6 +25,8 @@ module.exports = () => {
                 "label-text": text,
                 "expanded-text": expanded,
             });
+
+            return $el;
         },
     };
 };
