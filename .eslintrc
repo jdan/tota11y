@@ -1,4 +1,5 @@
 {
+    "parser": "babel-eslint",
     "env": {
         "node": true,
         "browser": true,
@@ -7,6 +8,7 @@
     },
     "rules": {
         "comma-dangle": 0,
+        "new-cap": 0,
         "no-underscore-dangle": 0,
         "quotes": [2, "double"],
         "space-after-keywords": [2, "always"],

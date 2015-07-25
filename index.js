@@ -16,18 +16,50 @@ let logoTemplate = require("./templates/logo.handlebars");
 require("script!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js");
 
 class Toolbar {
+    constructor() {
+        this.activePlugin = null;
+    }
+
+    /**
+     * Manages the state of the toolbar when a plugin is clicked, and toggles
+     * the appropriate plugins on and off.
+     */
+    handlePluginClick(plugin) {
+        // If the plugin was already selected, toggle it off
+        if (plugin === this.activePlugin) {
+            plugin.deactivate();
+            this.activePlugin = null;
+        } else {
+            // Deactivate the active plugin if there is one
+            if (this.activePlugin) {
+                this.activePlugin.deactivate();
+            }
+
+            // Activate the selected plugin
+            plugin.activate();
+            this.activePlugin = plugin;
+        }
+    }
+
+    /**
+     * Renders the toolbar and appends it to the specified element.
+     */
     appendTo($el) {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        // Attach each plugin
-        let $plugins = <div className="tota11y-plugins" />;
-        plugins.forEach((plugin) => {
-            // Mount the plugin to the list
-            plugin.appendTo($plugins);
-        });
+        let $plugins = (
+            <div className="tota11y-plugins">
+                {
+                    plugins.map((plugin) => {
+                        // Render each plugin with the bound click handler
+                        return plugin.render(::this.handlePluginClick);
+                    })
+                }
+            </div>
+        );
 
-        let handleClick = (e) => {
+        let handleToggleClick = (e) => {
             e.preventDefault();
             e.stopPropagation();
             $toolbar.toggleClass("tota11y-expanded");
@@ -36,7 +68,7 @@ class Toolbar {
         let $toggle = (
             <a href="#"
                className="tota11y-toolbar-toggle"
-               onClick={handleClick}>
+               onClick={handleToggleClick}>
                 <div className="tota11y-toolbar-logo">
                     {$logo}
                 </div>
