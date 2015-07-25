@@ -94,9 +94,9 @@ class HeadingsPlugin extends Plugin {
             // may want to separate the conditionals here to report multiple
             // errors on the same tag.
             if (i === 0 && level !== 1) {
-                error = ERRORS.FIRST_NOT_H1(level);
+                error = ERRORS.FIRST_NOT_H1(level);                         // eslint-disable-line new-cap
             } else if (prevLevel && level - prevLevel > 1) {
-                error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level);
+                error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level);     // eslint-disable-line new-cap
             }
 
             prevLevel = level;

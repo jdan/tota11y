@@ -48,14 +48,33 @@ class Toolbar {
         let $logo = $(logoTemplate());
         let $toolbar;
 
+        let $defaultPlugins = plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
+            // Render each plugin with the bound click handler
+            return <Plugin onClick={::this.handlePluginClick} />;
+        });
+
+        let $experimentalPlugins = null;
+        if (plugins.experimental.length) {
+            $experimentalPlugins = (
+                <div>
+                    <div className="tota11y-plugins-separator">
+                        Experimental
+                    </div>
+                    {
+                        plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
+                            return (
+                                <Plugin onClick={::this.handlePluginClick} />
+                            );
+                        })
+                    }
+                </div>
+            );
+        }
+
         let $plugins = (
             <div className="tota11y-plugins">
-                {
-                    plugins.map((plugin) => {
-                        // Render each plugin with the bound click handler
-                        return plugin.render(::this.handlePluginClick);
-                    })
-                }
+                {$defaultPlugins}
+                {$experimentalPlugins}
             </div>
         );
 
