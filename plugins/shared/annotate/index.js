@@ -168,6 +168,14 @@ module.exports = (namespace) => {
             });
         },
 
+        hide() {
+            $(".tota11y-label").hide();
+        },
+
+        show() {
+            $(".tota11y-label").show();
+        },
+
         removeAll() {
             // Remove all annotations
             $("." + ANNOTATION_CLASS).remove();

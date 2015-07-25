@@ -194,6 +194,17 @@ class InfoPanel {
             $activeTab = this._addTab("Summary", this.summary);
         }
 
+        // Wire annotation toggling.
+        this.$el.find(".toggle-annotation").click((e) => {
+            if ($(e.target).prop("checked")) {
+                // Showing annotations.
+                annotate.show();
+            } else {
+                // Hiding annotations.
+                annotate.hide();
+            }
+        });
+
         if (this.errors.length > 0) {
             let $errors = $("<ul>").addClass("tota11y-info-errors");
 
