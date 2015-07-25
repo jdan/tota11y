@@ -42,7 +42,7 @@ class Toolbar {
     }
 
     /**
-     * Renders the toolbar and appends it the specified element.
+     * Renders the toolbar and appends it to the specified element.
      */
     appendTo($el) {
         let $logo = $(logoTemplate());
