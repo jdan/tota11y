@@ -83,11 +83,11 @@ describe("Alt text plugin", function() {
 
         assert(dom.$("#empty-alt").hasErrorLabel());
         assert(dom.$("#empty-alt").hasClass("tota11y-label-warning"));
-        assert(/presentational/.test(dom.$("#empty-alt").expandedText()));
+        assert(/decorative/.test(dom.$("#empty-alt").expandedText()));
 
         assert(dom.$("#presentational").hasErrorLabel());
         assert(dom.$("#presentational").hasClass("tota11y-label-warning"));
-        assert(/presentational/.test(dom.$("#presentational").expandedText()));
+        assert(/decorative/.test(dom.$("#presentational").expandedText()));
     });
 
     after(function() {
