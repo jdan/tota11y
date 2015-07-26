@@ -5,11 +5,7 @@
  */
 
 // Register all future "require"s with babel
-require("babel/register")({
-    // Let babel know to transpile JSX into E(...)
-    jsxPragma: "E",
-    optional: ["es7.functionBind"],
-});
+require("babel/register");
 
 // Store our custom JSX transpile target as a global
 E = require("../element.js");       // eslint-disable-line no-undef

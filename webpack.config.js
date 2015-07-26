@@ -30,11 +30,6 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: "babel",
-                query: {
-                    // Transpile JSX into calls to "E()"
-                    jsxPragma: "E",
-                    optional: ["es7.functionBind"],
-                },
             },
             { test: /\.handlebars$/, loader: "handlebars", },
             {
