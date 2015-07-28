@@ -5,7 +5,7 @@
 
 let $ = require("jquery");
 let Plugin = require("../base");
-let annotate = require("../shared/annotate")("labels");
+let annotate = require("../shared/annotate")("contrast");
 
 let titleTemplate = require("./error-title.handlebars");
 let descriptionTemplate = require("./error-description.handlebars");
