@@ -1,0 +1,4 @@
+{
+    "jsxPragma": "E",
+    "optional": ["es7.functionBind"]
+}

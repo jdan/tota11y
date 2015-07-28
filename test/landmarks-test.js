@@ -1,5 +1,5 @@
 /**
- * Tests for the "Landmarks" plugin
+ * Tests for LandmarksPlugin
  */
 
 let assert = require("assert");

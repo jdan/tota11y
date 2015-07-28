@@ -27,10 +27,10 @@ class LabelsPlugin extends Plugin {
     }
 
     run() {
-        let result = audit("controlsWithoutLabel");
+        let {result, elements} = audit("controlsWithoutLabel");
 
-        if (result.result === "FAIL") {
-            result.elements.forEach((element) => {
+        if (result === "FAIL") {
+            elements.forEach((element) => {
                 let $el = $(element);
                 let title = "Input is missing a label";
 
