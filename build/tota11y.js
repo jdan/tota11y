@@ -1,5 +1,5 @@
 /*!
- * tota11y v0.0.9
+ * tota11y v0.0.10
  * http://khan.github.io/tota11y
  * 
  * Includes Accessibility Developer Tools
@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2015-07-22
+ * Date: 2015-07-29
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -79,30 +79,83 @@
 	var $ = __webpack_require__(/*! jquery */ 2);
 
 	var plugins = __webpack_require__(/*! ./plugins */ 7);
-	var logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ 46);
+	var logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ 45);
 
 	// Chrome Accessibility Developer Tools - required once as a global
-	__webpack_require__(/*! script!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 47);
+	__webpack_require__(/*! script!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 46);
 
 	var Toolbar = (function () {
 	    function Toolbar() {
 	        _classCallCheck(this, Toolbar);
+
+	        this.activePlugin = null;
 	    }
 
 	    _createClass(Toolbar, [{
+	        key: "handlePluginClick",
+
+	        /**
+	         * Manages the state of the toolbar when a plugin is clicked, and toggles
+	         * the appropriate plugins on and off.
+	         */
+	        value: function handlePluginClick(plugin) {
+	            // If the plugin was already selected, toggle it off
+	            if (plugin === this.activePlugin) {
+	                plugin.deactivate();
+	                this.activePlugin = null;
+	            } else {
+	                // Deactivate the active plugin if there is one
+	                if (this.activePlugin) {
+	                    this.activePlugin.deactivate();
+	                }
+
+	                // Activate the selected plugin
+	                plugin.activate();
+	                this.activePlugin = plugin;
+	            }
+	        }
+	    }, {
 	        key: "appendTo",
+
+	        /**
+	         * Renders the toolbar and appends it to the specified element.
+	         */
 	        value: function appendTo($el) {
+	            var _this = this;
+
 	            var $logo = $(logoTemplate());
 	            var $toolbar = undefined;
 
-	            // Attach each plugin
-	            var $plugins = E("div", { className: "tota11y-plugins" });
-	            plugins.forEach(function (plugin) {
-	                // Mount the plugin to the list
-	                plugin.appendTo($plugins);
+	            var $defaultPlugins = plugins["default"].map(function (Plugin) {
+	                // eslint-disable-line no-unused-vars
+	                // Render each plugin with the bound click handler
+	                return E(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
 	            });
 
-	            var handleClick = function handleClick(e) {
+	            var $experimentalPlugins = null;
+	            if (plugins.experimental.length) {
+	                $experimentalPlugins = E(
+	                    "div",
+	                    null,
+	                    E(
+	                        "div",
+	                        { className: "tota11y-plugins-separator" },
+	                        "Experimental"
+	                    ),
+	                    plugins.experimental.map(function (Plugin) {
+	                        return E(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
+	                    })
+	                );
+	            }
+
+	            var $plugins = E(
+	                "div",
+	                { className: "tota11y-plugins" },
+	                $defaultPlugins,
+	                $experimentalPlugins
+	            );
+
+	            var handleToggleClick = function handleToggleClick(e) {
 	                e.preventDefault();
 	                e.stopPropagation();
 	                $toolbar.toggleClass("tota11y-expanded");
@@ -112,7 +165,7 @@
 	                "a",
 	                { href: "#",
 	                    className: "tota11y-toolbar-toggle",
-	                    onClick: handleClick },
+	                    onClick: handleToggleClick },
 	                E(
 	                    "div",
 	                    { className: "tota11y-toolbar-logo" },
@@ -147,6 +200,7 @@
 	    // TODO: Make this customizable
 	    bar.appendTo($("body"));
 	});
+	// eslint-disable-line no-unused-vars
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 1)))
 
 /***/ },
@@ -161,44 +215,61 @@
 	 */
 	"use strict";
 
-	var $ = __webpack_require__(/*! jquery */ 2);
-
 	function buildElement(type, props) {
 	    for (var _len = arguments.length, children = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
 	        children[_key - 2] = arguments[_key];
 	    }
 
+	    // We need to require jQuery inside of this method because `require()`
+	    // will work different after mocha's magic "before" method runs.
+	    //
+	    // This allows us to use the jQuery instance provided by our jsdom
+	    // instance.
+	    var $ = __webpack_require__(/*! jquery */ 2);
+
 	    // Is our element a TextNode?
 	    if (props === undefined) {
 	        // Type will be the text content, which can simply be returned here
 	        return type;
-	    }
 
-	    // Create a jQuery element
-	    var $el = $(document.createElement(type));
+	        // Is our element a Plugin?
+	    } else if (type.render) {
+	        // Render the plugin with the passed-in click handler
+	        return type.render(props && props.onClick);
 
-	    // Iterate through props
-	    if (props !== null) {
-	        for (var propName in props) {
-	            // onClick gets turned into a jQuery event handler
-	            // TODO: Handle props like onHover, onFocus, etc.
-	            if (propName === "onClick") {
-	                var handler = props[propName];
-	                $el.click(handler);
-	            } else {
-	                var value = props[propName];
-	                $el.prop(propName, value);
+	        // Otherwise, build the element with jQuery
+	    } else {
+	        var _ret = (function () {
+	            var $el = $("<" + type + ">");
+
+	            // Iterate through props
+	            if (props !== null) {
+	                for (var propName in props) {
+	                    // onClick gets turned into a jQuery event handler
+	                    // TODO: Handle props like onHover, onFocus, etc.
+	                    if (propName === "onClick") {
+	                        var handler = props[propName];
+	                        $el.click(handler);
+	                    } else {
+	                        var value = props[propName];
+	                        $el.prop(propName, value);
+	                    }
+	                }
 	            }
-	        }
+
+	            // Recurse through the children and append each resulting element to
+	            // the parent
+	            children.forEach(function (child) {
+	                $el.append(buildElement(child));
+	            });
+
+	            return {
+	                v: $el
+	            };
+	        })();
+
+	        if (typeof _ret === "object") return _ret.v;
 	    }
-
-	    // Recurse through the children and append each resulting element to the
-	    // parent
-	    children.forEach(function (child) {
-	        $el.append(buildElement(child));
-	    });
-
-	    return $el;
 	}
 
 	module.exports = buildElement;
@@ -9456,7 +9527,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(/*! ./../~/css-loader/lib/css-base.js */ 5)();
-	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n/**\n * Base styles for tota11y to make sure things look consistent under\n * reasonable circumstances.\n */\n.tota11y,\n.tota11y * {\n  border: none !important;\n  box-sizing: border-box !important;\n  color: #f2f2f2 !important;\n  font-family: Arial !important;\n  font-size: 14px !important;\n  font-style: normal !important;\n  font-weight: 400 !important;\n  line-height: 1.35 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  text-align: left !important;\n  text-shadow: none !important;\n}\n.tota11y * {\n  height: auto !important;\n  width: auto !important;\n}\n.tota11y strong {\n  font-weight: bold !important;\n}\n.tota11y pre,\n.tota11y code {\n  background-color: #dddddd !important;\n  border: none !important;\n  border-radius: 0 !important;\n  color: inherit !important;\n  font-family: monospace !important;\n  font-size: inherit !important;\n  line-height: inherit !important;\n}\n.tota11y pre {\n  padding: 10px !important;\n  margin: 0 0 10px !important;\n  overflow-x: scroll !important;\n}\n.tota11y code {\n  border-radius: 2px !important;\n  display: inline !important;\n  padding: 1px !important;\n}\n.tota11y i,\n.tota11y em {\n  font-style: italic !important;\n}\n.tota11y p {\n  margin: 0 0 10px !important;\n}\n.tota11y a,\n.tota11y a:hover,\n.tota11y a:focus {\n  background-color: inherit !important;\n  color: inherit !important;\n  text-decoration: none !important;\n}\n.tota11y-toolbar {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n  position: fixed !important;\n  top: auto !important;\n  right: auto !important;\n  bottom: 0 !important;\n  left: 10px !important;\n  border-top-left-radius: 5px !important;\n  border-top-right-radius: 5px !important;\n  overflow: hidden !important;\n  z-index: 9998 !important;\n}\n.tota11y-toolbar-toggle {\n  display: block !important;\n  padding: 7px !important;\n}\n.tota11y-toolbar-logo {\n  height: 25px !important;\n  margin: 0 auto !important;\n  text-align: center !important;\n  width: 35px !important;\n}\n.tota11y-toolbar-logo svg {\n  height: 25px !important;\n}\n.tota11y-toolbar-body {\n  display: none !important;\n}\n.tota11y-toolbar.tota11y-expanded .tota11y-toolbar-body {\n  display: block !important;\n}\n.tota11y-plugin {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-bottom: 1px solid #555555 !important;\n}\n.tota11y-plugin-label {\n  -webkit-box-align: center !important;\n  -webkit-align-items: center !important;\n      -ms-flex-align: center !important;\n          align-items: center !important;\n  display: -webkit-box !important;\n  display: -webkit-flex !important;\n  display: -ms-flexbox !important;\n  display: flex !important;\n  padding: 12px 12px 12px 0 !important;\n  margin: 0 !important;\n}\n.tota11y-plugin-label:hover {\n  cursor: pointer !important;\n}\n.tota11y-plugin-control {\n  margin: 0 15px !important;\n}\n.tota11y-plugin-checkbox {\n  display: none !important;\n}\n.tota11y-plugin-indicator {\n  border-radius: 16px !important;\n  border: 1px solid #999999 !important;\n  color: transparent !important;\n  font-size: 13px !important;\n  height: 16px !important;\n  line-height: 16px !important;\n  padding: 0 0 0 1px !important;\n  width: 16px !important;\n}\n.tota11y-plugin-checkbox:checked + .tota11y-plugin-indicator {\n  background-color: #639b24 !important;\n  border-color: #639b24 !important;\n  color: white !important;\n}\n.tota11y-plugin-title {\n  font-weight: bold !important;\n}\n.tota11y-plugin-description {\n  font-size: 11px !important;\n  font-style: italic !important;\n  width: 200px !important;\n  margin-right: 3px !important;\n}\n", ""]);
+	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n/**\n * Base styles for tota11y to make sure things look consistent under\n * reasonable circumstances.\n */\n.tota11y,\n.tota11y * {\n  border: none !important;\n  box-sizing: border-box !important;\n  color: #f2f2f2 !important;\n  font-family: Arial !important;\n  font-size: 14px !important;\n  font-style: normal !important;\n  font-weight: 400 !important;\n  line-height: 1.35 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  text-align: left !important;\n  text-shadow: none !important;\n}\n.tota11y * {\n  height: auto !important;\n  width: auto !important;\n}\n.tota11y strong {\n  font-weight: bold !important;\n}\n.tota11y pre,\n.tota11y code {\n  background-color: #dddddd !important;\n  border: none !important;\n  border-radius: 0 !important;\n  color: inherit !important;\n  font-family: monospace !important;\n  font-size: inherit !important;\n  line-height: inherit !important;\n}\n.tota11y pre {\n  padding: 10px !important;\n  margin: 0 0 10px !important;\n  overflow-x: scroll !important;\n}\n.tota11y code {\n  border-radius: 2px !important;\n  display: inline !important;\n  padding: 1px !important;\n}\n.tota11y i,\n.tota11y em {\n  font-style: italic !important;\n}\n.tota11y p {\n  margin: 0 0 10px !important;\n}\n.tota11y a,\n.tota11y a:hover,\n.tota11y a:focus {\n  background-color: inherit !important;\n  color: inherit !important;\n  text-decoration: none !important;\n}\n.tota11y-toolbar {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n  position: fixed !important;\n  top: auto !important;\n  right: auto !important;\n  bottom: 0 !important;\n  left: 10px !important;\n  border-top-left-radius: 5px !important;\n  border-top-right-radius: 5px !important;\n  overflow: hidden !important;\n  z-index: 9998 !important;\n}\n.tota11y-toolbar-toggle {\n  display: block !important;\n  padding: 7px !important;\n}\n.tota11y-toolbar-logo {\n  height: 25px !important;\n  margin: 0 auto !important;\n  text-align: center !important;\n  width: 35px !important;\n}\n.tota11y-toolbar-logo svg {\n  height: 25px !important;\n}\n.tota11y-toolbar-body {\n  display: none !important;\n}\n.tota11y-toolbar.tota11y-expanded .tota11y-toolbar-body {\n  display: block !important;\n}\n.tota11y-plugins-separator {\n  font-size: 12px !important;\n  margin: 7px 15px 0 !important;\n  text-transform: uppercase !important;\n}\n.tota11y-plugin {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-bottom: 1px solid #555555 !important;\n}\n.tota11y-plugin-label {\n  -webkit-box-align: center !important;\n  -webkit-align-items: center !important;\n      -ms-flex-align: center !important;\n          align-items: center !important;\n  display: -webkit-box !important;\n  display: -webkit-flex !important;\n  display: -ms-flexbox !important;\n  display: flex !important;\n  padding: 12px 12px 12px 0 !important;\n  margin: 0 !important;\n}\n.tota11y-plugin-label:hover {\n  cursor: pointer !important;\n}\n.tota11y-plugin-control {\n  margin: 0 15px !important;\n}\n.tota11y-plugin-checkbox {\n  display: none !important;\n}\n.tota11y-plugin-indicator {\n  border-radius: 16px !important;\n  border: 1px solid #999999 !important;\n  color: transparent !important;\n  font-size: 13px !important;\n  height: 16px !important;\n  line-height: 16px !important;\n  padding: 0 0 0 1px !important;\n  width: 16px !important;\n}\n.tota11y-plugin-checkbox:checked + .tota11y-plugin-indicator {\n  background-color: #639b24 !important;\n  border-color: #639b24 !important;\n  color: white !important;\n}\n.tota11y-plugin-title {\n  font-weight: bold !important;\n}\n.tota11y-plugin-description {\n  font-size: 11px !important;\n  font-style: italic !important;\n  width: 200px !important;\n  margin-right: 3px !important;\n}\n", ""]);
 
 /***/ },
 /* 5 */
@@ -9761,13 +9832,17 @@
 	"use strict";
 
 	var AltTextPlugin = __webpack_require__(/*! ./alt-text */ 33);
-	var ContrastPlugin = __webpack_require__(/*! ./contrast */ 35);
-	var HeadingsPlugin = __webpack_require__(/*! ./headings */ 40);
+	var ContrastPlugin = __webpack_require__(/*! ./contrast */ 34);
+	var HeadingsPlugin = __webpack_require__(/*! ./headings */ 39);
 	var LabelsPlugin = __webpack_require__(/*! ./labels */ 8);
-	var LandmarksPlugin = __webpack_require__(/*! ./landmarks */ 44);
-	var LinkTextPlugin = __webpack_require__(/*! ./link-text */ 45);
+	var LandmarksPlugin = __webpack_require__(/*! ./landmarks */ 43);
+	var LinkTextPlugin = __webpack_require__(/*! ./link-text */ 44);
 
-	module.exports = [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin()];
+	module.exports = {
+	    "default": [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin()],
+
+	    experimental: []
+	};
 
 /***/ },
 /* 8 */
@@ -9830,10 +9905,13 @@
 	        value: function run() {
 	            var _this = this;
 
-	            var result = audit("controlsWithoutLabel");
+	            var _audit = audit("controlsWithoutLabel");
 
-	            if (result.result === "FAIL") {
-	                result.elements.forEach(function (element) {
+	            var result = _audit.result;
+	            var elements = _audit.elements;
+
+	            if (result === "FAIL") {
+	                elements.forEach(function (element) {
 	                    var $el = $(element);
 	                    var title = "Input is missing a label";
 
@@ -9883,14 +9961,13 @@
 	var $ = __webpack_require__(/*! jquery */ 2);
 	var InfoPanel = __webpack_require__(/*! ./shared/info-panel */ 10);
 	var template = __webpack_require__(/*! ../templates/plugin.handlebars */ 30);
-	var id = 1;
 
 	var Plugin = (function () {
 	    function Plugin() {
 	        _classCallCheck(this, Plugin);
 
-	        this.id = id++;
 	        this.panel = new InfoPanel(this.getTitle());
+	        this.$checkbox = null;
 	    }
 
 	    _createClass(Plugin, [{
@@ -9935,68 +10012,48 @@
 	        /**
 	         * Renders the plugin view.
 	         */
-	        value: function render() {
+	        value: function render(clickHandler) {
+	            var _this = this;
+
 	            var templateData = {
 	                title: this.getTitle(),
 	                description: this.getDescription()
 	            };
 
-	            return $(template(templateData));
+	            var $plugin = $(template(templateData));
+
+	            this.$checkbox = $plugin.find(".tota11y-plugin-checkbox");
+	            this.$checkbox.click(function (e) {
+	                e.stopPropagation();
+	                clickHandler(_this);
+	            });
+
+	            return $plugin;
 	        }
 	    }, {
-	        key: "appendTo",
+	        key: "activate",
 
 	        /**
-	         * Attaches the plugin to a given DOMNode.
-	         * (chainable)
+	         * Activate the plugin from the UI.
 	         */
-	        value: function appendTo($el) {
-	            var _this = this;
+	        value: function activate() {
+	            this.run();
+	            this.panel.render();
+	        }
+	    }, {
+	        key: "deactivate",
 
-	            // Render and mount plugin
-	            var $plugin = this.render();
-	            $el.append($plugin);
+	        /**
+	         * Deactivate the plugin from the UI.
+	         */
+	        value: function deactivate() {
+	            this.cleanup();
+	            this.panel.destroy();
 
-	            var $checkbox = $plugin.find(".tota11y-plugin-checkbox");
-
-	            $checkbox.click(function (e) {
-	                e.stopPropagation();
-
-	                // Trigger a `plugin-switched` event on the container, which will
-	                // be dispatched to all plugins. We include this plugin's ID to
-	                // determine if we should enable or disable the plugin listening
-	                // for this event.
-	                $el.trigger("plugin-switched", [_this.id]);
-
-	                // If our checkbox is checked, run and render the panel.
-	                // Otherwise, cleanup.
-	                if ($checkbox.is(":checked")) {
-	                    _this.run();
-	                    _this.panel.render();
-	                } else {
-	                    _this.cleanup();
-	                    _this.panel.destroy();
-	                }
-	            });
-
-	            // Listen for the `plugin-switched` event on the plugins container.
-	            $el.on("plugin-switched", function (e, pluginId) {
-	                // If we are the plugin that the user has interacted with, ignore
-	                // this step. We handle our own behavior before the event is
-	                // dispatched.
-	                if (pluginId === _this.id) {
-	                    return;
-
-	                    // If we are an active plugin that the user switched from, we
-	                    // uncheck ourselves and clean up.
-	                } else if ($checkbox.is(":checked")) {
-	                    $checkbox.attr("checked", false);
-	                    _this.cleanup();
-	                    _this.panel.destroy();
-	                }
-	            });
-
-	            return this;
+	            // If we toggle the plugin ourselves, the checkbox will already be
+	            // unchecked. If another plugin becomes active, however, this method
+	            // will be called and will uncheck the checkbox.
+	            this.$checkbox.attr("checked", false);
 	        }
 	    }]);
 
@@ -10230,6 +10287,17 @@
 	            if (this.summary) {
 	                $activeTab = this._addTab("Summary", this.summary);
 	            }
+
+	            // Wire annotation toggling.
+	            this.$el.find(".toggle-annotation").click(function (e) {
+	                if ($(e.target).prop("checked")) {
+	                    // Showing annotations.
+	                    annotate.show();
+	                } else {
+	                    // Hiding annotations.
+	                    annotate.hide();
+	                }
+	            });
 
 	            if (this.errors.length > 0) {
 	                (function () {
@@ -11366,6 +11434,14 @@
 	            });
 	        },
 
+	        hide: function hide() {
+	            $(".tota11y-label").hide();
+	        },
+
+	        show: function show() {
+	            $(".tota11y-label").show();
+	        },
+
 	        removeAll: function removeAll() {
 	            // Remove all annotations
 	            $("." + ANNOTATION_CLASS).remove();
@@ -11429,7 +11505,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(/*! ./../../../~/css-loader/lib/css-base.js */ 5)();
-	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-label {\n  background-color: #ffe800 !important;\n  border: 1px solid rgba(0, 0, 0, 0.1) !important;\n  cursor: default !important;\n  padding: 3px !important;\n  position: absolute !important;\n  z-index: 9997 !important;\n}\n.tota11y-label-error {\n  background-color: #ffaeae !important;\n}\n.tota11y-label-error-icon {\n  display: block !important;\n  float: left !important;\n  margin-right: 3px !important;\n  width: 12px !important;\n}\n.tota11y-label-success {\n  background-color: #b9eda9 !important;\n}\n.tota11y-label,\n.tota11y-label-text,\n.tota11y-label-detail,\n.tota11y-label-link,\n.tota11y-label-help {\n  color: #333333 !important;\n  font-size: 12px !important;\n}\n.tota11y-label-text {\n  float: left !important;\n}\n.tota11y-label-detail {\n  clear: both !important;\n  display: none !important;\n  max-width: 300px !important;\n}\n.tota11y-label:hover .tota11y-label-detail {\n  display: block !important;\n}\n.tota11y-label-help {\n  float: left !important;\n  margin-left: 5px !important;\n}\n.tota11y-label-link:hover,\n.tota11y-label-link:focus {\n  opacity: 0.6 !important;\n  text-decoration: underline !important;\n}\n.tota11y-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n  pointer-events: none !important;\n  position: absolute !important;\n  z-index: 9999 !important;\n}\n", ""]);
+	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-label {\n  background-color: #ffe800 !important;\n  border: 1px solid rgba(0, 0, 0, 0.1) !important;\n  cursor: default !important;\n  padding: 3px !important;\n  position: absolute !important;\n  z-index: 9997 !important;\n}\n.tota11y-label-error {\n  background-color: #ffaeae !important;\n}\n.tota11y-label-error-icon {\n  display: block !important;\n  float: left !important;\n  margin-right: 3px !important;\n  width: 12px !important;\n}\n.tota11y-label-success {\n  background-color: #b9eda9 !important;\n}\n.tota11y-label-warning {\n  background-color: #ffe800 !important;\n}\n.tota11y-label,\n.tota11y-label-text,\n.tota11y-label-detail,\n.tota11y-label-link,\n.tota11y-label-help {\n  color: #333333 !important;\n  font-size: 12px !important;\n}\n.tota11y-label-text {\n  float: left !important;\n}\n.tota11y-label-detail {\n  clear: both !important;\n  display: none !important;\n  max-width: 300px !important;\n}\n.tota11y-label:hover .tota11y-label-detail {\n  display: block !important;\n}\n.tota11y-label-help {\n  float: left !important;\n  margin-left: 5px !important;\n}\n.tota11y-label-link:hover,\n.tota11y-label-link:focus {\n  opacity: 0.6 !important;\n  text-decoration: underline !important;\n}\n.tota11y-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n  pointer-events: none !important;\n  position: absolute !important;\n  z-index: 9999 !important;\n}\n", ""]);
 
 /***/ },
 /* 24 */
@@ -11444,7 +11520,7 @@
 
 	  return "<div class=\"tota11y tota11y-info\">\n    <header class=\"tota11y-info-title\">\n        "
 	    + this.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
-	    + "\n        <span class=\"tota11y-info-dismiss\">\n            <a href=\"#\" class=\"tota11y-info-dismiss-trigger\">&times;</a>\n        </span>\n    </header>\n    <div class=\"tota11y-info-body\">\n        <div class=\"tota11y-info-sections\"></div>\n        <ul role=\"tablist\" class=\"tota11y-info-tabs\"></ul>\n    </div>\n</div>\n";
+	    + "\n        <span class=\"tota11y-info-controls\">\n            <label class=\"tota11y-info-annotation-toggle\">\n                Annotate:\n                <input class=\"toggle-annotation\" type=\"checkbox\" checked>\n            </label>\n            <a href=\"#\" class=\"tota11y-info-dismiss-trigger\">&times;</a>\n        </span>\n    </header>\n    <div class=\"tota11y-info-body\">\n        <div class=\"tota11y-info-sections\"></div>\n        <ul role=\"tablist\" class=\"tota11y-info-tabs\"></ul>\n    </div>\n</div>\n";
 	},"useData":true});
 
 /***/ },
@@ -11499,7 +11575,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(/*! ./../../../~/css-loader/lib/css-base.js */ 5)();
-	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-dismiss {\n  float: right !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: -webkit-box !important;\n  display: -webkit-flex !important;\n  display: -ms-flexbox !important;\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section * {\n  color: #333333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  -webkit-transform: rotateZ(90deg) !important;\n          transform: rotateZ(90deg) !important;\n  -webkit-transform-origin: 3px 8px !important;\n      -ms-transform-origin: 3px 8px !important;\n          transform-origin: 3px 8px !important;\n  -webkit-transition: -webkit-transform ease-in-out 50ms !important;\n          transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  -webkit-transform: rotateZ(0deg) !important;\n          transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  -webkit-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n      -ms-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n          transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n", ""]);
+	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: -webkit-box !important;\n  display: -webkit-flex !important;\n  display: -ms-flexbox !important;\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section * {\n  color: #333333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  -webkit-transform: rotateZ(90deg) !important;\n          transform: rotateZ(90deg) !important;\n  -webkit-transform-origin: 3px 8px !important;\n      -ms-transform-origin: 3px 8px !important;\n          transform-origin: 3px 8px !important;\n  -webkit-transition: -webkit-transform ease-in-out 50ms !important;\n          transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  -webkit-transform: rotateZ(0deg) !important;\n          transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  -webkit-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n      -ms-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n          transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n", ""]);
 
 /***/ },
 /* 30 */
@@ -11532,8 +11608,10 @@
 
 	"use strict";
 
+	var $ = __webpack_require__(/*! jquery */ 2);
+
 	function allRuleNames() {
-	    return axs.AuditRules.getRules().map(function (rule) {
+	    return $.axs.AuditRules.getRules().map(function (rule) {
 	        return rule.name;
 	    });
 	}
@@ -11541,7 +11619,7 @@
 	// Creates an audit configuration that whitelists a single rule and limits the
 	// amount of tests to run
 	function createWhitelist(ruleName) {
-	    var config = new axs.AuditConfiguration();
+	    var config = new $.axs.AuditConfiguration();
 	    config.showUnsupportedRulesWarning = false;
 
 	    // Ignore elements that are part of the toolbar
@@ -11559,9 +11637,17 @@
 	// Audits for a single rule (by name) and returns the results for only that
 	// rule
 	function audit(ruleName) {
+	    // Monkey-patch `matchSelector` for our jsdom testing environment,
+	    // using jQuery for optimal browser support.
+	    //
+	    // https://github.com/GoogleChrome/accessibility-developer-tools/pull/189
+	    $.axs.browserUtils.matchSelector = function (node, selectorText) {
+	        return $(node).is(selectorText);
+	    };
+
 	    var whitelist = createWhitelist(ruleName);
 
-	    return axs.Audit.run(whitelist).filter(function (result) {
+	    return $.axs.Audit.run(whitelist).filter(function (result) {
 	        return result.rule.name === ruleName;
 	    })[0];
 	}
@@ -11605,7 +11691,7 @@
   \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
+	/* WEBPACK VAR INJECTION */(function(E) {/**
 	 * A plugin to check for valid alternative representations for images
 	 */
 
@@ -11620,8 +11706,7 @@
 	var $ = __webpack_require__(/*! jquery */ 2);
 	var Plugin = __webpack_require__(/*! ../base */ 9);
 	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("alt-text");
-
-	var errorTemplate = __webpack_require__(/*! ./error.handlebars */ 34);
+	var audit = __webpack_require__(/*! ../shared/audit */ 31);
 
 	var AltTextPlugin = (function (_Plugin) {
 	    function AltTextPlugin() {
@@ -11645,28 +11730,70 @@
 	            return "Annotates images without alt text";
 	        }
 	    }, {
+	        key: "reportError",
+	        value: function reportError(el) {
+	            var $el = $(el);
+	            var title = "Image is missing alt text";
+	            var $error = E(
+	                "div",
+	                null,
+	                E(
+	                    "p",
+	                    null,
+	                    "This image does not have an associated \"alt\" attribute. Please specify the alt text for this image like so:"
+	                ),
+	                E(
+	                    "pre",
+	                    null,
+	                    E(
+	                        "code",
+	                        null,
+	                        "&lt;img src=\"..\" alt=\"Image description\"&gt"
+	                    )
+	                ),
+	                E(
+	                    "p",
+	                    null,
+	                    "If the image is decorative and does not convey any information to the surrounding content, however, you may leave this \"alt\" attribute empty, or specify a \"role\" attribute with a value of \"presentation.\""
+	                ),
+	                E(
+	                    "pre",
+	                    null,
+	                    E(
+	                        "code",
+	                        null,
+	                        "&lt;img src=\"..\" alt=\"\"&gt;",
+	                        E("br", null),
+	                        "&lt;img src=\"..\" role=\"presentation\"&gt;"
+	                    )
+	                )
+	            );
+
+	            // Place an error label on the element and register it as an
+	            // error in the info panel
+	            var entry = this.error(title, $error, $el);
+	            annotate.errorLabel($el, "", title, entry);
+	        }
+	    }, {
 	        key: "run",
 	        value: function run() {
-	            var _this = this;
+	            // Generate errors for any images that fail the Accessibility
+	            // Developer Tools audit
 
-	            $("img").each(function (i, el) {
-	                var $el = $(el);
+	            var _audit = audit("imagesWithoutAltText");
 
-	                if ($el.attr("alt") === "" || $el.attr("role") === "presentation") {
-	                    // Presentation images are fine.
-	                    //
-	                    // We'll label them as "decorative" to point out to users
-	                    // that they do not explicitly convey information.
-	                    annotate.label($el, "&#x2713; decorative").addClass("tota11y-label-success");
-	                } else if ($el.attr("alt")) {
-	                    // Image has proper alt text
-	                    // TODO: aria-label, etc from axs.properties.alternative
-	                    annotate.label($el, "&#x2713;").addClass("tota11y-label-success");
-	                } else {
-	                    annotate.label($el, "&#x2717;").addClass("tota11y-label-error");
+	            var result = _audit.result;
+	            var elements = _audit.elements;
 
-	                    _this.error("Image is missing alt text", $(errorTemplate()), $el);
-	                }
+	            if (result === "FAIL") {
+	                elements.forEach(this.reportError.bind(this));
+	            }
+
+	            // Additionally, label presentational images
+	            $("img[role=\"presentation\"], img[alt=\"\"]").each(function (i, el) {
+	                // "Error" labels have a warning icon and expanded text on hover,
+	                // but we add a special `warning` class to color it differently.
+	                annotate.errorLabel($(el), "", "This image is decorative").addClass("tota11y-label-warning");
 	            });
 	        }
 	    }, {
@@ -11680,21 +11807,10 @@
 	})(Plugin);
 
 	module.exports = AltTextPlugin;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 1)))
 
 /***/ },
 /* 34 */
-/*!*******************************************!*\
-  !*** ./plugins/alt-text/error.handlebars ***!
-  \*******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
-	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	    return "<p>\n    This image does not have an associated \"alt\" attribute. Please specify\n    the alt text for this image like so:\n</p>\n\n<pre><code>&lt;img src=\"..\" alt=\"Image description\"&gt;</code></pre>\n\n<p>\n    If the image is decorative and does not convey any information to the\n    surrounding content, however, you may leave this \"alt\" attribute empty, or\n    specify a \"role\" attribute with a value of \"presentation.\"\n</p>\n\n<pre><code>&lt;img src=\"..\" alt=\"\"&gt;\n&lt;img src=\"..\" role=\"presentation\"&gt;</code></pre>\n";
-	},"useData":true});
-
-/***/ },
-/* 35 */
 /*!***********************************!*\
   !*** ./plugins/contrast/index.js ***!
   \***********************************/
@@ -11715,12 +11831,12 @@
 
 	var $ = __webpack_require__(/*! jquery */ 2);
 	var Plugin = __webpack_require__(/*! ../base */ 9);
-	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("labels");
+	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("contrast");
 
-	var titleTemplate = __webpack_require__(/*! ./error-title.handlebars */ 36);
-	var descriptionTemplate = __webpack_require__(/*! ./error-description.handlebars */ 37);
+	var titleTemplate = __webpack_require__(/*! ./error-title.handlebars */ 35);
+	var descriptionTemplate = __webpack_require__(/*! ./error-description.handlebars */ 36);
 
-	__webpack_require__(/*! ./style.less */ 38);
+	__webpack_require__(/*! ./style.less */ 37);
 
 	var ContrastPlugin = (function (_Plugin) {
 	    function ContrastPlugin() {
@@ -11894,7 +12010,7 @@
 	module.exports = ContrastPlugin;
 
 /***/ },
-/* 36 */
+/* 35 */
 /*!*************************************************!*\
   !*** ./plugins/contrast/error-title.handlebars ***!
   \*************************************************/
@@ -11916,7 +12032,7 @@
 	},"useData":true});
 
 /***/ },
-/* 37 */
+/* 36 */
 /*!*******************************************************!*\
   !*** ./plugins/contrast/error-description.handlebars ***!
   \*******************************************************/
@@ -11948,7 +12064,7 @@
 	},"useData":true});
 
 /***/ },
-/* 38 */
+/* 37 */
 /*!*************************************!*\
   !*** ./plugins/contrast/style.less ***!
   \*************************************/
@@ -11957,7 +12073,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 39);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 38);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 6)(content, {});
@@ -11974,7 +12090,7 @@
 	}
 
 /***/ },
-/* 39 */
+/* 38 */
 /*!***********************************************************************************************************************************!*\
   !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/contrast/style.less ***!
   \***********************************************************************************************************************************/
@@ -11984,13 +12100,13 @@
 	exports.push([module.id, ".tota11y-swatches {\n  margin-left: 5px !important;\n  margin-right: 5px !important;\n  position: relative !important;\n  top: 1px !important;\n}\n.tota11y-swatch {\n  border: 1px solid #000 !important;\n  display: inline-block !important;\n  height: 12px !important;\n  width: 12px !important;\n}\n.tota11y-contrast-suggestion {\n  margin: 0 0 15px 15px !important;\n}\n.tota11y-color-hexes {\n  font-family: monospace !important;\n}\n", ""]);
 
 /***/ },
-/* 40 */
+/* 39 */
 /*!***********************************!*\
   !*** ./plugins/headings/index.js ***!
   \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
+	/* WEBPACK VAR INJECTION */(function(E) {/**
 	 * A plugin to identify and validate heading tags (<h1>, <h2>, etc.)
 	 */
 
@@ -12006,10 +12122,9 @@
 	var Plugin = __webpack_require__(/*! ../base */ 9);
 	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("headings");
 
-	var outlineItemTemplate = __webpack_require__(/*! ./outline-item.handlebars */ 41);
-	__webpack_require__(/*! ./style.less */ 42);
+	var outlineItemTemplate = __webpack_require__(/*! ./outline-item.handlebars */ 40);
+	__webpack_require__(/*! ./style.less */ 41);
 
-	/* eslint new-cap:0 */
 	var ERRORS = {
 	    FIRST_NOT_H1: function FIRST_NOT_H1(level) {
 	        return {
@@ -12079,11 +12194,13 @@
 	    }, {
 	        key: "outline",
 
-	        // Computes an outline of the page and reports any violations.
+	        /**
+	         * Computes an outline of the page and reports any violations.
+	         */
 	        value: function outline($headings) {
 	            var _this = this;
 
-	            var $outline = $("<div>").addClass("tota11y-heading-outline");
+	            var $items = [];
 
 	            var prevLevel = undefined;
 	            $headings.each(function (i, el) {
@@ -12096,9 +12213,9 @@
 	                // may want to separate the conditionals here to report multiple
 	                // errors on the same tag.
 	                if (i === 0 && level !== 1) {
-	                    error = ERRORS.FIRST_NOT_H1(level);
+	                    error = ERRORS.FIRST_NOT_H1(level); // eslint-disable-line new-cap
 	                } else if (prevLevel && level - prevLevel > 1) {
-	                    error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level);
+	                    error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level); // eslint-disable-line new-cap
 	                }
 
 	                prevLevel = level;
@@ -12109,7 +12226,7 @@
 	                    text: $el.text()
 	                }));
 
-	                $outline.append($item);
+	                $items.push($item);
 
 	                // Highlight the heading element on hover
 	                annotate.toggleHighlight($el, $item);
@@ -12134,16 +12251,24 @@
 	                }
 	            });
 
-	            return $outline;
+	            return $items;
 	        }
 	    }, {
 	        key: "run",
 	        value: function run() {
 	            var $headings = $("h1, h2, h3, h4, h5, h6");
 	            // `this.outline` has the side-effect of also reporting violations
-	            var $outline = this.outline($headings);
+	            var $items = this.outline($headings);
 
-	            this.summary($outline);
+	            if ($items.length) {
+	                var $outline = E(
+	                    "div",
+	                    { className: "tota11y-heading-outline" },
+	                    $items
+	                );
+
+	                this.summary($outline);
+	            }
 	        }
 	    }, {
 	        key: "cleanup",
@@ -12156,9 +12281,10 @@
 	})(Plugin);
 
 	module.exports = HeadingsPlugin;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 1)))
 
 /***/ },
-/* 41 */
+/* 40 */
 /*!**************************************************!*\
   !*** ./plugins/headings/outline-item.handlebars ***!
   \**************************************************/
@@ -12178,7 +12304,7 @@
 	},"useData":true});
 
 /***/ },
-/* 42 */
+/* 41 */
 /*!*************************************!*\
   !*** ./plugins/headings/style.less ***!
   \*************************************/
@@ -12187,7 +12313,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 43);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 42);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 6)(content, {});
@@ -12204,7 +12330,7 @@
 	}
 
 /***/ },
-/* 43 */
+/* 42 */
 /*!***********************************************************************************************************************************!*\
   !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/headings/style.less ***!
   \***********************************************************************************************************************************/
@@ -12214,7 +12340,7 @@
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-heading-outline {\n  color: #333333 !important;\n}\n.tota11y-heading-outline-entry {\n  margin-bottom: 8px !important;\n}\n.tota11y-heading-outline-entry.heading-level-1 {\n  margin-left: 0 !important;\n}\n.tota11y-heading-outline-entry.heading-level-2 {\n  margin-left: 20px !important;\n}\n.tota11y-heading-outline-entry.heading-level-3 {\n  margin-left: 40px !important;\n}\n.tota11y-heading-outline-entry.heading-level-4 {\n  margin-left: 60px !important;\n}\n.tota11y-heading-outline-entry.heading-level-5 {\n  margin-left: 80px !important;\n}\n.tota11y-heading-outline-entry.heading-level-6 {\n  margin-left: 100px !important;\n}\n.tota11y-heading-outline-level {\n  position: relative !important;\n  top: -2px !important;\n  right: auto !important;\n  bottom: auto !important;\n  left: auto !important;\n  margin-right: 5px !important;\n  padding: 2px 3px !important;\n  pointer-events: none !important;\n}\n", ""]);
 
 /***/ },
-/* 44 */
+/* 43 */
 /*!************************************!*\
   !*** ./plugins/landmarks/index.js ***!
   \************************************/
@@ -12277,13 +12403,13 @@
 	module.exports = LandmarksPlugin;
 
 /***/ },
-/* 45 */
+/* 44 */
 /*!************************************!*\
   !*** ./plugins/link-text/index.js ***!
   \************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
+	/* WEBPACK VAR INJECTION */(function(E) {/**
 	 * A plugin to identify unclear link text such as "more" and "click here,"
 	 * which can make for a bad experience when using a screen reader
 	 */
@@ -12331,6 +12457,11 @@
 	         * Original: https://github.com/GoogleChrome/accessibility-developer-tools/blob/9183b21cb0a02f5f04928f5cb7cb339b6bbc9ff8/src/audits/LinkWithUnclearPurpose.js#L55-67
 	         */
 	        value: function isDescriptiveText(textContent) {
+	            // Handle when the text is undefined or null
+	            if (typeof textContent === "undefined" || textContent === null) {
+	                return false;
+	            }
+
 	            var stopWords = ["click", "tap", "go", "here", "learn", "more", "this", "page", "link", "about"];
 	            // Generate a regex to match each of the stopWords
 	            var stopWordsRE = new RegExp("\\b(" + stopWords.join("|") + ")\\b", "ig");
@@ -12345,42 +12476,19 @@
 	            return textContent.trim() !== "";
 	        }
 	    }, {
-	        key: "validateTextContent",
-
-	        /**
-	         * Checks whether or not the text content of an element (including things
-	         * like `aria-label`) is unclear.
-	         */
-	        value: function validateTextContent(el) {
-	            var extractedText = $.axs.properties.getTextFromDescendantContent(el);
-	            return {
-	                extractedText: extractedText,
-	                result: this.isDescriptiveText(extractedText)
-	            };
-	        }
-	    }, {
-	        key: "validateAltText",
-
-	        /**
-	         * Checks if an image has descriptive alt text. This is used to determine
-	         * whether or not image links (<a> tags with a single <img> descendant)
-	         * are unclear.
-	         */
-	        value: function validateAltText(el) {
-	            var altText = el.getAttribute("alt");
-	            return {
-	                extractedText: altText,
-	                result: this.isDescriptiveText(altText)
-	            };
-	        }
-	    }, {
 	        key: "reportError",
-	        value: function reportError($el, description, content) {
-	            var entry = this.error("Link text is unclear", $(description), $el);
+	        value: function reportError($el, $description, content) {
+	            var entry = this.error("Link text is unclear", $description, $el);
 	            annotate.errorLabel($el, "", "Link text \"" + content + "\" is unclear", entry);
 	        }
 	    }, {
 	        key: "run",
+
+	        /**
+	         * We can call linkWithUnclearPurpose from ADT directly once the following
+	         * issue has been resolved. There is some extra code here until then.
+	         * https://github.com/GoogleChrome/accessibility-developer-tools/issues/156
+	         */
 	        value: function run() {
 	            var _this = this;
 
@@ -12392,24 +12500,49 @@
 	                    return;
 	                }
 
-	                // If this anchor contains a single image, we will test the
-	                // clarity of that image's alt text.
-	                if ($el.find("> img").length === 1) {
-	                    var report = _this.validateAltText($el.find("> img")[0]);
+	                // Monkey-patch `matchSelector` for our jsdom testing environment,
+	                // using jQuery for optimal browser support.
+	                //
+	                // https://github.com/GoogleChrome/accessibility-developer-tools/pull/189
+	                $.axs.browserUtils.matchSelector = function (node, selectorText) {
+	                    return $(node).is(selectorText);
+	                };
 
-	                    if (!report.result) {
-	                        var description = "\n                    <div>\n                        The alt text for this link's image,\n                        <i>\"" + report.extractedText + "\"</i>, is unclear without\n                        context and may be confusing to screen readers.\n                        Consider providing more detailed alt text.\n                    </div>\n                    ";
+	                // Extract the text alternatives for this element: including
+	                // its text content, aria-label/labelledby, and alt text for
+	                // images.
+	                //
+	                // TODO: Read from `alts` to determine where the text is coming
+	                // from (for tailored error messages)
+	                var alts = {};
+	                var extractedText = $.axs.properties.findTextAlternatives(el, alts);
 
-	                        _this.reportError($el, description, report.extractedText);
-	                    }
-	                } else {
-	                    var report = _this.validateTextContent(el);
+	                if (!_this.isDescriptiveText(extractedText)) {
+	                    var $description = E(
+	                        "div",
+	                        null,
+	                        "The text",
+	                        " ",
+	                        E(
+	                            "i",
+	                            null,
+	                            "\"",
+	                            extractedText,
+	                            "\""
+	                        ),
+	                        " ",
+	                        "is unclear without context and may be confusing to screen readers. Consider rearranging the",
+	                        " ",
+	                        E(
+	                            "code",
+	                            null,
+	                            "&lt;a&gt;&lt;/a&gt;"
+	                        ),
+	                        " ",
+	                        "tags or including special screen reader text."
+	                    );
 
-	                    if (!report.result) {
-	                        var description = "\n                        <div>\n                            The text <i>\"" + report.extractedText + "\"</i> is unclear\n                            without context and may be confusing to screen readers.\n                            Consider rearranging the <code>&lt;a&gt;&lt;/a&gt;\n                            </code> tags or including special screen reader text.\n                        </div>\n                    ";
-
-	                        _this.reportError($el, description, report.extractedText);
-	                    }
+	                    _this.reportError($el, $description, extractedText);
 	                }
 	            });
 	        }
@@ -12424,9 +12557,10 @@
 	})(Plugin);
 
 	module.exports = LinkTextPlugin;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 1)))
 
 /***/ },
-/* 46 */
+/* 45 */
 /*!***********************************!*\
   !*** ./templates/logo.handlebars ***!
   \***********************************/
@@ -12438,16 +12572,16 @@
 	},"useData":true});
 
 /***/ },
-/* 47 */
+/* 46 */
 /*!**********************************************************************************!*\
   !*** ./~/script-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js ***!
   \**********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(/*! !./~/script-loader/addScript.js */ 48)(__webpack_require__(/*! !./~/script-loader/~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 49)+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///Users/jordanscales/khan/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
+	__webpack_require__(/*! !./~/script-loader/addScript.js */ 47)(__webpack_require__(/*! !./~/script-loader/~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 48)+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///Users/jordanscales/khan/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
 
 /***/ },
-/* 48 */
+/* 47 */
 /*!**************************************!*\
   !*** ./~/script-loader/addScript.js ***!
   \**************************************/
@@ -12465,7 +12599,7 @@
 	}
 
 /***/ },
-/* 49 */
+/* 48 */
 /*!***********************************************************************************************!*\
   !*** ./~/script-loader/~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js ***!
   \***********************************************************************************************/
