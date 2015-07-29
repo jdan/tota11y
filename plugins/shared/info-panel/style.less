@@ -21,8 +21,13 @@
     position: fixed;
     z-index: @z-index--UI;
 
-    &-dismiss {
+    &-controls {
         float: right;
+    }
+
+    &-annotation-toggle {
+        float: left;
+        margin-right: 10px;
     }
 
     &-hidden {
@@ -32,6 +37,10 @@
     &-dismiss-trigger {
         font-size: @dismissFontSize;
         line-height: @dismissFontSize;
+
+        // TODO: Rework styles using line-heights
+        position: relative;
+        top: -2px;
     }
 
     &-title, &-body {
