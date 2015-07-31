@@ -44,6 +44,7 @@ class A11yTextWand extends Plugin {
     }
 
     cleanup() {
+        $(".tota11y-outlined").removeClass("tota11y-outlined");
         $(document).off("mousemove.wand");
     }
 }
