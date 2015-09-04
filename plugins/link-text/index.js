@@ -68,14 +68,6 @@ class LinkTextPlugin extends Plugin {
                 return;
             }
 
-            // Monkey-patch `matchSelector` for our jsdom testing environment,
-            // using jQuery for optimal browser support.
-            //
-            // https://github.com/GoogleChrome/accessibility-developer-tools/pull/189
-            $.axs.browserUtils.matchSelector = (node, selectorText) => {
-                return $(node).is(selectorText);
-            };
-
             // Extract the text alternatives for this element: including
             // its text content, aria-label/labelledby, and alt text for
             // images.

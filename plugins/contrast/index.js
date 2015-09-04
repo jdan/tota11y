@@ -23,15 +23,14 @@ class ContrastPlugin extends Plugin {
 
     addError({fgColor, bgColor, contrastRatio, requiredRatio}, el) {
         // Suggest colors at an "AA" level
-        let suggestedColors = axs.utils.suggestColors(
+        let suggestedColors = axs.color.suggestColors(
             bgColor,
             fgColor,
-            contrastRatio,
-            getComputedStyle(el)).AA;
+            { AA: requiredRatio }).AA;
 
         let templateData = {
-            fgColorHex: axs.utils.colorToString(fgColor),
-            bgColorHex: axs.utils.colorToString(bgColor),
+            fgColorHex: axs.color.colorToString(fgColor),
+            bgColorHex: axs.color.colorToString(bgColor),
             contrastRatio: contrastRatio,
             requiredRatio: requiredRatio,
             suggestedFgColorHex: suggestedColors.fg,
@@ -48,8 +47,8 @@ class ContrastPlugin extends Plugin {
                 $(el).css("background-color", suggestedColors.bg);
             } else {
                 // Set original colors.
-                $(el).css("color", axs.utils.colorToString(fgColor));
-                $(el).css("background-color", axs.utils.colorToString(bgColor));
+                $(el).css("color", axs.color.colorToString(fgColor));
+                $(el).css("background-color", axs.color.colorToString(bgColor));
             }
         });
 
@@ -60,19 +59,6 @@ class ContrastPlugin extends Plugin {
     }
 
     run() {
-        // Temporary parseColor proxy for FF, which offers "transparent" as a
-        // default computed backgroundColor instead of `rgba(0, 0, 0, 0)`.
-        //
-        // https://github.com/GoogleChrome/accessibility-developer-tools/issues/180
-        const _parseColor = axs.utils.parseColor;
-        axs.utils.parseColor = function(colorString) {
-            if (colorString === "transparent") {
-                return new axs.utils.Color(0, 0, 0, 0);
-            } else {
-                return _parseColor(colorString);
-            }
-        };
-
         // A map of fg/bg color pairs that we have already seen to the error
         // entry currently present in the info panel
         let combinations = {};
@@ -101,18 +87,18 @@ class ContrastPlugin extends Plugin {
             let style = getComputedStyle(el);
             let bgColor = axs.utils.getBgColor(style, el);
             let fgColor = axs.utils.getFgColor(style, el, bgColor);
-            let contrastRatio = axs.utils.calculateContrastRatio(
+            let contrastRatio = axs.color.calculateContrastRatio(
                 fgColor, bgColor).toFixed(2);
 
             // Calculate required ratio based on size
             // Using strings to prevent rounding
             let requiredRatio = axs.utils.isLargeFont(style) ?
-                "3.0" : "4.5";
+                3.0 : 4.5;
 
             // Build a key for our `combinations` map and report the color
             // if we have not seen it yet
-            let key = axs.utils.colorToString(fgColor) + "/" +
-                        axs.utils.colorToString(bgColor) + "/" +
+            let key = axs.color.colorToString(fgColor) + "/" +
+                        axs.color.colorToString(bgColor) + "/" +
                         requiredRatio;
 
             if (!axs.utils.isLowContrast(contrastRatio, style)) {
@@ -139,8 +125,8 @@ class ContrastPlugin extends Plugin {
                     // Save original color so it can be restored on cleanup.
                     this.origColorsList.push({
                         $el: $(el),
-                        fg: axs.utils.colorToString(fgColor),
-                        bg: axs.utils.colorToString(bgColor)
+                        fg: axs.color.colorToString(fgColor),
+                        bg: axs.color.colorToString(bgColor)
                     });
 
                     combinations[key] = error;
@@ -159,9 +145,6 @@ class ContrastPlugin extends Plugin {
                     combinations[key]);
             }
         });
-
-        // Restore the original `parseColor` method
-        axs.utils.parseColor = _parseColor;
     }
 
     cleanup() {

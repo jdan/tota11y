@@ -29,14 +29,6 @@ function createWhitelist(ruleName) {
 // Audits for a single rule (by name) and returns the results for only that
 // rule
 function audit(ruleName) {
-    // Monkey-patch `matchSelector` for our jsdom testing environment,
-    // using jQuery for optimal browser support.
-    //
-    // https://github.com/GoogleChrome/accessibility-developer-tools/pull/189
-    $.axs.browserUtils.matchSelector = (node, selectorText) => {
-        return $(node).is(selectorText);
-    };
-
     let whitelist = createWhitelist(ruleName);
 
     return $.axs.Audit.run(whitelist)
