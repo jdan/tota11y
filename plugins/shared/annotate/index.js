@@ -169,11 +169,11 @@ module.exports = (namespace) => {
         },
 
         hide() {
-            $(".tota11y-label").hide();
+            $(".tota11y.tota11y-label").hide();
         },
 
         show() {
-            $(".tota11y-label").show();
+            $(".tota11y.tota11y-label").show();
         },
 
         removeAll() {

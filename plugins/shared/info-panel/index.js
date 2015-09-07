@@ -194,13 +194,11 @@ class InfoPanel {
             $activeTab = this._addTab("Summary", this.summary);
         }
 
-        // Wire annotation toggling.
+        // Wire annotation toggling
         this.$el.find(".toggle-annotation").click((e) => {
             if ($(e.target).prop("checked")) {
-                // Showing annotations.
                 annotate.show();
             } else {
-                // Hiding annotations.
                 annotate.hide();
             }
         });
