@@ -13,6 +13,13 @@ let descriptionTemplate = require("./error-description.handlebars");
 require("./style.less");
 
 class ContrastPlugin extends Plugin {
+    constructor() {
+        super();
+        // List of original colors for elements with insufficient contrast.
+        // Used to restore original colors in cleanup.
+        this.preservedColors = [];
+    }
+
     getTitle() {
         return "Contrast";
     }
@@ -21,7 +28,7 @@ class ContrastPlugin extends Plugin {
         return "Labels elements with insufficient contrast";
     }
 
-    addError({fgColor, bgColor, contrastRatio, requiredRatio}, el) {
+    addError({style, fgColor, bgColor, contrastRatio, requiredRatio}, el) {
         // Suggest colors at an "AA" level
         let suggestedColors = axs.color.suggestColors(
             bgColor,
@@ -38,17 +45,20 @@ class ContrastPlugin extends Plugin {
             suggestedColorsRatio: suggestedColors.contrast
         };
 
-        // Add click handler to preview checkbox.
+        // Add click handler to preview checkbox
         let $description = $(descriptionTemplate(templateData));
+        let originalFgColor = style.color;
+        let originalBgColor = style.backgroundColor;
+
         $description.find(".preview-contrast-fix").click((e) => {
             if ($(e.target).prop("checked")) {
-                // Set suggested colors.
+                // Set suggested colors
                 $(el).css("color", suggestedColors.fg);
                 $(el).css("background-color", suggestedColors.bg);
             } else {
-                // Set original colors.
-                $(el).css("color", axs.color.colorToString(fgColor));
-                $(el).css("background-color", axs.color.colorToString(bgColor));
+                // Set original colors
+                $(el).css("color", originalFgColor);
+                $(el).css("background-color", originalBgColor);
             }
         });
 
@@ -62,10 +72,6 @@ class ContrastPlugin extends Plugin {
         // A map of fg/bg color pairs that we have already seen to the error
         // entry currently present in the info panel
         let combinations = {};
-
-        // List of original colors for elements with insufficient contrast.
-        // Used to restore original colors in cleanup.
-        this.origColorsList = [];
 
         $("*").each((i, el) => {
             // Only check elements with a direct text descendant
@@ -118,15 +124,19 @@ class ContrastPlugin extends Plugin {
                 if (!combinations[key]) {
                     // We do not show duplicates in the errors panel, however,
                     // to keep the output from being overwhelming
-                    let error = this.addError(
-                        {fgColor, bgColor, contrastRatio, requiredRatio},
-                        el);
+                    let error = this.addError({
+                        style,
+                        fgColor,
+                        bgColor,
+                        contrastRatio,
+                        requiredRatio,
+                    }, el);
 
                     // Save original color so it can be restored on cleanup.
-                    this.origColorsList.push({
+                    this.preservedColors.push({
                         $el: $(el),
-                        fg: axs.color.colorToString(fgColor),
-                        bg: axs.color.colorToString(bgColor)
+                        fg: style.color,
+                        bg: style.backgroundColor,
                     });
 
                     combinations[key] = error;
@@ -148,12 +158,12 @@ class ContrastPlugin extends Plugin {
     }
 
     cleanup() {
-        // Set all elements to original color.
-        for (let i = 0; i < this.origColorsList.length; i++) {
-            let item = this.origColorsList[i];
-            item.$el.css("color", item.fg);
-            item.$el.css("background-color", item.bg);
-        }
+        // Set all elements to original color
+        this.preservedColors.forEach((entry) => {
+            entry.$el.css("color", entry.fg);
+            entry.$el.css("background-color", entry.bg);
+        });
+
         annotate.removeAll();
     }
 }
