@@ -16,8 +16,13 @@ let logoTemplate = require("./templates/logo.handlebars");
 require("script!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js");
 
 class Toolbar {
-    constructor() {
+    constructor(inputData) {
         this.activePlugin = null;
+	this.inputData = inputData;
+	this.plugins = [];
+        plugins.default.map((plugin) => {
+		this.plugins.push(new plugin(inputData));
+	});
     }
 
     /**
@@ -48,35 +53,17 @@ class Toolbar {
         let $logo = $(logoTemplate());
         let $toolbar;
 
-        let $defaultPlugins = plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
-            // Render each plugin with the bound click handler
-            return <Plugin onClick={::this.handlePluginClick} />;
-        });
+        let $defaultPlugins = this.plugins.map((Plugin) => { // eslint-disable-line no-unused-vars
+		// Render each plugin with the bound click handler	    
+		return <Plugin onClick={::this.handlePluginClick} />;
+	    });
 
-        let $experimentalPlugins = null;
-        if (plugins.experimental.length) {
-            $experimentalPlugins = (
-                <div>
-                    <div className="tota11y-plugins-separator">
-                        Experimental
-                    </div>
-                    {
-                        plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
-                            return (
-                                <Plugin onClick={::this.handlePluginClick} />
-                            );
-                        })
-                    }
-                </div>
-            );
-        }
 
         let $plugins = (
-            <div className="tota11y-plugins">
-                {$defaultPlugins}
-                {$experimentalPlugins}
-            </div>
-        );
+			<div className="tota11y-plugins">
+			    {$defaultPlugins}
+			</div>
+			);
 
         let handleToggleClick = (e) => {
             e.preventDefault();
@@ -85,25 +72,25 @@ class Toolbar {
         };
 
         let $toggle = (
-            <a href="#"
-               className="tota11y-toolbar-toggle"
-               onClick={handleToggleClick}>
-                <div className="tota11y-toolbar-logo">
-                    {$logo}
-                </div>
-            </a>
-        );
+		       <a href="#"
+		       className="tota11y-toolbar-toggle"
+		       onClick={handleToggleClick}>
+		       <div className="tota11y-toolbar-logo">
+			   {$logo}
+		       </div>
+		       </a>
+		       );
 
         $toolbar = (
-            <div className="tota11y tota11y-toolbar">
-                <div className="tota11y-toolbar-body">
-                    {$plugins}
-                </div>
-                {$toggle}
-            </div>
-        );
+		    <div className="tota11y tota11y-toolbar">
+		    <div className="tota11y-toolbar-body">
+			{$plugins}
+		    </div>
+			{$toggle}
+		    </div>
+		    );
 
-        $el.append($toolbar);
+        $el.append($toolbar);      	
     }
 }
 
@@ -111,7 +98,7 @@ $(function() {
     // Attach the global `axs` object from Accessibility Developer Tools to $
     $.axs = axs;
 
-    var bar = new Toolbar();
+    var bar = new Toolbar({});
 
     // TODO: Make this customizable
     bar.appendTo($("body"));

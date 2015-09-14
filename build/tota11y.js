@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2015-07-29
+ * Date: 2015-09-14
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -74,30 +74,37 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	__webpack_require__(/*! ./less/tota11y.less */ 3);
+	__webpack_require__(/*! ./less/tota11y.less */ 5);
 
-	var $ = __webpack_require__(/*! jquery */ 2);
+	var $ = __webpack_require__(/*! jquery */ 4);
 
-	var plugins = __webpack_require__(/*! ./plugins */ 7);
-	var logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ 45);
+	var plugins = __webpack_require__(/*! ./plugins */ 9);
+	var logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ 38);
 
 	// Chrome Accessibility Developer Tools - required once as a global
-	__webpack_require__(/*! script!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 46);
+	__webpack_require__(/*! script!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 39);
 
 	var Toolbar = (function () {
-	    function Toolbar() {
+	    function Toolbar(inputData) {
+	        var _this = this;
+
 	        _classCallCheck(this, Toolbar);
 
 	        this.activePlugin = null;
+	        this.inputData = inputData;
+	        this.plugins = [];
+	        plugins["default"].map(function (plugin) {
+	            _this.plugins.push(new plugin(inputData));
+	        });
 	    }
+
+	    /**
+	     * Manages the state of the toolbar when a plugin is clicked, and toggles
+	     * the appropriate plugins on and off.
+	     */
 
 	    _createClass(Toolbar, [{
 	        key: "handlePluginClick",
-
-	        /**
-	         * Manages the state of the toolbar when a plugin is clicked, and toggles
-	         * the appropriate plugins on and off.
-	         */
 	        value: function handlePluginClick(plugin) {
 	            // If the plugin was already selected, toggle it off
 	            if (plugin === this.activePlugin) {
@@ -114,45 +121,28 @@
 	                this.activePlugin = plugin;
 	            }
 	        }
-	    }, {
-	        key: "appendTo",
 
 	        /**
 	         * Renders the toolbar and appends it to the specified element.
 	         */
+	    }, {
+	        key: "appendTo",
 	        value: function appendTo($el) {
-	            var _this = this;
+	            var _this2 = this;
 
 	            var $logo = $(logoTemplate());
 	            var $toolbar = undefined;
 
-	            var $defaultPlugins = plugins["default"].map(function (Plugin) {
+	            var $defaultPlugins = this.plugins.map(function (Plugin) {
 	                // eslint-disable-line no-unused-vars
-	                // Render each plugin with the bound click handler
-	                return E(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
+	                // Render each plugin with the bound click handler	   
+	                return E(Plugin, { onClick: _this2.handlePluginClick.bind(_this2) });
 	            });
-
-	            var $experimentalPlugins = null;
-	            if (plugins.experimental.length) {
-	                $experimentalPlugins = E(
-	                    "div",
-	                    null,
-	                    E(
-	                        "div",
-	                        { className: "tota11y-plugins-separator" },
-	                        "Experimental"
-	                    ),
-	                    plugins.experimental.map(function (Plugin) {
-	                        return E(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
-	                    })
-	                );
-	            }
 
 	            var $plugins = E(
 	                "div",
 	                { className: "tota11y-plugins" },
-	                $defaultPlugins,
-	                $experimentalPlugins
+	                $defaultPlugins
 	            );
 
 	            var handleToggleClick = function handleToggleClick(e) {
@@ -195,16 +185,17 @@
 	    // Attach the global `axs` object from Accessibility Developer Tools to $
 	    $.axs = axs;
 
-	    var bar = new Toolbar();
+	    var bar = new Toolbar({});
 
 	    // TODO: Make this customizable
 	    bar.appendTo($("body"));
 	});
-	// eslint-disable-line no-unused-vars
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 1)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 3)))
 
 /***/ },
-/* 1 */
+/* 1 */,
+/* 2 */,
+/* 3 */
 /*!********************!*\
   !*** ./element.js ***!
   \********************/
@@ -216,16 +207,14 @@
 	"use strict";
 
 	function buildElement(type, props) {
-	    for (var _len = arguments.length, children = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-	        children[_key - 2] = arguments[_key];
-	    }
+	    var _arguments = arguments;
 
 	    // We need to require jQuery inside of this method because `require()`
 	    // will work different after mocha's magic "before" method runs.
 	    //
 	    // This allows us to use the jQuery instance provided by our jsdom
 	    // instance.
-	    var $ = __webpack_require__(/*! jquery */ 2);
+	    var $ = __webpack_require__(/*! jquery */ 4);
 
 	    // Is our element a TextNode?
 	    if (props === undefined) {
@@ -234,48 +223,55 @@
 
 	        // Is our element a Plugin?
 	    } else if (type.render) {
-	        // Render the plugin with the passed-in click handler
-	        return type.render(props && props.onClick);
+	            // Render the plugin with the passed-in click handler
+	            return type.render(props && props.onClick);
 
-	        // Otherwise, build the element with jQuery
-	    } else {
-	        var _ret = (function () {
-	            var $el = $("<" + type + ">");
+	            // Otherwise, build the element with jQuery
+	        } else {
+	                var _len, children, _key;
 
-	            // Iterate through props
-	            if (props !== null) {
-	                for (var propName in props) {
-	                    // onClick gets turned into a jQuery event handler
-	                    // TODO: Handle props like onHover, onFocus, etc.
-	                    if (propName === "onClick") {
-	                        var handler = props[propName];
-	                        $el.click(handler);
-	                    } else {
-	                        var value = props[propName];
-	                        $el.prop(propName, value);
+	                var _ret = (function () {
+	                    var $el = $("<" + type + ">");
+
+	                    // Iterate through props
+	                    if (props !== null) {
+	                        for (var propName in props) {
+	                            // onClick gets turned into a jQuery event handler
+	                            // TODO: Handle props like onHover, onFocus, etc.
+	                            if (propName === "onClick") {
+	                                var handler = props[propName];
+	                                $el.click(handler);
+	                            } else {
+	                                var value = props[propName];
+	                                $el.prop(propName, value);
+	                            }
+	                        }
 	                    }
-	                }
+
+	                    // Recurse through the children and append each resulting element to
+	                    // the parent
+
+	                    for (_len = _arguments.length, children = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	                        children[_key - 2] = _arguments[_key];
+	                    }
+
+	                    children.forEach(function (child) {
+	                        $el.append(buildElement(child));
+	                    });
+
+	                    return {
+	                        v: $el
+	                    };
+	                })();
+
+	                if (typeof _ret === "object") return _ret.v;
 	            }
-
-	            // Recurse through the children and append each resulting element to
-	            // the parent
-	            children.forEach(function (child) {
-	                $el.append(buildElement(child));
-	            });
-
-	            return {
-	                v: $el
-	            };
-	        })();
-
-	        if (typeof _ret === "object") return _ret.v;
-	    }
 	}
 
 	module.exports = buildElement;
 
 /***/ },
-/* 2 */
+/* 4 */
 /*!*********************************!*\
   !*** ./~/jquery/dist/jquery.js ***!
   \*********************************/
@@ -9494,7 +9490,7 @@
 
 
 /***/ },
-/* 3 */
+/* 5 */
 /*!***************************!*\
   !*** ./less/tota11y.less ***!
   \***************************/
@@ -9503,10 +9499,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../~/css-loader!./../~/postcss-loader!./../~/autoprefixer-loader?{browsers:['> 1%']}!./../~/less-loader!./tota11y.less */ 4);
+	var content = __webpack_require__(/*! !./../~/css-loader!./../~/postcss-loader!./../~/autoprefixer-loader?{browsers:['> 1%']}!./../~/less-loader!./tota11y.less */ 6);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../~/style-loader/addStyles.js */ 6)(content, {});
+	var update = __webpack_require__(/*! ./../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -9520,21 +9516,21 @@
 	}
 
 /***/ },
-/* 4 */
+/* 6 */
 /*!*************************************************************************************************************************!*\
   !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./less/tota11y.less ***!
   \*************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../~/css-loader/lib/css-base.js */ 5)();
+	exports = module.exports = __webpack_require__(/*! ./../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n/**\n * Base styles for tota11y to make sure things look consistent under\n * reasonable circumstances.\n */\n.tota11y,\n.tota11y * {\n  border: none !important;\n  box-sizing: border-box !important;\n  color: #f2f2f2 !important;\n  font-family: Arial !important;\n  font-size: 14px !important;\n  font-style: normal !important;\n  font-weight: 400 !important;\n  line-height: 1.35 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  text-align: left !important;\n  text-shadow: none !important;\n}\n.tota11y * {\n  height: auto !important;\n  width: auto !important;\n}\n.tota11y strong {\n  font-weight: bold !important;\n}\n.tota11y pre,\n.tota11y code {\n  background-color: #dddddd !important;\n  border: none !important;\n  border-radius: 0 !important;\n  color: inherit !important;\n  font-family: monospace !important;\n  font-size: inherit !important;\n  line-height: inherit !important;\n}\n.tota11y pre {\n  padding: 10px !important;\n  margin: 0 0 10px !important;\n  overflow-x: scroll !important;\n}\n.tota11y code {\n  border-radius: 2px !important;\n  display: inline !important;\n  padding: 1px !important;\n}\n.tota11y i,\n.tota11y em {\n  font-style: italic !important;\n}\n.tota11y p {\n  margin: 0 0 10px !important;\n}\n.tota11y a,\n.tota11y a:hover,\n.tota11y a:focus {\n  background-color: inherit !important;\n  color: inherit !important;\n  text-decoration: none !important;\n}\n.tota11y-toolbar {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n  position: fixed !important;\n  top: auto !important;\n  right: auto !important;\n  bottom: 0 !important;\n  left: 10px !important;\n  border-top-left-radius: 5px !important;\n  border-top-right-radius: 5px !important;\n  overflow: hidden !important;\n  z-index: 9998 !important;\n}\n.tota11y-toolbar-toggle {\n  display: block !important;\n  padding: 7px !important;\n}\n.tota11y-toolbar-logo {\n  height: 25px !important;\n  margin: 0 auto !important;\n  text-align: center !important;\n  width: 35px !important;\n}\n.tota11y-toolbar-logo svg {\n  height: 25px !important;\n}\n.tota11y-toolbar-body {\n  display: none !important;\n}\n.tota11y-toolbar.tota11y-expanded .tota11y-toolbar-body {\n  display: block !important;\n}\n.tota11y-plugins-separator {\n  font-size: 12px !important;\n  margin: 7px 15px 0 !important;\n  text-transform: uppercase !important;\n}\n.tota11y-plugin {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-bottom: 1px solid #555555 !important;\n}\n.tota11y-plugin-label {\n  -webkit-box-align: center !important;\n  -webkit-align-items: center !important;\n      -ms-flex-align: center !important;\n          align-items: center !important;\n  display: -webkit-box !important;\n  display: -webkit-flex !important;\n  display: -ms-flexbox !important;\n  display: flex !important;\n  padding: 12px 12px 12px 0 !important;\n  margin: 0 !important;\n}\n.tota11y-plugin-label:hover {\n  cursor: pointer !important;\n}\n.tota11y-plugin-control {\n  margin: 0 15px !important;\n}\n.tota11y-plugin-checkbox {\n  display: none !important;\n}\n.tota11y-plugin-indicator {\n  border-radius: 16px !important;\n  border: 1px solid #999999 !important;\n  color: transparent !important;\n  font-size: 13px !important;\n  height: 16px !important;\n  line-height: 16px !important;\n  padding: 0 0 0 1px !important;\n  width: 16px !important;\n}\n.tota11y-plugin-checkbox:checked + .tota11y-plugin-indicator {\n  background-color: #639b24 !important;\n  border-color: #639b24 !important;\n  color: white !important;\n}\n.tota11y-plugin-title {\n  font-weight: bold !important;\n}\n.tota11y-plugin-description {\n  font-size: 11px !important;\n  font-style: italic !important;\n  width: 200px !important;\n  margin-right: 3px !important;\n}\n", ""]);
 
 /***/ },
-/* 5 */
+/* 7 */
 /*!**************************************!*\
   !*** ./~/css-loader/lib/css-base.js ***!
   \**************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/*
 		MIT License http://www.opensource.org/licenses/mit-license.php
@@ -9590,7 +9586,7 @@
 
 
 /***/ },
-/* 6 */
+/* 8 */
 /*!*************************************!*\
   !*** ./~/style-loader/addStyles.js ***!
   \*************************************/
@@ -9817,7 +9813,7 @@
 
 
 /***/ },
-/* 7 */
+/* 9 */
 /*!**************************!*\
   !*** ./plugins/index.js ***!
   \**************************/
@@ -9826,101 +9822,161 @@
 	/**
 	 * An index of plugins.
 	 *
-	 * Exposes an array of plugin instances.
+	 * Exposes an array of plugins
 	 */
 
 	"use strict";
 
-	var AltTextPlugin = __webpack_require__(/*! ./alt-text */ 33);
-	var ContrastPlugin = __webpack_require__(/*! ./contrast */ 34);
-	var HeadingsPlugin = __webpack_require__(/*! ./headings */ 39);
-	var LabelsPlugin = __webpack_require__(/*! ./labels */ 8);
-	var LandmarksPlugin = __webpack_require__(/*! ./landmarks */ 43);
-	var LinkTextPlugin = __webpack_require__(/*! ./link-text */ 44);
+	var HeadingsPlugin = __webpack_require__(/*! ./headings */ 10);
+	var TitlePlugin = __webpack_require__(/*! ./title */ 34);
 
 	module.exports = {
-	    "default": [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin()],
-
-	    experimental: []
+	  "default": [HeadingsPlugin, TitlePlugin]
 	};
 
 /***/ },
-/* 8 */
-/*!*********************************!*\
-  !*** ./plugins/labels/index.js ***!
-  \*********************************/
+/* 10 */
+/*!***********************************!*\
+  !*** ./plugins/headings/index.js ***!
+  \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * A plugin to identify unlabeled inputs
+	 * A plugin to identify and validate heading tags (<h1>, <h2>, etc.)
 	 */
 
 	"use strict";
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var $ = __webpack_require__(/*! jquery */ 2);
-	var Plugin = __webpack_require__(/*! ../base */ 9);
-	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("labels");
-	var audit = __webpack_require__(/*! ../shared/audit */ 31);
+	var $ = __webpack_require__(/*! jquery */ 4);
+	var Plugin = __webpack_require__(/*! ../base */ 11);
+	var annotate = __webpack_require__(/*! ../shared/annotate */ 13)("headings");
 
-	var errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ 32);
+	var outlineItemTemplate = __webpack_require__(/*! ./outline-item.handlebars */ 31);
+	__webpack_require__(/*! ./style.less */ 32);
 
-	var LabelsPlugin = (function (_Plugin) {
-	    function LabelsPlugin() {
-	        _classCallCheck(this, LabelsPlugin);
+	var ERRORS = {
+	    FIRST_NOT_H1: function FIRST_NOT_H1(level) {
+	        return {
+	            title: "First heading is not an &lt;h1&gt;",
+	            description: "\n                <div>\n                    To give your document a proper structure for assistive\n                    technologies, it is important to lay out your headings\n                    beginning with an <code>&lt;h1&gt;</code>. We found an\n                    <code>&lt;h" + level + "&gt;</code> instead.\n                </div>\n            "
+	        };
+	    },
 
-	        if (_Plugin != null) {
-	            _Plugin.apply(this, arguments);
+	    // This error is currently unused.
+	    //
+	    // The HTML5 outlining algorithm[1] enables the use of "sectioning roots"
+	    // to support multiple <h1> tags when embedded inside of containers like
+	    // <section> or <article>. There are currently "no known implementations
+	    // of the outline algorithm in graphical browsers or assistive technology
+	    // user agents" [2], so we instead simply "use heading rank (h1-h6) to
+	    // convey document structure." [2].
+	    //
+	    // [1]: http://www.w3.org/html/wg/drafts/html/master/semantics.html#outline
+	    // [2]: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Sections_and_Outlines_of_an_HTML5_document#The_HTML5_Outline_Algorithm
+	    MULTIPLE_H1: {
+	        title: "&lt;h1&gt; used when one is already present"
+	    },
+
+	    // This error accepts two arguments to display a relevant error message
+	    NONCONSECUTIVE_HEADER: function NONCONSECUTIVE_HEADER(prevLevel, currLevel) {
+	        var _tag = function _tag(level) {
+	            return "<code>&lt;h" + level + "&gt;</code>";
+	        };
+	        var description = "\n            <div>\n                This document contains an " + _tag(currLevel) + " tag directly\n                following an " + _tag(prevLevel) + ". In order to maintain a consistent\n                outline of the page for assistive technologies, reduce the gap in\n                the heading level by upgrading this tag to an\n                " + _tag(prevLevel + 1);
+
+	        // Suggest upgrading the tag to the same level as `prevLevel` iff
+	        // `prevLevel` is not 1
+	        if (prevLevel !== 1) {
+	            description += " or " + _tag(prevLevel);
 	        }
+
+	        description += ".</div>";
+
+	        return {
+	            title: "\n                Nonconsecutive heading level used (h" + prevLevel + " &rarr;\n                h" + currLevel + ")\n            ",
+	            description: description
+	        };
+	    }
+	};
+
+	var HeadingsPlugin = (function (_Plugin) {
+	    _inherits(HeadingsPlugin, _Plugin);
+
+	    function HeadingsPlugin() {
+	        _classCallCheck(this, HeadingsPlugin);
+
+	        _get(Object.getPrototypeOf(HeadingsPlugin.prototype), "constructor", this).apply(this, arguments);
 	    }
 
-	    _inherits(LabelsPlugin, _Plugin);
-
-	    _createClass(LabelsPlugin, [{
+	    _createClass(HeadingsPlugin, [{
 	        key: "getTitle",
 	        value: function getTitle() {
-	            return "Labels";
+	            this.analyze();
+	            return "Headings";
 	        }
 	    }, {
 	        key: "getDescription",
 	        value: function getDescription() {
-	            return "Identifies inputs with missing labels";
-	        }
-	    }, {
-	        key: "errorMessage",
-	        value: function errorMessage($el) {
-	            return errorTemplate({
-	                placeholder: $el.attr("placeholder"),
-	                id: $el.attr("id"),
-	                tagName: $el.prop("tagName").toLowerCase()
-	            });
+	            return "Highlights headings (<h1>, <h2>, etc) and order violations";
 	        }
 	    }, {
 	        key: "run",
 	        value: function run() {
 	            var _this = this;
 
-	            var _audit = audit("controlsWithoutLabel");
+	            this.errors.map(function (error) {
+	                // Register an error to the info panel
+	                var infoPanelError = _this.error(error.title, $(error.description), error.el);
+	                // Place an error label on the heading tag
+	                annotate.errorLabel(error.el, error.text, error.title, error.description);
+	            });
+	        }
 
-	            var result = _audit.result;
-	            var elements = _audit.elements;
+	        // Produce a list of errors for plugin
+	    }, {
+	        key: "analyze",
+	        value: function analyze() {
+	            var $headings = $("h1, h2, h3, h4, h5, h6");
+	            var errors = [];
 
-	            if (result === "FAIL") {
-	                elements.forEach(function (element) {
-	                    var $el = $(element);
-	                    var title = "Input is missing a label";
+	            var prevLevel = undefined;
+	            $headings.each(function (i, el) {
+	                var $el = $(el);
+	                var error_dict = {};
 
-	                    // Place an error label on the element and register it as an
-	                    // error in the info panel
-	                    var entry = _this.error(title, $(_this.errorMessage($el)), $el);
-	                    annotate.errorLabel($el, "", title, entry);
-	                });
-	            }
+	                var level = +$el.prop("tagName").slice(1);
+	                var error = undefined;
+
+	                // Check for any violations
+	                // NOTE: These violations do not overlap, but as we add more, we
+	                // may want to separate the conditionals here to report multiple
+	                // errors on the same tag.
+	                if (i === 0 && level !== 1) {
+	                    error = ERRORS.FIRST_NOT_H1(level); // eslint-disable-line new-cap
+	                } else if (prevLevel && level - prevLevel > 1) {
+	                        error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level); // eslint-disable-line new-cap
+	                    }
+
+	                prevLevel = level;
+	                if (error) {
+	                    error_dict = {
+	                        el: $el,
+	                        text: $el.prop("tagName").toLowerCase(),
+	                        title: error.title,
+	                        description: $(error.description)
+	                    };
+	                    errors.push(error_dict);
+	                }
+	            });
+	            return errors;
 	        }
 	    }, {
 	        key: "cleanup",
@@ -9929,13 +9985,13 @@
 	        }
 	    }]);
 
-	    return LabelsPlugin;
+	    return HeadingsPlugin;
 	})(Plugin);
 
-	module.exports = LabelsPlugin;
+	module.exports = HeadingsPlugin;
 
 /***/ },
-/* 9 */
+/* 11 */
 /*!*************************!*\
   !*** ./plugins/base.js ***!
   \*************************/
@@ -9958,16 +10014,19 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var $ = __webpack_require__(/*! jquery */ 2);
-	var InfoPanel = __webpack_require__(/*! ./shared/info-panel */ 10);
+	var $ = __webpack_require__(/*! jquery */ 4);
+	var InfoPanel = __webpack_require__(/*! ./shared/info-panel */ 12);
 	var template = __webpack_require__(/*! ../templates/plugin.handlebars */ 30);
 
 	var Plugin = (function () {
-	    function Plugin() {
+	    function Plugin(inputData) {
 	        _classCallCheck(this, Plugin);
 
 	        this.panel = new InfoPanel(this.getTitle());
 	        this.$checkbox = null;
+	        this.input = null;
+	        this.inputData = inputData;
+	        this.errors = this.analyze();
 	    }
 
 	    _createClass(Plugin, [{
@@ -9981,7 +10040,10 @@
 	            return "";
 	        }
 	    }, {
-	        key: "summary",
+	        key: "addInput",
+	        value: function addInput(input) {
+	            this.input = input;
+	        }
 
 	        /**
 	         * Methods that communicate directly with the info panel
@@ -9989,29 +10051,31 @@
 	         */
 
 	        // Populates the info panel's "Summary" tab
+	    }, {
+	        key: "summary",
 	        value: function summary($html) {
 	            return this.panel.setSummary($html);
 	        }
-	    }, {
-	        key: "about",
 
 	        // Populates the info panel's "About" tab
+	    }, {
+	        key: "about",
 	        value: function about($html) {
 	            return this.panel.setAbout($html);
 	        }
-	    }, {
-	        key: "error",
 
 	        // Adds an entry to the info panel's "Errors" tab
+	    }, {
+	        key: "error",
 	        value: function error(title, $description, $el) {
 	            return this.panel.addError(title, $description, $el);
 	        }
-	    }, {
-	        key: "render",
 
 	        /**
 	         * Renders the plugin view.
 	         */
+	    }, {
+	        key: "render",
 	        value: function render(clickHandler) {
 	            var _this = this;
 
@@ -10030,22 +10094,22 @@
 
 	            return $plugin;
 	        }
-	    }, {
-	        key: "activate",
 
 	        /**
 	         * Activate the plugin from the UI.
 	         */
+	    }, {
+	        key: "activate",
 	        value: function activate() {
 	            this.run();
 	            this.panel.render();
 	        }
-	    }, {
-	        key: "deactivate",
 
 	        /**
 	         * Deactivate the plugin from the UI.
 	         */
+	    }, {
+	        key: "deactivate",
 	        value: function deactivate() {
 	            this.cleanup();
 	            this.panel.destroy();
@@ -10063,7 +10127,7 @@
 	module.exports = Plugin;
 
 /***/ },
-/* 10 */
+/* 12 */
 /*!********************************************!*\
   !*** ./plugins/shared/info-panel/index.js ***!
   \********************************************/
@@ -10091,13 +10155,13 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var $ = __webpack_require__(/*! jquery */ 2);
-	var annotate = __webpack_require__(/*! ../annotate */ 20)("info-panel");
+	var $ = __webpack_require__(/*! jquery */ 4);
+	var annotate = __webpack_require__(/*! ../annotate */ 13)("info-panel");
 
-	var template = __webpack_require__(/*! ./template.handlebars */ 24);
-	var errorTemplate = __webpack_require__(/*! ./error.handlebars */ 11);
-	var tabTemplate = __webpack_require__(/*! ./tab.handlebars */ 25);
-	__webpack_require__(/*! ./style.less */ 26);
+	var template = __webpack_require__(/*! ./template.handlebars */ 25);
+	var errorTemplate = __webpack_require__(/*! ./error.handlebars */ 26);
+	var tabTemplate = __webpack_require__(/*! ./tab.handlebars */ 27);
+	__webpack_require__(/*! ./style.less */ 28);
 
 	var INITIAL_PANEL_MARGIN_PX = 10;
 	var COLLAPSED_CLASS_NAME = "tota11y-collapsed";
@@ -10115,40 +10179,40 @@
 	        this.$el = null;
 	    }
 
+	    /**
+	     * Sets the title of the info panel
+	     */
+
 	    _createClass(InfoPanel, [{
 	        key: "setTitle",
-
-	        /**
-	         * Sets the title of the info panel
-	         */
 	        value: function setTitle(title) {
 	            this.title = title;
 	        }
-	    }, {
-	        key: "setAbout",
 
 	        /**
 	         * Sets the contents of the about section as HTML
 	         */
+	    }, {
+	        key: "setAbout",
 	        value: function setAbout(about) {
 	            this.about = about;
 	        }
-	    }, {
-	        key: "setSummary",
 
 	        /**
 	         * Sets the contents of the summary section as HTML
 	         */
+	    }, {
+	        key: "setSummary",
 	        value: function setSummary(summary) {
 	            this.summary = summary;
 	        }
-	    }, {
-	        key: "addError",
 
 	        /**
 	         * Adds an error to the errors tab. Also receives a jQuery element to
 	         * highlight on hover.
 	         */
+	    }, {
+	        key: "addError",
 	        value: function addError(title, $description, $el) {
 	            var error = { title: title, $description: $description, $el: $el };
 	            this.errors.push(error);
@@ -10187,13 +10251,13 @@
 
 	            return $tab;
 	        }
-	    }, {
-	        key: "initAndPosition",
 
 	        /**
 	         * Positions the info panel and sets up event listeners to make the
 	         * panel draggable
 	         */
+	    }, {
+	        key: "initAndPosition",
 	        value: function initAndPosition() {
 	            var _this2 = this;
 
@@ -10288,13 +10352,11 @@
 	                $activeTab = this._addTab("Summary", this.summary);
 	            }
 
-	            // Wire annotation toggling.
+	            // Wire annotation toggling
 	            this.$el.find(".toggle-annotation").click(function (e) {
 	                if ($(e.target).prop("checked")) {
-	                    // Showing annotations.
 	                    annotate.show();
 	                } else {
-	                    // Hiding annotations.
 	                    annotate.hide();
 	                }
 	            });
@@ -10423,23 +10485,222 @@
 	module.exports = InfoPanel;
 
 /***/ },
-/* 11 */
-/*!****************************************************!*\
-  !*** ./plugins/shared/info-panel/error.handlebars ***!
-  \****************************************************/
+/* 13 */
+/*!******************************************!*\
+  !*** ./plugins/shared/annotate/index.js ***!
+  \******************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
-	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	    var stack1, helper;
+	/**
+	 * Utility functions to annotate particular site elements.
+	 *
+	 * Annotations are namespaced, meaning you would normally include this
+	 * package like so:
+	 *
+	 *     let annotate = require("./annotate")("headers");
+	 *
+	 * This allows plugins to easily maintain their annotations, rather than
+	 * keeping track of an extra class name elsewhere.
+	 */
 
-	  return "<li class=\"tota11y-info-error\">\n    <a href=\"#\" class=\"tota11y-info-error-scroll\">\n        <div class=\"tota11y-info-error-scroll-glyph tota11y-info-error-scroll-lens\"></div>\n        <div class=\"tota11y-info-error-scroll-glyph tota11y-info-error-scroll-handle\"></div>\n    </a>\n    <a href=\"#\" class=\"tota11y-info-error-trigger tota11y-collapsed\">\n        <div class=\"tota11y-info-error-title\">\n            <span class=\"tota11y-info-error-chevron\">\n                &#8250;\n            </span>\n            "
-	    + ((stack1 = ((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-	    + "\n        </div>\n    </a>\n    <div class=\"tota11y-info-error-description tota11y-collapsed\"></div>\n</li>\n";
+	"use strict";
+
+	var $ = __webpack_require__(/*! jquery */ 4);
+
+	var errorLabelTemplate = __webpack_require__(/*! ./error-label.handlebars */ 14);
+	__webpack_require__(/*! ./style.less */ 23);
+
+	// For very small (or zero-area) elements, highlights are not very useful.
+	// This constant declares highlights to be at least `MIN_HIGHLIGHT_SIZE` tall
+	// and across.
+	var MIN_HIGHLIGHT_SIZE = 25;
+
+	module.exports = function (namespace) {
+	    // The class that will be applied to any annotation generated in this
+	    // namespace
+	    var ANNOTATION_CLASS = "tota11y-annotation-" + namespace;
+
+	    // A queue of {$annotation, $parent}'s that is populated by
+	    // `createAnnotation` and emptied by the `render()` method.
+	    //
+	    // Annotations are queued to reduce reflows.
+	    var queue = [];
+
+	    // Register a new annotation to a given jQuery element
+	    var createAnnotation = function createAnnotation($el, className) {
+	        // Create a position an annotation relative to its offset parent.
+	        // We also store the element its annotation so we can reposition when
+	        // the window resizes.
+	        var $annotation = $("<div>").addClass("tota11y") // tota11y base class for styling
+	        .addClass(ANNOTATION_CLASS).addClass(className).css($el.position()).data({ $el: $el });
+
+	        // TODO: We can invoke a requestAnimationFrame(render) here to limit
+	        // the amount of times we run that timer
+
+	        // Append an object to the queue. We'll add the annotation to the DOM
+	        // later to reduce reflows.
+	        queue.push({
+	            $annotation: $annotation,
+	            $parent: $el.offsetParent()
+	        });
+
+	        return $annotation;
+	    };
+
+	    // To maintain a high framerate, we'll only render `RENDER_CHUNK_SIZE`
+	    // annotations per frame.
+	    //
+	    // NOTE: A value of "20" consistently hits 60fps on facebook.com
+	    var RENDER_CHUNK_SIZE = 20;
+
+	    // Mount all annotations to the DOM in sequence. This is done by
+	    // picking items off the queue, where each item consists of the
+	    // annotation and the node to which we'll append it.
+	    function render() {
+	        for (var i = 0; queue.length > 0 && i < RENDER_CHUNK_SIZE; i++) {
+	            var item = queue.shift();
+	            item.$parent.append(item.$annotation);
+	        }
+
+	        window.requestAnimationFrame(render);
+	    }
+	    window.requestAnimationFrame(render);
+
+	    // Handle resizes by repositioning all annotations in bulk
+	    $(window).resize(function () {
+	        var $annotations = $("." + ANNOTATION_CLASS);
+
+	        // Record the position of each annotation's corresponding element to
+	        // batch measurements
+	        var positions = $annotations.map(function (i, el) {
+	            return $(el).data("$el").position();
+	        });
+
+	        // Reposition each annotation (batching invalidations)
+	        $annotations.each(function (i, el) {
+	            $(el).css({
+	                top: positions[i].top,
+	                left: positions[i].left
+	            });
+	        });
+	    });
+
+	    return {
+	        // Places a small label in the top left corner of a given jQuery
+	        // element. By default, this label contains the element's tagName.
+	        label: function label($el) {
+	            var text = arguments.length <= 1 || arguments[1] === undefined ? $el.prop("tagName").toLowerCase() : arguments[1];
+	            return (function () {
+	                var $label = createAnnotation($el, "tota11y-label");
+	                return $label.html(text);
+	            })();
+	        },
+
+	        // Places a special label on an element that, when hovered, displays
+	        // an expanded error message.
+	        //
+	        // This method also accepts an optional `errorEntry`, which
+	        // corresponds to the object returned from `InfoPanel.addError`. This
+	        // object will contain a "show()" method when the info panel is
+	        // rendered, allowing us to externally open the entry in the info
+	        // panel corresponding to this error.
+	        errorLabel: function errorLabel($el, text, expanded, errorEntry) {
+	            var $innerHtml = $(errorLabelTemplate({
+	                text: text,
+	                detail: expanded,
+	                hasErrorEntry: !!errorEntry
+	            }));
+
+	            if (errorEntry) {
+	                $innerHtml.find(".tota11y-label-link").click(function (e) {
+	                    e.preventDefault();
+	                    e.stopPropagation();
+	                    errorEntry.show();
+	                });
+
+	                $innerHtml.hover(function () {
+	                    errorEntry.$trigger.addClass("trigger-highlight");
+	                }, function () {
+	                    errorEntry.$trigger.removeClass("trigger-highlight");
+	                });
+	            }
+
+	            return this.label($el).addClass("tota11y-label-error").html($innerHtml);
+	        },
+
+	        // Highlights a given jQuery element by placing a translucent
+	        // rectangle directly over it
+	        highlight: function highlight($el) {
+	            var $highlight = createAnnotation($el, "tota11y-highlight");
+	            return $highlight.css({
+	                // include margins
+	                width: Math.max(MIN_HIGHLIGHT_SIZE, $el.outerWidth(true)),
+	                height: Math.max(MIN_HIGHLIGHT_SIZE, $el.outerHeight(true))
+	            });
+	        },
+
+	        // Toggles a highlight on a given jQuery element `$el` when `$trigger`
+	        // is hovered (mouseenter/mouseleave) or focused (focus/blur)
+	        toggleHighlight: function toggleHighlight($el, $trigger) {
+	            var _this = this;
+
+	            var $highlight = undefined;
+
+	            $trigger.on("mouseenter focus", function () {
+	                if ($highlight) {
+	                    $highlight.remove();
+	                }
+
+	                $highlight = _this.highlight($el);
+	            });
+
+	            $trigger.on("mouseleave blur", function () {
+	                if ($highlight) {
+	                    $highlight.remove();
+	                    $highlight = null;
+	                }
+	            });
+	        },
+
+	        hide: function hide() {
+	            $(".tota11y.tota11y-label").hide();
+	        },
+
+	        show: function show() {
+	            $(".tota11y.tota11y-label").show();
+	        },
+
+	        removeAll: function removeAll() {
+	            // Remove all annotations
+	            $("." + ANNOTATION_CLASS).remove();
+	        }
+	    };
+	};
+
+/***/ },
+/* 14 */
+/*!********************************************************!*\
+  !*** ./plugins/shared/annotate/error-label.handlebars ***!
+  \********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(depth0,helpers,partials,data) {
+	    return "        <div class=\"tota11y-label-help\">\n            (<a class=\"tota11y-label-link\" href=\"#\">?</a>)\n        </div>\n";
+	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=helpers.helperMissing, alias2="function";
+
+	  return "<span class=\"tota11y-label-error-icon\">\n    <!--\n        \"Warning\" icon by Lorena Salagre\n        https://thenounproject.com/lorens/\n\n        Licensed under Creative Commons by 3.0 US\n        http://creativecommons.org/licenses/by/3.0/us/legalcode\n    -->\n    <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Capa_1\" x=\"0px\" y=\"0px\" width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n        <path d=\"M80.515,90.781H19.485c-6.145,0-10.779-2.168-13.052-6.103c-2.273-3.938-1.832-9.036,1.24-14.356l30.515-52.851  c3.07-5.321,7.266-8.251,11.811-8.251s8.741,2.93,11.811,8.251l30.515,52.851c3.072,5.32,3.513,10.418,1.24,14.356  C91.293,88.613,86.659,90.781,80.515,90.781z M50,12.384c-3.367,0-6.59,2.369-9.071,6.669L10.415,71.904  c-2.483,4.3-2.924,8.275-1.24,11.191c1.683,2.916,5.345,4.521,10.311,4.521h61.029c4.966,0,8.628-1.605,10.311-4.521  c1.683-2.916,1.243-6.89-1.24-11.191L59.071,19.053C56.59,14.753,53.367,12.384,50,12.384z M56.227,72.18  c0-3.172-2.572-5.744-5.744-5.744s-5.744,2.572-5.744,5.744c0,3.172,2.572,5.744,5.744,5.744S56.227,75.352,56.227,72.18z   M56.382,37.613c0-3.257-2.641-5.898-5.898-5.898c-3.257,0-5.898,2.641-5.898,5.898l1.393,20.932h0.019  c0.202,2.312,2.121,4.132,4.486,4.132c2.187,0,4.012-1.551,4.434-3.613c0.034-0.167,0.037-0.345,0.052-0.518h0.04L56.382,37.613z\"/>\n    </svg>\n</span>\n\n<span class=\"tota11y-label-content\">\n    <div class=\"tota11y-label-text\">"
+	    + ((stack1 = ((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"text","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+	    + "</div>\n"
+	    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.hasErrorEntry : depth0),{"name":"if","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+	    + "    <div class=\"tota11y-label-detail\">"
+	    + ((stack1 = ((helper = (helper = helpers.detail || (depth0 != null ? depth0.detail : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"detail","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+	    + "</div>\n</span>\n";
 	},"useData":true});
 
 /***/ },
-/* 12 */
+/* 15 */
 /*!*********************************!*\
   !*** ./~/handlebars/runtime.js ***!
   \*********************************/
@@ -10447,11 +10708,11 @@
 
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(/*! ./dist/cjs/handlebars.runtime */ 13)['default'];
+	module.exports = __webpack_require__(/*! ./dist/cjs/handlebars.runtime */ 16)['default'];
 
 
 /***/ },
-/* 13 */
+/* 16 */
 /*!*****************************************************!*\
   !*** ./~/handlebars/dist/cjs/handlebars.runtime.js ***!
   \*****************************************************/
@@ -10463,30 +10724,30 @@
 
 	exports.__esModule = true;
 
-	var _import = __webpack_require__(/*! ./handlebars/base */ 15);
+	var _import = __webpack_require__(/*! ./handlebars/base */ 17);
 
 	var base = _interopRequireWildcard(_import);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
 
-	var _SafeString = __webpack_require__(/*! ./handlebars/safe-string */ 17);
+	var _SafeString = __webpack_require__(/*! ./handlebars/safe-string */ 20);
 
 	var _SafeString2 = _interopRequireWildcard(_SafeString);
 
-	var _Exception = __webpack_require__(/*! ./handlebars/exception */ 16);
+	var _Exception = __webpack_require__(/*! ./handlebars/exception */ 19);
 
 	var _Exception2 = _interopRequireWildcard(_Exception);
 
-	var _import2 = __webpack_require__(/*! ./handlebars/utils */ 14);
+	var _import2 = __webpack_require__(/*! ./handlebars/utils */ 18);
 
 	var Utils = _interopRequireWildcard(_import2);
 
-	var _import3 = __webpack_require__(/*! ./handlebars/runtime */ 18);
+	var _import3 = __webpack_require__(/*! ./handlebars/runtime */ 21);
 
 	var runtime = _interopRequireWildcard(_import3);
 
-	var _noConflict = __webpack_require__(/*! ./handlebars/no-conflict */ 19);
+	var _noConflict = __webpack_require__(/*! ./handlebars/no-conflict */ 22);
 
 	var _noConflict2 = _interopRequireWildcard(_noConflict);
 
@@ -10519,129 +10780,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 14 */
-/*!***************************************************!*\
-  !*** ./~/handlebars/dist/cjs/handlebars/utils.js ***!
-  \***************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-	exports.extend = extend;
-
-	// Older IE versions do not directly support indexOf so we must implement our own, sadly.
-	exports.indexOf = indexOf;
-	exports.escapeExpression = escapeExpression;
-	exports.isEmpty = isEmpty;
-	exports.blockParams = blockParams;
-	exports.appendContextPath = appendContextPath;
-	var escape = {
-	  '&': '&amp;',
-	  '<': '&lt;',
-	  '>': '&gt;',
-	  '"': '&quot;',
-	  '\'': '&#x27;',
-	  '`': '&#x60;'
-	};
-
-	var badChars = /[&<>"'`]/g,
-	    possible = /[&<>"'`]/;
-
-	function escapeChar(chr) {
-	  return escape[chr];
-	}
-
-	function extend(obj /* , ...source */) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    for (var key in arguments[i]) {
-	      if (Object.prototype.hasOwnProperty.call(arguments[i], key)) {
-	        obj[key] = arguments[i][key];
-	      }
-	    }
-	  }
-
-	  return obj;
-	}
-
-	var toString = Object.prototype.toString;
-
-	exports.toString = toString;
-	// Sourced from lodash
-	// https://github.com/bestiejs/lodash/blob/master/LICENSE.txt
-	/*eslint-disable func-style, no-var */
-	var isFunction = function isFunction(value) {
-	  return typeof value === 'function';
-	};
-	// fallback for older versions of Chrome and Safari
-	/* istanbul ignore next */
-	if (isFunction(/x/)) {
-	  exports.isFunction = isFunction = function (value) {
-	    return typeof value === 'function' && toString.call(value) === '[object Function]';
-	  };
-	}
-	var isFunction;
-	exports.isFunction = isFunction;
-	/*eslint-enable func-style, no-var */
-
-	/* istanbul ignore next */
-	var isArray = Array.isArray || function (value) {
-	  return value && typeof value === 'object' ? toString.call(value) === '[object Array]' : false;
-	};exports.isArray = isArray;
-
-	function indexOf(array, value) {
-	  for (var i = 0, len = array.length; i < len; i++) {
-	    if (array[i] === value) {
-	      return i;
-	    }
-	  }
-	  return -1;
-	}
-
-	function escapeExpression(string) {
-	  if (typeof string !== 'string') {
-	    // don't escape SafeStrings, since they're already safe
-	    if (string && string.toHTML) {
-	      return string.toHTML();
-	    } else if (string == null) {
-	      return '';
-	    } else if (!string) {
-	      return string + '';
-	    }
-
-	    // Force a string conversion as this will be done by the append regardless and
-	    // the regex test will do this transparently behind the scenes, causing issues if
-	    // an object's to string has escaped characters in it.
-	    string = '' + string;
-	  }
-
-	  if (!possible.test(string)) {
-	    return string;
-	  }
-	  return string.replace(badChars, escapeChar);
-	}
-
-	function isEmpty(value) {
-	  if (!value && value !== 0) {
-	    return true;
-	  } else if (isArray(value) && value.length === 0) {
-	    return true;
-	  } else {
-	    return false;
-	  }
-	}
-
-	function blockParams(params, ids) {
-	  params.path = ids;
-	  return params;
-	}
-
-	function appendContextPath(contextPath, id) {
-	  return (contextPath ? contextPath + '.' : '') + id;
-	}
-
-/***/ },
-/* 15 */
+/* 17 */
 /*!**************************************************!*\
   !*** ./~/handlebars/dist/cjs/handlebars/base.js ***!
   \**************************************************/
@@ -10655,11 +10794,11 @@
 	exports.HandlebarsEnvironment = HandlebarsEnvironment;
 	exports.createFrame = createFrame;
 
-	var _import = __webpack_require__(/*! ./utils */ 14);
+	var _import = __webpack_require__(/*! ./utils */ 18);
 
 	var Utils = _interopRequireWildcard(_import);
 
-	var _Exception = __webpack_require__(/*! ./exception */ 16);
+	var _Exception = __webpack_require__(/*! ./exception */ 19);
 
 	var _Exception2 = _interopRequireWildcard(_Exception);
 
@@ -10922,11 +11061,133 @@
 	/* [args, ]options */
 
 /***/ },
-/* 16 */
+/* 18 */
+/*!***************************************************!*\
+  !*** ./~/handlebars/dist/cjs/handlebars/utils.js ***!
+  \***************************************************/
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports.extend = extend;
+
+	// Older IE versions do not directly support indexOf so we must implement our own, sadly.
+	exports.indexOf = indexOf;
+	exports.escapeExpression = escapeExpression;
+	exports.isEmpty = isEmpty;
+	exports.blockParams = blockParams;
+	exports.appendContextPath = appendContextPath;
+	var escape = {
+	  '&': '&amp;',
+	  '<': '&lt;',
+	  '>': '&gt;',
+	  '"': '&quot;',
+	  '\'': '&#x27;',
+	  '`': '&#x60;'
+	};
+
+	var badChars = /[&<>"'`]/g,
+	    possible = /[&<>"'`]/;
+
+	function escapeChar(chr) {
+	  return escape[chr];
+	}
+
+	function extend(obj /* , ...source */) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    for (var key in arguments[i]) {
+	      if (Object.prototype.hasOwnProperty.call(arguments[i], key)) {
+	        obj[key] = arguments[i][key];
+	      }
+	    }
+	  }
+
+	  return obj;
+	}
+
+	var toString = Object.prototype.toString;
+
+	exports.toString = toString;
+	// Sourced from lodash
+	// https://github.com/bestiejs/lodash/blob/master/LICENSE.txt
+	/*eslint-disable func-style, no-var */
+	var isFunction = function isFunction(value) {
+	  return typeof value === 'function';
+	};
+	// fallback for older versions of Chrome and Safari
+	/* istanbul ignore next */
+	if (isFunction(/x/)) {
+	  exports.isFunction = isFunction = function (value) {
+	    return typeof value === 'function' && toString.call(value) === '[object Function]';
+	  };
+	}
+	var isFunction;
+	exports.isFunction = isFunction;
+	/*eslint-enable func-style, no-var */
+
+	/* istanbul ignore next */
+	var isArray = Array.isArray || function (value) {
+	  return value && typeof value === 'object' ? toString.call(value) === '[object Array]' : false;
+	};exports.isArray = isArray;
+
+	function indexOf(array, value) {
+	  for (var i = 0, len = array.length; i < len; i++) {
+	    if (array[i] === value) {
+	      return i;
+	    }
+	  }
+	  return -1;
+	}
+
+	function escapeExpression(string) {
+	  if (typeof string !== 'string') {
+	    // don't escape SafeStrings, since they're already safe
+	    if (string && string.toHTML) {
+	      return string.toHTML();
+	    } else if (string == null) {
+	      return '';
+	    } else if (!string) {
+	      return string + '';
+	    }
+
+	    // Force a string conversion as this will be done by the append regardless and
+	    // the regex test will do this transparently behind the scenes, causing issues if
+	    // an object's to string has escaped characters in it.
+	    string = '' + string;
+	  }
+
+	  if (!possible.test(string)) {
+	    return string;
+	  }
+	  return string.replace(badChars, escapeChar);
+	}
+
+	function isEmpty(value) {
+	  if (!value && value !== 0) {
+	    return true;
+	  } else if (isArray(value) && value.length === 0) {
+	    return true;
+	  } else {
+	    return false;
+	  }
+	}
+
+	function blockParams(params, ids) {
+	  params.path = ids;
+	  return params;
+	}
+
+	function appendContextPath(contextPath, id) {
+	  return (contextPath ? contextPath + '.' : '') + id;
+	}
+
+/***/ },
+/* 19 */
 /*!*******************************************************!*\
   !*** ./~/handlebars/dist/cjs/handlebars/exception.js ***!
   \*******************************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 
@@ -10968,11 +11229,11 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 17 */
+/* 20 */
 /*!*********************************************************!*\
   !*** ./~/handlebars/dist/cjs/handlebars/safe-string.js ***!
   \*********************************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 
@@ -10990,7 +11251,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 18 */
+/* 21 */
 /*!*****************************************************!*\
   !*** ./~/handlebars/dist/cjs/handlebars/runtime.js ***!
   \*****************************************************/
@@ -11011,15 +11272,15 @@
 	exports.invokePartial = invokePartial;
 	exports.noop = noop;
 
-	var _import = __webpack_require__(/*! ./utils */ 14);
+	var _import = __webpack_require__(/*! ./utils */ 18);
 
 	var Utils = _interopRequireWildcard(_import);
 
-	var _Exception = __webpack_require__(/*! ./exception */ 16);
+	var _Exception = __webpack_require__(/*! ./exception */ 19);
 
 	var _Exception2 = _interopRequireWildcard(_Exception);
 
-	var _COMPILER_REVISION$REVISION_CHANGES$createFrame = __webpack_require__(/*! ./base */ 15);
+	var _COMPILER_REVISION$REVISION_CHANGES$createFrame = __webpack_require__(/*! ./base */ 17);
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,
@@ -11230,11 +11491,11 @@
 	}
 
 /***/ },
-/* 19 */
+/* 22 */
 /*!*********************************************************!*\
   !*** ./~/handlebars/dist/cjs/handlebars/no-conflict.js ***!
   \*********************************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
@@ -11257,222 +11518,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 20 */
-/*!******************************************!*\
-  !*** ./plugins/shared/annotate/index.js ***!
-  \******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Utility functions to annotate particular site elements.
-	 *
-	 * Annotations are namespaced, meaning you would normally include this
-	 * package like so:
-	 *
-	 *     let annotate = require("./annotate")("headers");
-	 *
-	 * This allows plugins to easily maintain their annotations, rather than
-	 * keeping track of an extra class name elsewhere.
-	 */
-
-	"use strict";
-
-	var $ = __webpack_require__(/*! jquery */ 2);
-
-	var errorLabelTemplate = __webpack_require__(/*! ./error-label.handlebars */ 21);
-	__webpack_require__(/*! ./style.less */ 22);
-
-	// For very small (or zero-area) elements, highlights are not very useful.
-	// This constant declares highlights to be at least `MIN_HIGHLIGHT_SIZE` tall
-	// and across.
-	var MIN_HIGHLIGHT_SIZE = 25;
-
-	module.exports = function (namespace) {
-	    // The class that will be applied to any annotation generated in this
-	    // namespace
-	    var ANNOTATION_CLASS = "tota11y-annotation-" + namespace;
-
-	    // A queue of {$annotation, $parent}'s that is populated by
-	    // `createAnnotation` and emptied by the `render()` method.
-	    //
-	    // Annotations are queued to reduce reflows.
-	    var queue = [];
-
-	    // Register a new annotation to a given jQuery element
-	    var createAnnotation = function createAnnotation($el, className) {
-	        // Create a position an annotation relative to its offset parent.
-	        // We also store the element its annotation so we can reposition when
-	        // the window resizes.
-	        var $annotation = $("<div>").addClass("tota11y") // tota11y base class for styling
-	        .addClass(ANNOTATION_CLASS).addClass(className).css($el.position()).data({ $el: $el });
-
-	        // TODO: We can invoke a requestAnimationFrame(render) here to limit
-	        // the amount of times we run that timer
-
-	        // Append an object to the queue. We'll add the annotation to the DOM
-	        // later to reduce reflows.
-	        queue.push({
-	            $annotation: $annotation,
-	            $parent: $el.offsetParent()
-	        });
-
-	        return $annotation;
-	    };
-
-	    // To maintain a high framerate, we'll only render `RENDER_CHUNK_SIZE`
-	    // annotations per frame.
-	    //
-	    // NOTE: A value of "20" consistently hits 60fps on facebook.com
-	    var RENDER_CHUNK_SIZE = 20;
-
-	    // Mount all annotations to the DOM in sequence. This is done by
-	    // picking items off the queue, where each item consists of the
-	    // annotation and the node to which we'll append it.
-	    function render() {
-	        for (var i = 0; queue.length > 0 && i < RENDER_CHUNK_SIZE; i++) {
-	            var item = queue.shift();
-	            item.$parent.append(item.$annotation);
-	        }
-
-	        window.requestAnimationFrame(render);
-	    }
-	    window.requestAnimationFrame(render);
-
-	    // Handle resizes by repositioning all annotations in bulk
-	    $(window).resize(function () {
-	        var $annotations = $("." + ANNOTATION_CLASS);
-
-	        // Record the position of each annotation's corresponding element to
-	        // batch measurements
-	        var positions = $annotations.map(function (i, el) {
-	            return $(el).data("$el").position();
-	        });
-
-	        // Reposition each annotation (batching invalidations)
-	        $annotations.each(function (i, el) {
-	            $(el).css({
-	                top: positions[i].top,
-	                left: positions[i].left
-	            });
-	        });
-	    });
-
-	    return {
-	        // Places a small label in the top left corner of a given jQuery
-	        // element. By default, this label contains the element's tagName.
-	        label: function label($el) {
-	            var text = arguments[1] === undefined ? $el.prop("tagName").toLowerCase() : arguments[1];
-	            return (function () {
-	                var $label = createAnnotation($el, "tota11y-label");
-	                return $label.html(text);
-	            })();
-	        },
-
-	        // Places a special label on an element that, when hovered, displays
-	        // an expanded error message.
-	        //
-	        // This method also accepts an optional `errorEntry`, which
-	        // corresponds to the object returned from `InfoPanel.addError`. This
-	        // object will contain a "show()" method when the info panel is
-	        // rendered, allowing us to externally open the entry in the info
-	        // panel corresponding to this error.
-	        errorLabel: function errorLabel($el, text, expanded, errorEntry) {
-	            var $innerHtml = $(errorLabelTemplate({
-	                text: text,
-	                detail: expanded,
-	                hasErrorEntry: !!errorEntry
-	            }));
-
-	            if (errorEntry) {
-	                $innerHtml.find(".tota11y-label-link").click(function (e) {
-	                    e.preventDefault();
-	                    e.stopPropagation();
-	                    errorEntry.show();
-	                });
-
-	                $innerHtml.hover(function () {
-	                    errorEntry.$trigger.addClass("trigger-highlight");
-	                }, function () {
-	                    errorEntry.$trigger.removeClass("trigger-highlight");
-	                });
-	            }
-
-	            return this.label($el).addClass("tota11y-label-error").html($innerHtml);
-	        },
-
-	        // Highlights a given jQuery element by placing a translucent
-	        // rectangle directly over it
-	        highlight: function highlight($el) {
-	            var $highlight = createAnnotation($el, "tota11y-highlight");
-	            return $highlight.css({
-	                // include margins
-	                width: Math.max(MIN_HIGHLIGHT_SIZE, $el.outerWidth(true)),
-	                height: Math.max(MIN_HIGHLIGHT_SIZE, $el.outerHeight(true))
-	            });
-	        },
-
-	        // Toggles a highlight on a given jQuery element `$el` when `$trigger`
-	        // is hovered (mouseenter/mouseleave) or focused (focus/blur)
-	        toggleHighlight: function toggleHighlight($el, $trigger) {
-	            var _this = this;
-
-	            var $highlight = undefined;
-
-	            $trigger.on("mouseenter focus", function () {
-	                if ($highlight) {
-	                    $highlight.remove();
-	                }
-
-	                $highlight = _this.highlight($el);
-	            });
-
-	            $trigger.on("mouseleave blur", function () {
-	                if ($highlight) {
-	                    $highlight.remove();
-	                    $highlight = null;
-	                }
-	            });
-	        },
-
-	        hide: function hide() {
-	            $(".tota11y-label").hide();
-	        },
-
-	        show: function show() {
-	            $(".tota11y-label").show();
-	        },
-
-	        removeAll: function removeAll() {
-	            // Remove all annotations
-	            $("." + ANNOTATION_CLASS).remove();
-	        }
-	    };
-	};
-
-/***/ },
-/* 21 */
-/*!********************************************************!*\
-  !*** ./plugins/shared/annotate/error-label.handlebars ***!
-  \********************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
-	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(depth0,helpers,partials,data) {
-	    return "        <div class=\"tota11y-label-help\">\n            (<a class=\"tota11y-label-link\" href=\"#\">?</a>)\n        </div>\n";
-	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	    var stack1, helper, alias1=helpers.helperMissing, alias2="function";
-
-	  return "<span class=\"tota11y-label-error-icon\">\n    <!--\n        \"Warning\" icon by Lorena Salagre\n        https://thenounproject.com/lorens/\n\n        Licensed under Creative Commons by 3.0 US\n        http://creativecommons.org/licenses/by/3.0/us/legalcode\n    -->\n    <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Capa_1\" x=\"0px\" y=\"0px\" width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n        <path d=\"M80.515,90.781H19.485c-6.145,0-10.779-2.168-13.052-6.103c-2.273-3.938-1.832-9.036,1.24-14.356l30.515-52.851  c3.07-5.321,7.266-8.251,11.811-8.251s8.741,2.93,11.811,8.251l30.515,52.851c3.072,5.32,3.513,10.418,1.24,14.356  C91.293,88.613,86.659,90.781,80.515,90.781z M50,12.384c-3.367,0-6.59,2.369-9.071,6.669L10.415,71.904  c-2.483,4.3-2.924,8.275-1.24,11.191c1.683,2.916,5.345,4.521,10.311,4.521h61.029c4.966,0,8.628-1.605,10.311-4.521  c1.683-2.916,1.243-6.89-1.24-11.191L59.071,19.053C56.59,14.753,53.367,12.384,50,12.384z M56.227,72.18  c0-3.172-2.572-5.744-5.744-5.744s-5.744,2.572-5.744,5.744c0,3.172,2.572,5.744,5.744,5.744S56.227,75.352,56.227,72.18z   M56.382,37.613c0-3.257-2.641-5.898-5.898-5.898c-3.257,0-5.898,2.641-5.898,5.898l1.393,20.932h0.019  c0.202,2.312,2.121,4.132,4.486,4.132c2.187,0,4.012-1.551,4.434-3.613c0.034-0.167,0.037-0.345,0.052-0.518h0.04L56.382,37.613z\"/>\n    </svg>\n</span>\n\n<span class=\"tota11y-label-content\">\n    <div class=\"tota11y-label-text\">"
-	    + ((stack1 = ((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"text","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-	    + "</div>\n"
-	    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.hasErrorEntry : depth0),{"name":"if","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-	    + "    <div class=\"tota11y-label-detail\">"
-	    + ((stack1 = ((helper = (helper = helpers.detail || (depth0 != null ? depth0.detail : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"detail","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-	    + "</div>\n</span>\n";
-	},"useData":true});
-
-/***/ },
-/* 22 */
+/* 23 */
 /*!********************************************!*\
   !*** ./plugins/shared/annotate/style.less ***!
   \********************************************/
@@ -11481,10 +11527,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../../../~/css-loader!./../../../~/postcss-loader!./../../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../../~/less-loader!./style.less */ 23);
+	var content = __webpack_require__(/*! !./../../../~/css-loader!./../../../~/postcss-loader!./../../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../../~/less-loader!./style.less */ 24);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../../~/style-loader/addStyles.js */ 6)(content, {});
+	var update = __webpack_require__(/*! ./../../../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -11498,39 +11544,55 @@
 	}
 
 /***/ },
-/* 23 */
+/* 24 */
 /*!******************************************************************************************************************************************!*\
   !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/shared/annotate/style.less ***!
   \******************************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../../~/css-loader/lib/css-base.js */ 5)();
+	exports = module.exports = __webpack_require__(/*! ./../../../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-label {\n  background-color: #ffe800 !important;\n  border: 1px solid rgba(0, 0, 0, 0.1) !important;\n  cursor: default !important;\n  padding: 3px !important;\n  position: absolute !important;\n  z-index: 9997 !important;\n}\n.tota11y-label-error {\n  background-color: #ffaeae !important;\n}\n.tota11y-label-error-icon {\n  display: block !important;\n  float: left !important;\n  margin-right: 3px !important;\n  width: 12px !important;\n}\n.tota11y-label-success {\n  background-color: #b9eda9 !important;\n}\n.tota11y-label-warning {\n  background-color: #ffe800 !important;\n}\n.tota11y-label,\n.tota11y-label-text,\n.tota11y-label-detail,\n.tota11y-label-link,\n.tota11y-label-help {\n  color: #333333 !important;\n  font-size: 12px !important;\n}\n.tota11y-label-text {\n  float: left !important;\n}\n.tota11y-label-detail {\n  clear: both !important;\n  display: none !important;\n  max-width: 300px !important;\n}\n.tota11y-label:hover .tota11y-label-detail {\n  display: block !important;\n}\n.tota11y-label-help {\n  float: left !important;\n  margin-left: 5px !important;\n}\n.tota11y-label-link:hover,\n.tota11y-label-link:focus {\n  opacity: 0.6 !important;\n  text-decoration: underline !important;\n}\n.tota11y-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n  pointer-events: none !important;\n  position: absolute !important;\n  z-index: 9999 !important;\n}\n", ""]);
 
 /***/ },
-/* 24 */
+/* 25 */
 /*!*******************************************************!*\
   !*** ./plugins/shared/info-panel/template.handlebars ***!
   \*******************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
+	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	    var helper;
 
 	  return "<div class=\"tota11y tota11y-info\">\n    <header class=\"tota11y-info-title\">\n        "
 	    + this.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
-	    + "\n        <span class=\"tota11y-info-controls\">\n            <label class=\"tota11y-info-annotation-toggle\">\n                Annotate:\n                <input class=\"toggle-annotation\" type=\"checkbox\" checked>\n            </label>\n            <a href=\"#\" class=\"tota11y-info-dismiss-trigger\">&times;</a>\n        </span>\n    </header>\n    <div class=\"tota11y-info-body\">\n        <div class=\"tota11y-info-sections\"></div>\n        <ul role=\"tablist\" class=\"tota11y-info-tabs\"></ul>\n    </div>\n</div>\n";
+	    + "\n        <span class=\"tota11y-info-controls\">\n            <label class=\"tota11y-info-annotation-toggle\">\n                Annotate:\n                <input class=\"toggle-annotation\" type=\"checkbox\" checked>\n            </label>\n            <a aria-label=\"Close this window\" href=\"#\" class=\"tota11y-info-dismiss-trigger\">\n                &times;\n            </a>\n        </span>\n    </header>\n    <div class=\"tota11y-info-body\">\n        <div class=\"tota11y-info-sections\"></div>\n        <ul role=\"tablist\" class=\"tota11y-info-tabs\"></ul>\n    </div>\n</div>\n";
 	},"useData":true});
 
 /***/ },
-/* 25 */
+/* 26 */
+/*!****************************************************!*\
+  !*** ./plugins/shared/info-panel/error.handlebars ***!
+  \****************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	    var stack1, helper;
+
+	  return "<li class=\"tota11y-info-error\">\n    <a href=\"#\" class=\"tota11y-info-error-scroll\">\n        <div class=\"tota11y-info-error-scroll-glyph tota11y-info-error-scroll-lens\"></div>\n        <div class=\"tota11y-info-error-scroll-glyph tota11y-info-error-scroll-handle\"></div>\n    </a>\n    <a href=\"#\" class=\"tota11y-info-error-trigger tota11y-collapsed\">\n        <div class=\"tota11y-info-error-title\">\n            <span class=\"tota11y-info-error-chevron\">\n                &#8250;\n            </span>\n            "
+	    + ((stack1 = ((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+	    + "\n        </div>\n    </a>\n    <div class=\"tota11y-info-error-description tota11y-collapsed\"></div>\n</li>\n";
+	},"useData":true});
+
+/***/ },
+/* 27 */
 /*!**************************************************!*\
   !*** ./plugins/shared/info-panel/tab.handlebars ***!
   \**************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
+	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	    var helper;
 
@@ -11540,7 +11602,7 @@
 	},"useData":true});
 
 /***/ },
-/* 26 */
+/* 28 */
 /*!**********************************************!*\
   !*** ./plugins/shared/info-panel/style.less ***!
   \**********************************************/
@@ -11552,7 +11614,7 @@
 	var content = __webpack_require__(/*! !./../../../~/css-loader!./../../../~/postcss-loader!./../../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../../~/less-loader!./style.less */ 29);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../../~/style-loader/addStyles.js */ 6)(content, {});
+	var update = __webpack_require__(/*! ./../../../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -11566,16 +11628,14 @@
 	}
 
 /***/ },
-/* 27 */,
-/* 28 */,
 /* 29 */
 /*!********************************************************************************************************************************************!*\
   !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/shared/info-panel/style.less ***!
   \********************************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../../~/css-loader/lib/css-base.js */ 5)();
-	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: -webkit-box !important;\n  display: -webkit-flex !important;\n  display: -ms-flexbox !important;\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section * {\n  color: #333333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  -webkit-transform: rotateZ(90deg) !important;\n          transform: rotateZ(90deg) !important;\n  -webkit-transform-origin: 3px 8px !important;\n      -ms-transform-origin: 3px 8px !important;\n          transform-origin: 3px 8px !important;\n  -webkit-transition: -webkit-transform ease-in-out 50ms !important;\n          transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  -webkit-transform: rotateZ(0deg) !important;\n          transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  -webkit-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n      -ms-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n          transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n", ""]);
+	exports = module.exports = __webpack_require__(/*! ./../../../~/css-loader/lib/css-base.js */ 7)();
+	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: -webkit-box !important;\n  display: -webkit-flex !important;\n  display: -ms-flexbox !important;\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  -webkit-transform: rotateZ(90deg) !important;\n          transform: rotateZ(90deg) !important;\n  -webkit-transform-origin: 3px 8px !important;\n      -ms-transform-origin: 3px 8px !important;\n          transform-origin: 3px 8px !important;\n  -webkit-transition: -webkit-transform ease-in-out 50ms !important;\n          transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  -webkit-transform: rotateZ(0deg) !important;\n          transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  -webkit-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n      -ms-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n          transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n", ""]);
 
 /***/ },
 /* 30 */
@@ -11584,7 +11644,7 @@
   \*************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
+	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	    var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
 
@@ -11597,700 +11657,12 @@
 
 /***/ },
 /* 31 */
-/*!*********************************!*\
-  !*** ./plugins/shared/audit.js ***!
-  \*********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Abstractions for how we use Accessibility Developer Tools
-	 */
-
-	"use strict";
-
-	var $ = __webpack_require__(/*! jquery */ 2);
-
-	function allRuleNames() {
-	    return $.axs.AuditRules.getRules().map(function (rule) {
-	        return rule.name;
-	    });
-	}
-
-	// Creates an audit configuration that whitelists a single rule and limits the
-	// amount of tests to run
-	function createWhitelist(ruleName) {
-	    var config = new $.axs.AuditConfiguration();
-	    config.showUnsupportedRulesWarning = false;
-
-	    // Ignore elements that are part of the toolbar
-	    config.ignoreSelectors(ruleName, ".tota11y *");
-
-	    allRuleNames().forEach(function (name) {
-	        if (name !== ruleName) {
-	            config.ignoreSelectors(name, "*");
-	        }
-	    });
-
-	    return config;
-	}
-
-	// Audits for a single rule (by name) and returns the results for only that
-	// rule
-	function audit(ruleName) {
-	    // Monkey-patch `matchSelector` for our jsdom testing environment,
-	    // using jQuery for optimal browser support.
-	    //
-	    // https://github.com/GoogleChrome/accessibility-developer-tools/pull/189
-	    $.axs.browserUtils.matchSelector = function (node, selectorText) {
-	        return $(node).is(selectorText);
-	    };
-
-	    var whitelist = createWhitelist(ruleName);
-
-	    return $.axs.Audit.run(whitelist).filter(function (result) {
-	        return result.rule.name === ruleName;
-	    })[0];
-	}
-
-	module.exports = audit;
-
-/***/ },
-/* 32 */
-/*!**************************************************!*\
-  !*** ./plugins/labels/error-template.handlebars ***!
-  \**************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
-	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(depth0,helpers,partials,data) {
-	    return "    <p>\n        The <code>placeholder</code> attribute is not guaranteed to be read by\n        assistive technologies. It is better to include a proper label.\n    </p>\n";
-	},"3":function(depth0,helpers,partials,data) {
-	    var helper;
-
-	  return "    <p>\n        The simplest way to do so is by creating a <code>&lt;label&gt;</code>\n        tag with a <code>for</code> attribute like so:\n    </p>\n\n    <pre><code>&lt;label for=\""
-	    + this.escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
-	    + "\"&gt;\n    Label text here...\n&lt;/label&gt;</code></pre>\n";
-	},"5":function(depth0,helpers,partials,data) {
-	    var helper;
-
-	  return "    <p>\n        You can give this element an <code>id</code> attribute and build a\n        <code>&lt;label&gt;</code> with a corresponding <code>for</code>\n        attribute like so:\n\n        <pre><code>&lt;label for=\"my-input\"&gt;\n    Label text here...\n&lt;/label&gt;\n&lt;"
-	    + this.escapeExpression(((helper = (helper = helpers.tagName || (depth0 != null ? depth0.tagName : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"tagName","hash":{},"data":data}) : helper)))
-	    + " id=\"my-input\"&gt;</code></pre>\n    </p>\n";
-	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	    var stack1;
-
-	  return ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.placeholder : depth0),{"name":"if","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-	    + "\n"
-	    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.id : depth0),{"name":"if","hash":{},"fn":this.program(3, data, 0),"inverse":this.program(5, data, 0),"data":data})) != null ? stack1 : "");
-	},"useData":true});
-
-/***/ },
-/* 33 */
-/*!***********************************!*\
-  !*** ./plugins/alt-text/index.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(E) {/**
-	 * A plugin to check for valid alternative representations for images
-	 */
-
-	"use strict";
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var $ = __webpack_require__(/*! jquery */ 2);
-	var Plugin = __webpack_require__(/*! ../base */ 9);
-	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("alt-text");
-	var audit = __webpack_require__(/*! ../shared/audit */ 31);
-
-	var AltTextPlugin = (function (_Plugin) {
-	    function AltTextPlugin() {
-	        _classCallCheck(this, AltTextPlugin);
-
-	        if (_Plugin != null) {
-	            _Plugin.apply(this, arguments);
-	        }
-	    }
-
-	    _inherits(AltTextPlugin, _Plugin);
-
-	    _createClass(AltTextPlugin, [{
-	        key: "getTitle",
-	        value: function getTitle() {
-	            return "Image alt-text";
-	        }
-	    }, {
-	        key: "getDescription",
-	        value: function getDescription() {
-	            return "Annotates images without alt text";
-	        }
-	    }, {
-	        key: "reportError",
-	        value: function reportError(el) {
-	            var $el = $(el);
-	            var title = "Image is missing alt text";
-	            var $error = E(
-	                "div",
-	                null,
-	                E(
-	                    "p",
-	                    null,
-	                    "This image does not have an associated \"alt\" attribute. Please specify the alt text for this image like so:"
-	                ),
-	                E(
-	                    "pre",
-	                    null,
-	                    E(
-	                        "code",
-	                        null,
-	                        "&lt;img src=\"..\" alt=\"Image description\"&gt"
-	                    )
-	                ),
-	                E(
-	                    "p",
-	                    null,
-	                    "If the image is decorative and does not convey any information to the surrounding content, however, you may leave this \"alt\" attribute empty, or specify a \"role\" attribute with a value of \"presentation.\""
-	                ),
-	                E(
-	                    "pre",
-	                    null,
-	                    E(
-	                        "code",
-	                        null,
-	                        "&lt;img src=\"..\" alt=\"\"&gt;",
-	                        E("br", null),
-	                        "&lt;img src=\"..\" role=\"presentation\"&gt;"
-	                    )
-	                )
-	            );
-
-	            // Place an error label on the element and register it as an
-	            // error in the info panel
-	            var entry = this.error(title, $error, $el);
-	            annotate.errorLabel($el, "", title, entry);
-	        }
-	    }, {
-	        key: "run",
-	        value: function run() {
-	            // Generate errors for any images that fail the Accessibility
-	            // Developer Tools audit
-
-	            var _audit = audit("imagesWithoutAltText");
-
-	            var result = _audit.result;
-	            var elements = _audit.elements;
-
-	            if (result === "FAIL") {
-	                elements.forEach(this.reportError.bind(this));
-	            }
-
-	            // Additionally, label presentational images
-	            $("img[role=\"presentation\"], img[alt=\"\"]").each(function (i, el) {
-	                // "Error" labels have a warning icon and expanded text on hover,
-	                // but we add a special `warning` class to color it differently.
-	                annotate.errorLabel($(el), "", "This image is decorative").addClass("tota11y-label-warning");
-	            });
-	        }
-	    }, {
-	        key: "cleanup",
-	        value: function cleanup() {
-	            annotate.removeAll();
-	        }
-	    }]);
-
-	    return AltTextPlugin;
-	})(Plugin);
-
-	module.exports = AltTextPlugin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 1)))
-
-/***/ },
-/* 34 */
-/*!***********************************!*\
-  !*** ./plugins/contrast/index.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * A plugin to label different levels of contrast on the page, and highlight
-	 * those with poor contrast while suggesting alternatives.
-	 */
-
-	"use strict";
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var $ = __webpack_require__(/*! jquery */ 2);
-	var Plugin = __webpack_require__(/*! ../base */ 9);
-	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("contrast");
-
-	var titleTemplate = __webpack_require__(/*! ./error-title.handlebars */ 35);
-	var descriptionTemplate = __webpack_require__(/*! ./error-description.handlebars */ 36);
-
-	__webpack_require__(/*! ./style.less */ 37);
-
-	var ContrastPlugin = (function (_Plugin) {
-	    function ContrastPlugin() {
-	        _classCallCheck(this, ContrastPlugin);
-
-	        if (_Plugin != null) {
-	            _Plugin.apply(this, arguments);
-	        }
-	    }
-
-	    _inherits(ContrastPlugin, _Plugin);
-
-	    _createClass(ContrastPlugin, [{
-	        key: "getTitle",
-	        value: function getTitle() {
-	            return "Contrast";
-	        }
-	    }, {
-	        key: "getDescription",
-	        value: function getDescription() {
-	            return "Labels elements with insufficient contrast";
-	        }
-	    }, {
-	        key: "addError",
-	        value: function addError(_ref, el) {
-	            var fgColor = _ref.fgColor;
-	            var bgColor = _ref.bgColor;
-	            var contrastRatio = _ref.contrastRatio;
-	            var requiredRatio = _ref.requiredRatio;
-
-	            // Suggest colors at an "AA" level
-	            var suggestedColors = axs.utils.suggestColors(bgColor, fgColor, contrastRatio, getComputedStyle(el)).AA;
-
-	            var templateData = {
-	                fgColorHex: axs.utils.colorToString(fgColor),
-	                bgColorHex: axs.utils.colorToString(bgColor),
-	                contrastRatio: contrastRatio,
-	                requiredRatio: requiredRatio,
-	                suggestedFgColorHex: suggestedColors.fg,
-	                suggestedBgColorHex: suggestedColors.bg,
-	                suggestedColorsRatio: suggestedColors.contrast
-	            };
-
-	            // Add click handler to preview checkbox.
-	            var $description = $(descriptionTemplate(templateData));
-	            $description.find(".preview-contrast-fix").click(function (e) {
-	                if ($(e.target).prop("checked")) {
-	                    // Set suggested colors.
-	                    $(el).css("color", suggestedColors.fg);
-	                    $(el).css("background-color", suggestedColors.bg);
-	                } else {
-	                    // Set original colors.
-	                    $(el).css("color", axs.utils.colorToString(fgColor));
-	                    $(el).css("background-color", axs.utils.colorToString(bgColor));
-	                }
-	            });
-
-	            return this.error(titleTemplate(templateData), $description, $(el));
-	        }
-	    }, {
-	        key: "run",
-	        value: function run() {
-	            var _this = this;
-
-	            // Temporary parseColor proxy for FF, which offers "transparent" as a
-	            // default computed backgroundColor instead of `rgba(0, 0, 0, 0)`.
-	            //
-	            // https://github.com/GoogleChrome/accessibility-developer-tools/issues/180
-	            var _parseColor = axs.utils.parseColor;
-	            axs.utils.parseColor = function (colorString) {
-	                if (colorString === "transparent") {
-	                    return new axs.utils.Color(0, 0, 0, 0);
-	                } else {
-	                    return _parseColor(colorString);
-	                }
-	            };
-
-	            // A map of fg/bg color pairs that we have already seen to the error
-	            // entry currently present in the info panel
-	            var combinations = {};
-
-	            // List of original colors for elements with insufficient contrast.
-	            // Used to restore original colors in cleanup.
-	            this.origColorsList = [];
-
-	            $("*").each(function (i, el) {
-	                // Only check elements with a direct text descendant
-	                if (!axs.properties.hasDirectTextDescendant(el)) {
-	                    return;
-	                }
-
-	                // Ignore elements that are part of the tota11y UI
-	                if ($(el).parents(".tota11y").length > 0) {
-	                    return;
-	                }
-
-	                // Ignore invisible elements
-	                if (axs.utils.elementIsTransparent(el) || axs.utils.elementHasZeroArea(el)) {
-	                    return;
-	                }
-
-	                var style = getComputedStyle(el);
-	                var bgColor = axs.utils.getBgColor(style, el);
-	                var fgColor = axs.utils.getFgColor(style, el, bgColor);
-	                var contrastRatio = axs.utils.calculateContrastRatio(fgColor, bgColor).toFixed(2);
-
-	                // Calculate required ratio based on size
-	                // Using strings to prevent rounding
-	                var requiredRatio = axs.utils.isLargeFont(style) ? "3.0" : "4.5";
-
-	                // Build a key for our `combinations` map and report the color
-	                // if we have not seen it yet
-	                var key = axs.utils.colorToString(fgColor) + "/" + axs.utils.colorToString(bgColor) + "/" + requiredRatio;
-
-	                if (!axs.utils.isLowContrast(contrastRatio, style)) {
-	                    // For acceptable contrast values, we don't show ratios if
-	                    // they have been presented already
-	                    if (!combinations[key]) {
-	                        annotate.label($(el), contrastRatio).addClass("tota11y-label-success");
-
-	                        // Add the key to the combinations map. We don't have an
-	                        // error to associate it with, so we'll just give it the
-	                        // value of `true`.
-	                        combinations[key] = true;
-	                    }
-	                } else {
-	                    if (!combinations[key]) {
-	                        // We do not show duplicates in the errors panel, however,
-	                        // to keep the output from being overwhelming
-	                        var error = _this.addError({ fgColor: fgColor, bgColor: bgColor, contrastRatio: contrastRatio, requiredRatio: requiredRatio }, el);
-
-	                        // Save original color so it can be restored on cleanup.
-	                        _this.origColorsList.push({
-	                            $el: $(el),
-	                            fg: axs.utils.colorToString(fgColor),
-	                            bg: axs.utils.colorToString(bgColor)
-	                        });
-
-	                        combinations[key] = error;
-	                    }
-
-	                    // We display errors multiple times for emphasis. Each error
-	                    // will point back to the entry in the info panel for that
-	                    // particular color combination.
-	                    //
-	                    // TODO: The error entry in the info panel will only highlight
-	                    // the first element with that color combination
-	                    annotate.errorLabel($(el), contrastRatio, "This contrast is insufficient at this size.", combinations[key]);
-	                }
-	            });
-
-	            // Restore the original `parseColor` method
-	            axs.utils.parseColor = _parseColor;
-	        }
-	    }, {
-	        key: "cleanup",
-	        value: function cleanup() {
-	            // Set all elements to original color.
-	            for (var i = 0; i < this.origColorsList.length; i++) {
-	                var item = this.origColorsList[i];
-	                item.$el.css("color", item.fg);
-	                item.$el.css("background-color", item.bg);
-	            }
-	            annotate.removeAll();
-	        }
-	    }]);
-
-	    return ContrastPlugin;
-	})(Plugin);
-
-	module.exports = ContrastPlugin;
-
-/***/ },
-/* 35 */
-/*!*************************************************!*\
-  !*** ./plugins/contrast/error-title.handlebars ***!
-  \*************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
-	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	    var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
-
-	  return "Insufficient contrast ratio ("
-	    + alias3(((helper = (helper = helpers.contrastRatio || (depth0 != null ? depth0.contrastRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"contrastRatio","hash":{},"data":data}) : helper)))
-	    + " &lt; "
-	    + alias3(((helper = (helper = helpers.requiredRatio || (depth0 != null ? depth0.requiredRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"requiredRatio","hash":{},"data":data}) : helper)))
-	    + ")\n\n<span class=\"tota11y-swatches\">\n    <span class=\"tota11y-swatch\" style=\"background-color: "
-	    + alias3(((helper = (helper = helpers.fgColorHex || (depth0 != null ? depth0.fgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"fgColorHex","hash":{},"data":data}) : helper)))
-	    + "\"></span>\n    /\n    <span class=\"tota11y-swatch\" style=\"background-color: "
-	    + alias3(((helper = (helper = helpers.bgColorHex || (depth0 != null ? depth0.bgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"bgColorHex","hash":{},"data":data}) : helper)))
-	    + "\"></span>\n</span>\n";
-	},"useData":true});
-
-/***/ },
-/* 36 */
-/*!*******************************************************!*\
-  !*** ./plugins/contrast/error-description.handlebars ***!
-  \*******************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
-	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	    var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
-
-	  return "<div>\n    <p>\n        The color combination\n        <span class=\"tota11y-color-hexes\">"
-	    + alias3(((helper = (helper = helpers.fgColorHex || (depth0 != null ? depth0.fgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"fgColorHex","hash":{},"data":data}) : helper)))
-	    + "/"
-	    + alias3(((helper = (helper = helpers.bgColorHex || (depth0 != null ? depth0.bgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"bgColorHex","hash":{},"data":data}) : helper)))
-	    + "</span>\n        has a contrast ratio of <strong>"
-	    + alias3(((helper = (helper = helpers.contrastRatio || (depth0 != null ? depth0.contrastRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"contrastRatio","hash":{},"data":data}) : helper)))
-	    + "</strong>, which is not\n        sufficient. At this size, you will need a ratio of at least\n        <strong>"
-	    + alias3(((helper = (helper = helpers.requiredRatio || (depth0 != null ? depth0.requiredRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"requiredRatio","hash":{},"data":data}) : helper)))
-	    + "</strong>.\n    </p>\n\n    <p>\n        Consider using the following foreground/background combination:\n    </p>\n\n    <div class=\"tota11y-contrast-suggestion\">\n        <span class=\"tota11y-color-hexes\">\n            "
-	    + alias3(((helper = (helper = helpers.suggestedFgColorHex || (depth0 != null ? depth0.suggestedFgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedFgColorHex","hash":{},"data":data}) : helper)))
-	    + "/"
-	    + alias3(((helper = (helper = helpers.suggestedBgColorHex || (depth0 != null ? depth0.suggestedBgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedBgColorHex","hash":{},"data":data}) : helper)))
-	    + "\n        </span>\n\n        <span class=\"tota11y-swatches\">\n            <span\n                class=\"tota11y-swatch\"\n                style=\"background-color: "
-	    + alias3(((helper = (helper = helpers.suggestedFgColorHex || (depth0 != null ? depth0.suggestedFgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedFgColorHex","hash":{},"data":data}) : helper)))
-	    + "\">\n            </span>\n            /\n            <span\n                class=\"tota11y-swatch\"\n                style=\"background-color: "
-	    + alias3(((helper = (helper = helpers.suggestedBgColorHex || (depth0 != null ? depth0.suggestedBgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedBgColorHex","hash":{},"data":data}) : helper)))
-	    + "\">\n            </span>\n        </span>\n\n        has a ratio of <strong>"
-	    + alias3(((helper = (helper = helpers.suggestedColorsRatio || (depth0 != null ? depth0.suggestedColorsRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedColorsRatio","hash":{},"data":data}) : helper)))
-	    + "</strong>\n        <br />\n\n        <label>\n            Preview:\n            <input class=\"preview-contrast-fix\" type=\"checkbox\">\n        </label>\n    </div>\n</div>\n";
-	},"useData":true});
-
-/***/ },
-/* 37 */
-/*!*************************************!*\
-  !*** ./plugins/contrast/style.less ***!
-  \*************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 38);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 6)(content, {});
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less", function() {
-			var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less");
-			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-			update(newContent);
-		});
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 38 */
-/*!***********************************************************************************************************************************!*\
-  !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/contrast/style.less ***!
-  \***********************************************************************************************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 5)();
-	exports.push([module.id, ".tota11y-swatches {\n  margin-left: 5px !important;\n  margin-right: 5px !important;\n  position: relative !important;\n  top: 1px !important;\n}\n.tota11y-swatch {\n  border: 1px solid #000 !important;\n  display: inline-block !important;\n  height: 12px !important;\n  width: 12px !important;\n}\n.tota11y-contrast-suggestion {\n  margin: 0 0 15px 15px !important;\n}\n.tota11y-color-hexes {\n  font-family: monospace !important;\n}\n", ""]);
-
-/***/ },
-/* 39 */
-/*!***********************************!*\
-  !*** ./plugins/headings/index.js ***!
-  \***********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(E) {/**
-	 * A plugin to identify and validate heading tags (<h1>, <h2>, etc.)
-	 */
-
-	"use strict";
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var $ = __webpack_require__(/*! jquery */ 2);
-	var Plugin = __webpack_require__(/*! ../base */ 9);
-	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("headings");
-
-	var outlineItemTemplate = __webpack_require__(/*! ./outline-item.handlebars */ 40);
-	__webpack_require__(/*! ./style.less */ 41);
-
-	var ERRORS = {
-	    FIRST_NOT_H1: function FIRST_NOT_H1(level) {
-	        return {
-	            title: "First heading is not an &lt;h1&gt;",
-	            description: "\n                <div>\n                    To give your document a proper structure for assistive\n                    technologies, it is important to lay out your headings\n                    beginning with an <code>&lt;h1&gt;</code>. We found an\n                    <code>&lt;h" + level + "&gt;</code> instead.\n                </div>\n            "
-	        };
-	    },
-
-	    // This error is currently unused.
-	    //
-	    // The HTML5 outlining algorithm[1] enables the use of "sectioning roots"
-	    // to support multiple <h1> tags when embedded inside of containers like
-	    // <section> or <article>. There are currently "no known implementations
-	    // of the outline algorithm in graphical browsers or assistive technology
-	    // user agents" [2], so we instead simply "use heading rank (h1-h6) to
-	    // convey document structure." [2].
-	    //
-	    // [1]: http://www.w3.org/html/wg/drafts/html/master/semantics.html#outline
-	    // [2]: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Sections_and_Outlines_of_an_HTML5_document#The_HTML5_Outline_Algorithm
-	    MULTIPLE_H1: {
-	        title: "&lt;h1&gt; used when one is already present"
-	    },
-
-	    // This error accepts two arguments to display a relevant error message
-	    NONCONSECUTIVE_HEADER: function NONCONSECUTIVE_HEADER(prevLevel, currLevel) {
-	        var _tag = function _tag(level) {
-	            return "<code>&lt;h" + level + "&gt;</code>";
-	        };
-	        var description = "\n            <div>\n                This document contains an " + _tag(currLevel) + " tag directly\n                following an " + _tag(prevLevel) + ". In order to maintain a consistent\n                outline of the page for assistive technologies, reduce the gap in\n                the heading level by upgrading this tag to an\n                " + _tag(prevLevel + 1);
-
-	        // Suggest upgrading the tag to the same level as `prevLevel` iff
-	        // `prevLevel` is not 1
-	        if (prevLevel !== 1) {
-	            description += " or " + _tag(prevLevel);
-	        }
-
-	        description += ".</div>";
-
-	        return {
-	            title: "\n                Nonconsecutive heading level used (h" + prevLevel + " &rarr;\n                h" + currLevel + ")\n            ",
-	            description: description
-	        };
-	    }
-	};
-
-	var HeadingsPlugin = (function (_Plugin) {
-	    function HeadingsPlugin() {
-	        _classCallCheck(this, HeadingsPlugin);
-
-	        if (_Plugin != null) {
-	            _Plugin.apply(this, arguments);
-	        }
-	    }
-
-	    _inherits(HeadingsPlugin, _Plugin);
-
-	    _createClass(HeadingsPlugin, [{
-	        key: "getTitle",
-	        value: function getTitle() {
-	            return "Headings";
-	        }
-	    }, {
-	        key: "getDescription",
-	        value: function getDescription() {
-	            return "Highlights headings (<h1>, <h2>, etc) and order violations";
-	        }
-	    }, {
-	        key: "outline",
-
-	        /**
-	         * Computes an outline of the page and reports any violations.
-	         */
-	        value: function outline($headings) {
-	            var _this = this;
-
-	            var $items = [];
-
-	            var prevLevel = undefined;
-	            $headings.each(function (i, el) {
-	                var $el = $(el);
-	                var level = +$el.prop("tagName").slice(1);
-	                var error = undefined;
-
-	                // Check for any violations
-	                // NOTE: These violations do not overlap, but as we add more, we
-	                // may want to separate the conditionals here to report multiple
-	                // errors on the same tag.
-	                if (i === 0 && level !== 1) {
-	                    error = ERRORS.FIRST_NOT_H1(level); // eslint-disable-line new-cap
-	                } else if (prevLevel && level - prevLevel > 1) {
-	                    error = ERRORS.NONCONSECUTIVE_HEADER(prevLevel, level); // eslint-disable-line new-cap
-	                }
-
-	                prevLevel = level;
-
-	                // Render the entry in the outline for the "Summary" tab
-	                var $item = $(outlineItemTemplate({
-	                    level: level,
-	                    text: $el.text()
-	                }));
-
-	                $items.push($item);
-
-	                // Highlight the heading element on hover
-	                annotate.toggleHighlight($el, $item);
-
-	                if (error) {
-	                    // Register an error to the info panel
-	                    var infoPanelError = _this.error(error.title, $(error.description), $el);
-
-	                    // Place an error label on the heading tag
-	                    annotate.errorLabel($el, $el.prop("tagName").toLowerCase(), error.title, infoPanelError);
-
-	                    // Mark the summary item as red
-	                    // Pretty hacky, since we're borrowing label styles for this
-	                    // summary tab
-	                    $item.find(".tota11y-heading-outline-level").addClass("tota11y-label-error");
-	                } else {
-	                    // Label the heading tag
-	                    annotate.label($el).addClass("tota11y-label-success");
-
-	                    // Mark the summary item as green
-	                    $item.find(".tota11y-heading-outline-level").addClass("tota11y-label-success");
-	                }
-	            });
-
-	            return $items;
-	        }
-	    }, {
-	        key: "run",
-	        value: function run() {
-	            var $headings = $("h1, h2, h3, h4, h5, h6");
-	            // `this.outline` has the side-effect of also reporting violations
-	            var $items = this.outline($headings);
-
-	            if ($items.length) {
-	                var $outline = E(
-	                    "div",
-	                    { className: "tota11y-heading-outline" },
-	                    $items
-	                );
-
-	                this.summary($outline);
-	            }
-	        }
-	    }, {
-	        key: "cleanup",
-	        value: function cleanup() {
-	            annotate.removeAll();
-	        }
-	    }]);
-
-	    return HeadingsPlugin;
-	})(Plugin);
-
-	module.exports = HeadingsPlugin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 1)))
-
-/***/ },
-/* 40 */
 /*!**************************************************!*\
   !*** ./plugins/headings/outline-item.handlebars ***!
   \**************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
+	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	    var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
 
@@ -12304,7 +11676,7 @@
 	},"useData":true});
 
 /***/ },
-/* 41 */
+/* 32 */
 /*!*************************************!*\
   !*** ./plugins/headings/style.less ***!
   \*************************************/
@@ -12313,10 +11685,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 42);
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 33);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 6)(content, {});
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -12330,262 +11702,205 @@
 	}
 
 /***/ },
-/* 42 */
+/* 33 */
 /*!***********************************************************************************************************************************!*\
   !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/headings/style.less ***!
   \***********************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 5)();
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-heading-outline {\n  color: #333333 !important;\n}\n.tota11y-heading-outline-entry {\n  margin-bottom: 8px !important;\n}\n.tota11y-heading-outline-entry.heading-level-1 {\n  margin-left: 0 !important;\n}\n.tota11y-heading-outline-entry.heading-level-2 {\n  margin-left: 20px !important;\n}\n.tota11y-heading-outline-entry.heading-level-3 {\n  margin-left: 40px !important;\n}\n.tota11y-heading-outline-entry.heading-level-4 {\n  margin-left: 60px !important;\n}\n.tota11y-heading-outline-entry.heading-level-5 {\n  margin-left: 80px !important;\n}\n.tota11y-heading-outline-entry.heading-level-6 {\n  margin-left: 100px !important;\n}\n.tota11y-heading-outline-level {\n  position: relative !important;\n  top: -2px !important;\n  right: auto !important;\n  bottom: auto !important;\n  left: auto !important;\n  margin-right: 5px !important;\n  padding: 2px 3px !important;\n  pointer-events: none !important;\n}\n", ""]);
 
 /***/ },
-/* 43 */
-/*!************************************!*\
-  !*** ./plugins/landmarks/index.js ***!
-  \************************************/
+/* 34 */
+/*!********************************!*\
+  !*** ./plugins/title/index.js ***!
+  \********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * A plugin to label all ARIA landmark roles
+	 * A plugin to identify and validate <title> tag
 	 */
 
 	"use strict";
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var $ = __webpack_require__(/*! jquery */ 2);
-	var Plugin = __webpack_require__(/*! ../base */ 9);
-	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("landmarks");
+	var $ = __webpack_require__(/*! jquery */ 4);
+	var Plugin = __webpack_require__(/*! ../base */ 11);
 
-	var LandmarksPlugin = (function (_Plugin) {
-	    function LandmarksPlugin() {
-	        _classCallCheck(this, LandmarksPlugin);
+	var outlineItemTemplate = __webpack_require__(/*! ./outline-item.handlebars */ 35);
+	__webpack_require__(/*! ./style.less */ 36);
 
-	        if (_Plugin != null) {
-	            _Plugin.apply(this, arguments);
-	        }
-	    }
+	var ERRORS = {
+					MULTIPLE_TITLES: function MULTIPLE_TITLES(titles) {
+									var _tag = function _tag(level) {
+													return "<code>" + level + "</code>";
+									};
+									var description = "\n\t<div>This document contains multiple <code>&lt;title&gt;</code> tags ";
 
-	    _inherits(LandmarksPlugin, _Plugin);
+									titles.each(function (i, title) {
+													description += _tag($(title).text());
+													if (i < titles.length - 1) {
+																	description += ', ';
+													}
+									});
+									description += "</div>";
+									return {
+													title: "Multiple &lt;title&gt; tags provided",
+													description: description
+									};
+					}
+	};
 
-	    _createClass(LandmarksPlugin, [{
-	        key: "getTitle",
-	        value: function getTitle() {
-	            return "Landmarks";
-	        }
-	    }, {
-	        key: "getDescription",
-	        value: function getDescription() {
-	            return "Labels all ARIA landmarks";
-	        }
-	    }, {
-	        key: "run",
-	        value: function run() {
-	            $("[role]").each(function () {
-	                annotate.label($(this), $(this).attr("role"));
-	            });
-	        }
-	    }, {
-	        key: "cleanup",
-	        value: function cleanup() {
-	            annotate.removeAll();
-	        }
-	    }]);
+	var TitlePlugin = (function (_Plugin) {
+					_inherits(TitlePlugin, _Plugin);
 
-	    return LandmarksPlugin;
+					function TitlePlugin(inputData) {
+									_classCallCheck(this, TitlePlugin);
+
+									_get(Object.getPrototypeOf(TitlePlugin.prototype), "constructor", this).call(this, inputData);
+					}
+
+					_createClass(TitlePlugin, [{
+									key: "getTitle",
+									value: function getTitle() {
+													return "Title";
+									}
+					}, {
+									key: "getDescription",
+									value: function getDescription() {
+													return "Title Violations";
+									}
+					}, {
+									key: "run",
+									value: function run() {
+													var _this = this;
+
+													this.errors.map(function (error) {
+																	// Register an error to the info panel
+																	_this.error(error.title, $(error.description), $(error.el));
+													});
+									}
+					}, {
+									key: "analyze",
+									value: function analyze() {
+													var $titles = $("title");
+													var errors = [];
+													var error = undefined;
+													if ($titles.length > 1) {
+																	error = ERRORS.MULTIPLE_TITLES($titles); // eslint-disable-line new-cap
+													}
+
+													if (error) {
+																	// Register an error to the info panel
+																	errors = [{
+																					title: error.title,
+																					description: $(error.description),
+																					el: $titles[0]
+																	}];
+													}
+													return errors;
+									}
+					}, {
+									key: "cleanup",
+									value: function cleanup() {}
+					}]);
+
+					return TitlePlugin;
 	})(Plugin);
 
-	module.exports = LandmarksPlugin;
+	module.exports = TitlePlugin;
 
 /***/ },
-/* 44 */
-/*!************************************!*\
-  !*** ./plugins/link-text/index.js ***!
-  \************************************/
+/* 35 */
+/*!***********************************************!*\
+  !*** ./plugins/title/outline-item.handlebars ***!
+  \***********************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(E) {/**
-	 * A plugin to identify unclear link text such as "more" and "click here,"
-	 * which can make for a bad experience when using a screen reader
-	 */
+	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	    var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
 
-	"use strict";
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var $ = __webpack_require__(/*! jquery */ 2);
-	var Plugin = __webpack_require__(/*! ../base */ 9);
-	var annotate = __webpack_require__(/*! ../shared/annotate */ 20)("link-text");
-
-	var LinkTextPlugin = (function (_Plugin) {
-	    function LinkTextPlugin() {
-	        _classCallCheck(this, LinkTextPlugin);
-
-	        if (_Plugin != null) {
-	            _Plugin.apply(this, arguments);
-	        }
-	    }
-
-	    _inherits(LinkTextPlugin, _Plugin);
-
-	    _createClass(LinkTextPlugin, [{
-	        key: "getTitle",
-	        value: function getTitle() {
-	            return "Link text";
-	        }
-	    }, {
-	        key: "getDescription",
-	        value: function getDescription() {
-	            return "\n            Identifies links that may be confusing when read by a screen\n            reader\n        ";
-	        }
-	    }, {
-	        key: "isDescriptiveText",
-
-	        /**
-	         * Slightly modified unclear text checking that has been refactored into
-	         * a single method to be called with arbitrary strings.
-	         *
-	         * Original: https://github.com/GoogleChrome/accessibility-developer-tools/blob/9183b21cb0a02f5f04928f5cb7cb339b6bbc9ff8/src/audits/LinkWithUnclearPurpose.js#L55-67
-	         */
-	        value: function isDescriptiveText(textContent) {
-	            // Handle when the text is undefined or null
-	            if (typeof textContent === "undefined" || textContent === null) {
-	                return false;
-	            }
-
-	            var stopWords = ["click", "tap", "go", "here", "learn", "more", "this", "page", "link", "about"];
-	            // Generate a regex to match each of the stopWords
-	            var stopWordsRE = new RegExp("\\b(" + stopWords.join("|") + ")\\b", "ig");
-
-	            textContent = textContent
-	            // Strip leading non-alphabetical characters
-	            .replace(/[^a-zA-Z ]/g, "")
-	            // Remove the stopWords
-	            .replace(stopWordsRE, "");
-
-	            // Return whether or not there is any text left
-	            return textContent.trim() !== "";
-	        }
-	    }, {
-	        key: "reportError",
-	        value: function reportError($el, $description, content) {
-	            var entry = this.error("Link text is unclear", $description, $el);
-	            annotate.errorLabel($el, "", "Link text \"" + content + "\" is unclear", entry);
-	        }
-	    }, {
-	        key: "run",
-
-	        /**
-	         * We can call linkWithUnclearPurpose from ADT directly once the following
-	         * issue has been resolved. There is some extra code here until then.
-	         * https://github.com/GoogleChrome/accessibility-developer-tools/issues/156
-	         */
-	        value: function run() {
-	            var _this = this;
-
-	            $("a").each(function (i, el) {
-	                var $el = $(el);
-
-	                // Ignore the tota11y UI
-	                if ($el.parents(".tota11y").length) {
-	                    return;
-	                }
-
-	                // Monkey-patch `matchSelector` for our jsdom testing environment,
-	                // using jQuery for optimal browser support.
-	                //
-	                // https://github.com/GoogleChrome/accessibility-developer-tools/pull/189
-	                $.axs.browserUtils.matchSelector = function (node, selectorText) {
-	                    return $(node).is(selectorText);
-	                };
-
-	                // Extract the text alternatives for this element: including
-	                // its text content, aria-label/labelledby, and alt text for
-	                // images.
-	                //
-	                // TODO: Read from `alts` to determine where the text is coming
-	                // from (for tailored error messages)
-	                var alts = {};
-	                var extractedText = $.axs.properties.findTextAlternatives(el, alts);
-
-	                if (!_this.isDescriptiveText(extractedText)) {
-	                    var $description = E(
-	                        "div",
-	                        null,
-	                        "The text",
-	                        " ",
-	                        E(
-	                            "i",
-	                            null,
-	                            "\"",
-	                            extractedText,
-	                            "\""
-	                        ),
-	                        " ",
-	                        "is unclear without context and may be confusing to screen readers. Consider rearranging the",
-	                        " ",
-	                        E(
-	                            "code",
-	                            null,
-	                            "&lt;a&gt;&lt;/a&gt;"
-	                        ),
-	                        " ",
-	                        "tags or including special screen reader text."
-	                    );
-
-	                    _this.reportError($el, $description, extractedText);
-	                }
-	            });
-	        }
-	    }, {
-	        key: "cleanup",
-	        value: function cleanup() {
-	            annotate.removeAll();
-	        }
-	    }]);
-
-	    return LinkTextPlugin;
-	})(Plugin);
-
-	module.exports = LinkTextPlugin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 1)))
+	  return "<div class=\"tota11y-heading-outline-entry heading-level-"
+	    + alias3(((helper = (helper = helpers.level || (depth0 != null ? depth0.level : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"level","hash":{},"data":data}) : helper)))
+	    + "\">\n    <span class=\"tota11y-heading-outline-level tota11y-label\">"
+	    + alias3(((helper = (helper = helpers.level || (depth0 != null ? depth0.level : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"level","hash":{},"data":data}) : helper)))
+	    + "</span>\n    <span class=\"tota11y-heading-outline-heading-text\">"
+	    + alias3(((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"text","hash":{},"data":data}) : helper)))
+	    + "</span>\n</div>\n";
+	},"useData":true});
 
 /***/ },
-/* 45 */
+/* 36 */
+/*!**********************************!*\
+  !*** ./plugins/title/style.less ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 37);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 8)(content, {});
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less", function() {
+			var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 37 */
+/*!********************************************************************************************************************************!*\
+  !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/title/style.less ***!
+  \********************************************************************************************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 7)();
+	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-heading-outline {\n  color: #333333 !important;\n}\n.tota11y-heading-outline-entry {\n  margin-bottom: 8px !important;\n}\n.tota11y-heading-outline-entry.heading-level-1 {\n  margin-left: 0 !important;\n}\n.tota11y-heading-outline-entry.heading-level-2 {\n  margin-left: 20px !important;\n}\n.tota11y-heading-outline-entry.heading-level-3 {\n  margin-left: 40px !important;\n}\n.tota11y-heading-outline-entry.heading-level-4 {\n  margin-left: 60px !important;\n}\n.tota11y-heading-outline-entry.heading-level-5 {\n  margin-left: 80px !important;\n}\n.tota11y-heading-outline-entry.heading-level-6 {\n  margin-left: 100px !important;\n}\n.tota11y-heading-outline-level {\n  position: relative !important;\n  top: -2px !important;\n  right: auto !important;\n  bottom: auto !important;\n  left: auto !important;\n  margin-right: 5px !important;\n  padding: 2px 3px !important;\n  pointer-events: none !important;\n}\n", ""]);
+
+/***/ },
+/* 38 */
 /*!***********************************!*\
   !*** ./templates/logo.handlebars ***!
   \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 12);
+	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	    return "<!--\n    \"Glasses\" icon by Kyle Scott\n    https://thenounproject.com/Kyle/\n\n    Licensed under Creative Commons by 3.0 US\n    http://creativecommons.org/licenses/by/3.0/us/legalcode\n-->\n<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Layer_1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n    <path fill=\"#ffffff\" d=\"M74.466,35.24c-1.069-0.19-2.208-0.267-3.228-0.562c-0.639-0.184-1.348-0.622-1.965-1.075  c-1.246-0.919-2.479-1.557-3.928-2.152c-0.671-0.276-1.617-0.698-2.432-0.608c-0.582,0.064-1.196,0.664-1.73,1.029  c-1.196,0.818-2.186,1.442-3.32,2.198c-0.524,0.35-1.308,0.798-1.543,1.263c-0.142,0.279-0.13,0.736-0.281,1.029  c-0.35,0.679-1.069,1.434-1.777,1.403c-0.835-0.038-1.773-1.518-1.449-2.619c0.177-0.602,1.126-0.902,1.776-1.262  c2.041-1.134,3.803-2.3,5.52-3.602c1.106-0.841,2.579-1.471,4.536-1.542c1.889-0.071,4.45-0.083,6.22,0  c1.465,0.066,2.698,0.164,3.976,0.42c7.308,1.469,14.698,2.788,21.607,4.77c0.739,0.213,2.896,0.613,3.086,1.311  c0.121,0.439-0.236,1.435-0.375,2.151c-0.165,0.865-0.292,1.626-0.42,2.246c-0.12,0.574-0.65,1.174-0.936,1.776  c-0.842,1.778-1.379,3.821-2.104,5.753c-0.954,2.545-2.02,4.859-3.554,6.968c-1.46,2.005-3.442,3.33-5.987,4.536  c-1.128,0.534-2.43,1.083-3.835,1.403c-1.355,0.311-3.263,0.63-4.817,0.28c-2.233-0.501-3.081-2.543-3.882-4.536  c-0.848-2.115-1.351-4.049-1.636-6.827c-2.692,0.176-3.259,2.014-4.163,3.928c-0.384,0.812-0.792,1.623-1.168,2.385  c-1.542,3.115-3.197,6.47-5.473,8.746c-1.215,1.213-2.581,2.03-4.35,2.758c-3.331,1.373-6.847,2.569-10.757,3.462  c-3.598,0.821-8.923,1.642-12.252-0.093c-2.136-1.113-3.105-3.939-4.023-6.268c-0.458-1.159-0.835-2.459-1.262-3.882  c-0.378-1.259-0.708-2.778-1.543-3.602c-1.053-1.037-2.78-1.414-3.227-2.993c-0.815-0.307-1.563-0.821-2.292-1.308  c-4.349-2.915-8.693-5.774-13.141-8.606c-0.727-0.462-1.667-0.958-2.151-1.497c-0.712-0.792-1.108-2.117-1.684-3.133  c-0.265-0.469-0.588-0.92-0.888-1.357c-0.275-0.4-0.536-0.997-1.076-1.076C2.223,36.823,2.365,37.469,2.349,38  c-0.017,0.549-0.077,1.172-0.047,1.823c0.028,0.606,0.297,1.049,0.28,1.544c-0.018,0.515-0.291,1.036-0.841,1.029  c-0.727-0.009-0.8-0.98-0.983-1.686c-0.209-0.807-0.483-1.551-0.421-2.245c0.049-0.531,0.341-1.223,0.468-2.057  c0.246-1.599,0.126-3.078,1.451-3.415C3.004,32.804,4,33.38,4.781,33.649c0.789,0.272,1.597,0.428,2.339,0.702  c0.854,0.316,1.706,0.875,2.524,1.355c2.526,1.484,4.626,3.112,7.062,4.63c3.273,2.041,6.545,3.955,9.307,6.267  c7.434-2.179,16.722-3.566,25.863-4.302c4.176-0.337,8.326-0.174,12.253,0.374c5.624,0.787,10.073-1.58,13.844-3.18  c2.035-0.864,4.078-1.653,6.173-2.573C80.804,36.331,77.705,35.814,74.466,35.24z M93.968,39.729  c-1.838-0.388-3.732-0.737-5.471-1.075c-0.059-0.012-0.127-0.067-0.188-0.046c-1.143,0.392-2.279,0.613-3.367,1.029  c-2.033,0.773-4.015,1.775-5.752,3.039C78.33,43.3,77.372,44,76.897,44.733c-1.609,2.489-1.206,7.214-0.467,10.149  c0.27,1.071,0.411,1.79,0.889,2.666c3.022,1.287,6.88-0.183,8.885-1.684c1.526-1.142,2.676-2.75,3.602-4.35  C91.815,48.042,93.102,43.946,93.968,39.729z M64.878,46.089c-6.121-1.937-14.865-0.822-21.232,0.467  c-4.477,0.907-9.474,1.92-10.944,5.753c-0.801,2.086-1.009,5.098-0.701,7.903c0.284,2.599,1.076,4.892,2.011,6.594  c2.943,2.698,10.038,1.581,14.124,0.375c2.523-0.745,4.112-1.389,5.845-2.197c1.973-0.921,4.636-1.939,5.285-4.116  c0.179-0.597,0.115-1.244,0.188-1.824c0.492-3.909,1.942-7.447,4.303-9.634c0.477-0.441,1.146-0.679,1.357-1.262  C65.37,47.428,65.13,46.709,64.878,46.089z\"/>\n</svg>\n";
 	},"useData":true});
 
 /***/ },
-/* 46 */
+/* 39 */
 /*!**********************************************************************************!*\
   !*** ./~/script-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js ***!
   \**********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(/*! !./~/script-loader/addScript.js */ 47)(__webpack_require__(/*! !./~/script-loader/~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 48)+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///Users/jordanscales/khan/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
+	__webpack_require__(/*! !./~/script-loader/addScript.js */ 40)(__webpack_require__(/*! !./~/script-loader/~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 41)+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///Users/kkamalov/workspace/unlim_tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
 
 /***/ },
-/* 47 */
+/* 40 */
 /*!**************************************!*\
   !*** ./~/script-loader/addScript.js ***!
   \**************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/*
 		MIT License http://www.opensource.org/licenses/mit-license.php
@@ -12599,13 +11914,13 @@
 	}
 
 /***/ },
-/* 48 */
+/* 41 */
 /*!***********************************************************************************************!*\
   !*** ./~/script-loader/~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js ***!
   \***********************************************************************************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	module.exports = "/*\n * Copyright 2015 Google Inc.\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *      http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n *\n * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/a33b34feb4bf5c6990c9d88f98c3c8e3115168ab\n *\n * See project README for build steps.\n */\n \n// AUTO-GENERATED CONTENT BELOW: DO NOT EDIT! See above for details.\n\nvar COMPILED = !0, goog = goog || {};\ngoog.global = this;\ngoog.isDef = function(a) {\n  return void 0 !== a;\n};\ngoog.exportPath_ = function(a, b, c) {\n  a = a.split(\".\");\n  c = c || goog.global;\n  a[0] in c || !c.execScript || c.execScript(\"var \" + a[0]);\n  for (var d;a.length && (d = a.shift());) {\n    !a.length && goog.isDef(b) ? c[d] = b : c = c[d] ? c[d] : c[d] = {};\n  }\n};\ngoog.define = function(a, b) {\n  var c = b;\n  COMPILED || (goog.global.CLOSURE_UNCOMPILED_DEFINES && Object.prototype.hasOwnProperty.call(goog.global.CLOSURE_UNCOMPILED_DEFINES, a) ? c = goog.global.CLOSURE_UNCOMPILED_DEFINES[a] : goog.global.CLOSURE_DEFINES && Object.prototype.hasOwnProperty.call(goog.global.CLOSURE_DEFINES, a) && (c = goog.global.CLOSURE_DEFINES[a]));\n  goog.exportPath_(a, c);\n};\ngoog.DEBUG = !0;\ngoog.LOCALE = \"en\";\ngoog.TRUSTED_SITE = !0;\ngoog.STRICT_MODE_COMPATIBLE = !1;\ngoog.provide = function(a) {\n  if (!COMPILED) {\n    if (goog.isProvided_(a)) {\n      throw Error('Namespace \"' + a + '\" already declared.');\n    }\n    delete goog.implicitNamespaces_[a];\n    for (var b = a;(b = b.substring(0, b.lastIndexOf(\".\"))) && !goog.getObjectByName(b);) {\n      goog.implicitNamespaces_[b] = !0;\n    }\n  }\n  goog.exportPath_(a);\n};\ngoog.setTestOnly = function(a) {\n  if (COMPILED && !goog.DEBUG) {\n    throw a = a || \"\", Error(\"Importing test-only code into non-debug environment\" + a ? \": \" + a : \".\");\n  }\n};\ngoog.forwardDeclare = function(a) {\n};\nCOMPILED || (goog.isProvided_ = function(a) {\n  return !goog.implicitNamespaces_[a] && goog.isDefAndNotNull(goog.getObjectByName(a));\n}, goog.implicitNamespaces_ = {});\ngoog.getObjectByName = function(a, b) {\n  for (var c = a.split(\".\"), d = b || goog.global, e;e = c.shift();) {\n    if (goog.isDefAndNotNull(d[e])) {\n      d = d[e];\n    } else {\n      return null;\n    }\n  }\n  return d;\n};\ngoog.globalize = function(a, b) {\n  var c = b || goog.global, d;\n  for (d in a) {\n    c[d] = a[d];\n  }\n};\ngoog.addDependency = function(a, b, c) {\n  if (goog.DEPENDENCIES_ENABLED) {\n    var d;\n    a = a.replace(/\\\\/g, \"/\");\n    for (var e = goog.dependencies_, f = 0;d = b[f];f++) {\n      e.nameToPath[d] = a, a in e.pathToNames || (e.pathToNames[a] = {}), e.pathToNames[a][d] = !0;\n    }\n    for (d = 0;b = c[d];d++) {\n      a in e.requires || (e.requires[a] = {}), e.requires[a][b] = !0;\n    }\n  }\n};\ngoog.ENABLE_DEBUG_LOADER = !0;\ngoog.require = function(a) {\n  if (!COMPILED && !goog.isProvided_(a)) {\n    if (goog.ENABLE_DEBUG_LOADER) {\n      var b = goog.getPathFromDeps_(a);\n      if (b) {\n        goog.included_[b] = !0;\n        goog.writeScripts_();\n        return;\n      }\n    }\n    a = \"goog.require could not find: \" + a;\n    goog.global.console && goog.global.console.error(a);\n    throw Error(a);\n  }\n};\ngoog.basePath = \"\";\ngoog.nullFunction = function() {\n};\ngoog.identityFunction = function(a, b) {\n  return a;\n};\ngoog.abstractMethod = function() {\n  throw Error(\"unimplemented abstract method\");\n};\ngoog.addSingletonGetter = function(a) {\n  a.getInstance = function() {\n    if (a.instance_) {\n      return a.instance_;\n    }\n    goog.DEBUG && (goog.instantiatedSingletons_[goog.instantiatedSingletons_.length] = a);\n    return a.instance_ = new a;\n  };\n};\ngoog.instantiatedSingletons_ = [];\ngoog.DEPENDENCIES_ENABLED = !COMPILED && goog.ENABLE_DEBUG_LOADER;\ngoog.DEPENDENCIES_ENABLED && (goog.included_ = {}, goog.dependencies_ = {pathToNames:{}, nameToPath:{}, requires:{}, visited:{}, written:{}}, goog.inHtmlDocument_ = function() {\n  var a = goog.global.document;\n  return \"undefined\" != typeof a && \"write\" in a;\n}, goog.findBasePath_ = function() {\n  if (goog.global.CLOSURE_BASE_PATH) {\n    goog.basePath = goog.global.CLOSURE_BASE_PATH;\n  } else {\n    if (goog.inHtmlDocument_()) {\n      for (var a = goog.global.document.getElementsByTagName(\"script\"), b = a.length - 1;0 <= b;--b) {\n        var c = a[b].src, d = c.lastIndexOf(\"?\"), d = -1 == d ? c.length : d;\n        if (\"base.js\" == c.substr(d - 7, 7)) {\n          goog.basePath = c.substr(0, d - 7);\n          break;\n        }\n      }\n    }\n  }\n}, goog.importScript_ = function(a) {\n  var b = goog.global.CLOSURE_IMPORT_SCRIPT || goog.writeScriptTag_;\n  !goog.dependencies_.written[a] && b(a) && (goog.dependencies_.written[a] = !0);\n}, goog.writeScriptTag_ = function(a) {\n  if (goog.inHtmlDocument_()) {\n    var b = goog.global.document;\n    if (\"complete\" == b.readyState) {\n      if (/\\bdeps.js$/.test(a)) {\n        return !1;\n      }\n      throw Error('Cannot write \"' + a + '\" after document load');\n    }\n    b.write('<script type=\"text/javascript\" src=\"' + a + '\">\\x3c/script>');\n    return !0;\n  }\n  return !1;\n}, goog.writeScripts_ = function() {\n  function a(e) {\n    if (!(e in d.written)) {\n      if (!(e in d.visited) && (d.visited[e] = !0, e in d.requires)) {\n        for (var g in d.requires[e]) {\n          if (!goog.isProvided_(g)) {\n            if (g in d.nameToPath) {\n              a(d.nameToPath[g]);\n            } else {\n              throw Error(\"Undefined nameToPath for \" + g);\n            }\n          }\n        }\n      }\n      e in c || (c[e] = !0, b.push(e));\n    }\n  }\n  var b = [], c = {}, d = goog.dependencies_, e;\n  for (e in goog.included_) {\n    d.written[e] || a(e);\n  }\n  for (e = 0;e < b.length;e++) {\n    if (b[e]) {\n      goog.importScript_(goog.basePath + b[e]);\n    } else {\n      throw Error(\"Undefined script input\");\n    }\n  }\n}, goog.getPathFromDeps_ = function(a) {\n  return a in goog.dependencies_.nameToPath ? goog.dependencies_.nameToPath[a] : null;\n}, goog.findBasePath_(), goog.global.CLOSURE_NO_DEPS || goog.importScript_(goog.basePath + \"deps.js\"));\ngoog.typeOf = function(a) {\n  var b = typeof a;\n  if (\"object\" == b) {\n    if (a) {\n      if (a instanceof Array) {\n        return \"array\";\n      }\n      if (a instanceof Object) {\n        return b;\n      }\n      var c = Object.prototype.toString.call(a);\n      if (\"[object Window]\" == c) {\n        return \"object\";\n      }\n      if (\"[object Array]\" == c || \"number\" == typeof a.length && \"undefined\" != typeof a.splice && \"undefined\" != typeof a.propertyIsEnumerable && !a.propertyIsEnumerable(\"splice\")) {\n        return \"array\";\n      }\n      if (\"[object Function]\" == c || \"undefined\" != typeof a.call && \"undefined\" != typeof a.propertyIsEnumerable && !a.propertyIsEnumerable(\"call\")) {\n        return \"function\";\n      }\n    } else {\n      return \"null\";\n    }\n  } else {\n    if (\"function\" == b && \"undefined\" == typeof a.call) {\n      return \"object\";\n    }\n  }\n  return b;\n};\ngoog.isNull = function(a) {\n  return null === a;\n};\ngoog.isDefAndNotNull = function(a) {\n  return null != a;\n};\ngoog.isArray = function(a) {\n  return \"array\" == goog.typeOf(a);\n};\ngoog.isArrayLike = function(a) {\n  var b = goog.typeOf(a);\n  return \"array\" == b || \"object\" == b && \"number\" == typeof a.length;\n};\ngoog.isDateLike = function(a) {\n  return goog.isObject(a) && \"function\" == typeof a.getFullYear;\n};\ngoog.isString = function(a) {\n  return \"string\" == typeof a;\n};\ngoog.isBoolean = function(a) {\n  return \"boolean\" == typeof a;\n};\ngoog.isNumber = function(a) {\n  return \"number\" == typeof a;\n};\ngoog.isFunction = function(a) {\n  return \"function\" == goog.typeOf(a);\n};\ngoog.isObject = function(a) {\n  var b = typeof a;\n  return \"object\" == b && null != a || \"function\" == b;\n};\ngoog.getUid = function(a) {\n  return a[goog.UID_PROPERTY_] || (a[goog.UID_PROPERTY_] = ++goog.uidCounter_);\n};\ngoog.hasUid = function(a) {\n  return !!a[goog.UID_PROPERTY_];\n};\ngoog.removeUid = function(a) {\n  \"removeAttribute\" in a && a.removeAttribute(goog.UID_PROPERTY_);\n  try {\n    delete a[goog.UID_PROPERTY_];\n  } catch (b) {\n  }\n};\ngoog.UID_PROPERTY_ = \"closure_uid_\" + (1E9 * Math.random() >>> 0);\ngoog.uidCounter_ = 0;\ngoog.getHashCode = goog.getUid;\ngoog.removeHashCode = goog.removeUid;\ngoog.cloneObject = function(a) {\n  var b = goog.typeOf(a);\n  if (\"object\" == b || \"array\" == b) {\n    if (a.clone) {\n      return a.clone();\n    }\n    var b = \"array\" == b ? [] : {}, c;\n    for (c in a) {\n      b[c] = goog.cloneObject(a[c]);\n    }\n    return b;\n  }\n  return a;\n};\ngoog.bindNative_ = function(a, b, c) {\n  return a.call.apply(a.bind, arguments);\n};\ngoog.bindJs_ = function(a, b, c) {\n  if (!a) {\n    throw Error();\n  }\n  if (2 < arguments.length) {\n    var d = Array.prototype.slice.call(arguments, 2);\n    return function() {\n      var c = Array.prototype.slice.call(arguments);\n      Array.prototype.unshift.apply(c, d);\n      return a.apply(b, c);\n    };\n  }\n  return function() {\n    return a.apply(b, arguments);\n  };\n};\ngoog.bind = function(a, b, c) {\n  Function.prototype.bind && -1 != Function.prototype.bind.toString().indexOf(\"native code\") ? goog.bind = goog.bindNative_ : goog.bind = goog.bindJs_;\n  return goog.bind.apply(null, arguments);\n};\ngoog.partial = function(a, b) {\n  var c = Array.prototype.slice.call(arguments, 1);\n  return function() {\n    var b = c.slice();\n    b.push.apply(b, arguments);\n    return a.apply(this, b);\n  };\n};\ngoog.mixin = function(a, b) {\n  for (var c in b) {\n    a[c] = b[c];\n  }\n};\ngoog.now = goog.TRUSTED_SITE && Date.now || function() {\n  return +new Date;\n};\ngoog.globalEval = function(a) {\n  if (goog.global.execScript) {\n    goog.global.execScript(a, \"JavaScript\");\n  } else {\n    if (goog.global.eval) {\n      if (null == goog.evalWorksForGlobals_ && (goog.global.eval(\"var _et_ = 1;\"), \"undefined\" != typeof goog.global._et_ ? (delete goog.global._et_, goog.evalWorksForGlobals_ = !0) : goog.evalWorksForGlobals_ = !1), goog.evalWorksForGlobals_) {\n        goog.global.eval(a);\n      } else {\n        var b = goog.global.document, c = b.createElement(\"script\");\n        c.type = \"text/javascript\";\n        c.defer = !1;\n        c.appendChild(b.createTextNode(a));\n        b.body.appendChild(c);\n        b.body.removeChild(c);\n      }\n    } else {\n      throw Error(\"goog.globalEval not available\");\n    }\n  }\n};\ngoog.evalWorksForGlobals_ = null;\ngoog.getCssName = function(a, b) {\n  var c = function(a) {\n    return goog.cssNameMapping_[a] || a;\n  }, d = function(a) {\n    a = a.split(\"-\");\n    for (var b = [], d = 0;d < a.length;d++) {\n      b.push(c(a[d]));\n    }\n    return b.join(\"-\");\n  }, d = goog.cssNameMapping_ ? \"BY_WHOLE\" == goog.cssNameMappingStyle_ ? c : d : function(a) {\n    return a;\n  };\n  return b ? a + \"-\" + d(b) : d(a);\n};\ngoog.setCssNameMapping = function(a, b) {\n  goog.cssNameMapping_ = a;\n  goog.cssNameMappingStyle_ = b;\n};\n!COMPILED && goog.global.CLOSURE_CSS_NAME_MAPPING && (goog.cssNameMapping_ = goog.global.CLOSURE_CSS_NAME_MAPPING);\ngoog.getMsg = function(a, b) {\n  var c = b || {}, d;\n  for (d in c) {\n    var e = (\"\" + c[d]).replace(/\\$/g, \"$$$$\");\n    a = a.replace(new RegExp(\"\\\\{\\\\$\" + d + \"\\\\}\", \"gi\"), e);\n  }\n  return a;\n};\ngoog.getMsgWithFallback = function(a, b) {\n  return a;\n};\ngoog.exportSymbol = function(a, b, c) {\n  goog.exportPath_(a, b, c);\n};\ngoog.exportProperty = function(a, b, c) {\n  a[b] = c;\n};\ngoog.inherits = function(a, b) {\n  function c() {\n  }\n  c.prototype = b.prototype;\n  a.superClass_ = b.prototype;\n  a.prototype = new c;\n  a.prototype.constructor = a;\n  a.base = function(a, c, f) {\n    var g = Array.prototype.slice.call(arguments, 2);\n    return b.prototype[c].apply(a, g);\n  };\n};\ngoog.base = function(a, b, c) {\n  var d = arguments.callee.caller;\n  if (goog.STRICT_MODE_COMPATIBLE || goog.DEBUG && !d) {\n    throw Error(\"arguments.caller not defined.  goog.base() cannot be used with strict mode code. See http://www.ecma-international.org/ecma-262/5.1/#sec-C\");\n  }\n  if (d.superClass_) {\n    return d.superClass_.constructor.apply(a, Array.prototype.slice.call(arguments, 1));\n  }\n  for (var e = Array.prototype.slice.call(arguments, 2), f = !1, g = a.constructor;g;g = g.superClass_ && g.superClass_.constructor) {\n    if (g.prototype[b] === d) {\n      f = !0;\n    } else {\n      if (f) {\n        return g.prototype[b].apply(a, e);\n      }\n    }\n  }\n  if (a[b] === d) {\n    return a.constructor.prototype[b].apply(a, e);\n  }\n  throw Error(\"goog.base called from a method of one name to a method of a different name\");\n};\ngoog.scope = function(a) {\n  a.call(goog.global);\n};\nvar axs = {};\naxs.browserUtils = {};\naxs.browserUtils.matchSelector = function(a, b) {\n  return a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector ? a.mozMatchesSelector(b) : a.msMatchesSelector ? a.msMatchesSelector(b) : !1;\n};\naxs.constants = {};\naxs.constants.ARIA_ROLES = {alert:{namefrom:[\"author\"], parent:[\"region\"]}, alertdialog:{namefrom:[\"author\"], namerequired:!0, parent:[\"alert\", \"dialog\"]}, application:{namefrom:[\"author\"], namerequired:!0, parent:[\"landmark\"]}, article:{namefrom:[\"author\"], parent:[\"document\", \"region\"]}, banner:{namefrom:[\"author\"], parent:[\"landmark\"]}, button:{childpresentational:!0, namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"command\"], properties:[\"aria-expanded\", \"aria-pressed\"]}, checkbox:{namefrom:[\"contents\", \n\"author\"], namerequired:!0, parent:[\"input\"], requiredProperties:[\"aria-checked\"], properties:[\"aria-checked\"]}, columnheader:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"gridcell\", \"sectionhead\", \"widget\"], properties:[\"aria-sort\"], scope:[\"row\"]}, combobox:{mustcontain:[\"listbox\", \"textbox\"], namefrom:[\"author\"], namerequired:!0, parent:[\"select\"], requiredProperties:[\"aria-expanded\"], properties:[\"aria-expanded\", \"aria-autocomplete\", \"aria-required\"]}, command:{\"abstract\":!0, namefrom:[\"author\"], \nparent:[\"widget\"]}, complementary:{namefrom:[\"author\"], parent:[\"landmark\"]}, composite:{\"abstract\":!0, childpresentational:!1, namefrom:[\"author\"], parent:[\"widget\"], properties:[\"aria-activedescendant\"]}, contentinfo:{namefrom:[\"author\"], parent:[\"landmark\"]}, definition:{namefrom:[\"author\"], parent:[\"section\"]}, dialog:{namefrom:[\"author\"], namerequired:!0, parent:[\"window\"]}, directory:{namefrom:[\"contents\", \"author\"], parent:[\"list\"]}, document:{namefrom:[\" author\"], namerequired:!0, parent:[\"structure\"], \nproperties:[\"aria-expanded\"]}, form:{namefrom:[\"author\"], parent:[\"landmark\"]}, grid:{mustcontain:[\"row\", \"rowgroup\"], namefrom:[\"author\"], namerequired:!0, parent:[\"composite\", \"region\"], properties:[\"aria-level\", \"aria-multiselectable\", \"aria-readonly\"]}, gridcell:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"section\", \"widget\"], properties:[\"aria-readonly\", \"aria-required\", \"aria-selected\"], scope:[\"row\"]}, group:{namefrom:[\" author\"], parent:[\"section\"], properties:[\"aria-activedescendant\"]}, \nheading:{namerequired:!0, parent:[\"sectionhead\"], properties:[\"aria-level\"]}, img:{childpresentational:!0, namefrom:[\"author\"], namerequired:!0, parent:[\"section\"]}, input:{\"abstract\":!0, namefrom:[\"author\"], parent:[\"widget\"]}, landmark:{\"abstract\":!0, namefrom:[\"contents\", \"author\"], namerequired:!1, parent:[\"region\"]}, link:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"command\"], properties:[\"aria-expanded\"]}, list:{mustcontain:[\"group\", \"listitem\"], namefrom:[\"author\"], parent:[\"region\"]}, \nlistbox:{mustcontain:[\"option\"], namefrom:[\"author\"], namerequired:!0, parent:[\"list\", \"select\"], properties:[\"aria-multiselectable\", \"aria-required\"]}, listitem:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"section\"], properties:[\"aria-level\", \"aria-posinset\", \"aria-setsize\"], scope:[\"list\"]}, log:{namefrom:[\" author\"], namerequired:!0, parent:[\"region\"]}, main:{namefrom:[\"author\"], parent:[\"landmark\"]}, marquee:{namerequired:!0, parent:[\"section\"]}, math:{childpresentational:!0, namefrom:[\"author\"], \nparent:[\"section\"]}, menu:{mustcontain:[\"group\", \"menuitemradio\", \"menuitem\", \"menuitemcheckbox\"], namefrom:[\"author\"], namerequired:!0, parent:[\"list\", \"select\"]}, menubar:{namefrom:[\"author\"], parent:[\"menu\"]}, menuitem:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"command\"], scope:[\"menu\", \"menubar\"]}, menuitemcheckbox:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"checkbox\", \"menuitem\"], scope:[\"menu\", \"menubar\"]}, menuitemradio:{namefrom:[\"contents\", \"author\"], namerequired:!0, \nparent:[\"menuitemcheckbox\", \"radio\"], scope:[\"menu\", \"menubar\"]}, navigation:{namefrom:[\"author\"], parent:[\"landmark\"]}, note:{namefrom:[\"author\"], parent:[\"section\"]}, option:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"input\"], properties:[\"aria-checked\", \"aria-posinset\", \"aria-selected\", \"aria-setsize\"]}, presentation:{parent:[\"structure\"]}, progressbar:{childpresentational:!0, namefrom:[\"author\"], namerequired:!0, parent:[\"range\"]}, radio:{namefrom:[\"contents\", \"author\"], namerequired:!0, \nparent:[\"checkbox\", \"option\"]}, radiogroup:{mustcontain:[\"radio\"], namefrom:[\"author\"], namerequired:!0, parent:[\"select\"], properties:[\"aria-required\"]}, range:{\"abstract\":!0, namefrom:[\"author\"], parent:[\"widget\"], properties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\", \"aria-valuetext\"]}, region:{namefrom:[\" author\"], parent:[\"section\"]}, roletype:{\"abstract\":!0, properties:\"aria-atomic aria-busy aria-controls aria-describedby aria-disabled aria-dropeffect aria-flowto aria-grabbed aria-haspopup aria-hidden aria-invalid aria-label aria-labelledby aria-live aria-owns aria-relevant\".split(\" \")}, \nrow:{mustcontain:[\"columnheader\", \"gridcell\", \"rowheader\"], namefrom:[\"contents\", \"author\"], parent:[\"group\", \"widget\"], properties:[\"aria-level\", \"aria-selected\"], scope:[\"grid\", \"rowgroup\", \"treegrid\"]}, rowgroup:{mustcontain:[\"row\"], namefrom:[\"contents\", \"author\"], parent:[\"group\"], scope:[\"grid\"]}, rowheader:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"gridcell\", \"sectionhead\", \"widget\"], properties:[\"aria-sort\"], scope:[\"row\"]}, search:{namefrom:[\"author\"], parent:[\"landmark\"]}, \nsection:{\"abstract\":!0, namefrom:[\"contents\", \"author\"], parent:[\"structure\"], properties:[\"aria-expanded\"]}, sectionhead:{\"abstract\":!0, namefrom:[\"contents\", \"author\"], parent:[\"structure\"], properties:[\"aria-expanded\"]}, select:{\"abstract\":!0, namefrom:[\"author\"], parent:[\"composite\", \"group\", \"input\"]}, separator:{childpresentational:!0, namefrom:[\"author\"], parent:[\"structure\"], properties:[\"aria-expanded\", \"aria-orientation\"]}, scrollbar:{childpresentational:!0, namefrom:[\"author\"], namerequired:!1, \nparent:[\"input\", \"range\"], requiredProperties:[\"aria-controls\", \"aria-orientation\", \"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\"], properties:[\"aria-controls\", \"aria-orientation\", \"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\"]}, slider:{childpresentational:!0, namefrom:[\"author\"], namerequired:!0, parent:[\"input\", \"range\"], requiredProperties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\"], properties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\", \"aria-orientation\"]}, spinbutton:{namefrom:[\"author\"], \nnamerequired:!0, parent:[\"input\", \"range\"], requiredProperties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\"], properties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\", \"aria-required\"]}, status:{parent:[\"region\"]}, structure:{\"abstract\":!0, parent:[\"roletype\"]}, tab:{namefrom:[\"contents\", \"author\"], parent:[\"sectionhead\", \"widget\"], properties:[\"aria-selected\"]}, tablist:{mustcontain:[\"tab\"], namefrom:[\"author\"], parent:[\"composite\", \"directory\"], properties:[\"aria-level\"], scope:[\"tablist\"]}, \ntabpanel:{namefrom:[\"author\"], namerequired:!0, parent:[\"region\"]}, textbox:{namefrom:[\"author\"], namerequired:!0, parent:[\"input\"], properties:[\"aria-activedescendant\", \"aria-autocomplete\", \"aria-multiline\", \"aria-readonly\", \"aria-required\"]}, timer:{namefrom:[\"author\"], namerequired:!0, parent:[\"status\"]}, toolbar:{namefrom:[\"author\"], parent:[\"group\"]}, tooltip:{namerequired:!0, parent:[\"section\"]}, tree:{mustcontain:[\"group\", \"treeitem\"], namefrom:[\"author\"], namerequired:!0, parent:[\"select\"], \nproperties:[\"aria-multiselectable\", \"aria-required\"]}, treegrid:{mustcontain:[\"row\"], namefrom:[\"author\"], namerequired:!0, parent:[\"grid\", \"tree\"]}, treeitem:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"listitem\", \"option\"], scope:[\"group\", \"tree\"]}, widget:{\"abstract\":!0, parent:[\"roletype\"]}, window:{\"abstract\":!0, namefrom:[\" author\"], parent:[\"roletype\"], properties:[\"aria-expanded\"]}};\naxs.constants.WIDGET_ROLES = {};\naxs.constants.addAllParentRolesToSet_ = function(a, b) {\n  if (a.parent) {\n    for (var c = a.parent, d = 0;d < c.length;d++) {\n      var e = c[d];\n      b[e] = !0;\n      axs.constants.addAllParentRolesToSet_(axs.constants.ARIA_ROLES[e], b);\n    }\n  }\n};\naxs.constants.addAllPropertiesToSet_ = function(a, b, c) {\n  var d = a[b];\n  if (d) {\n    for (var e = 0;e < d.length;e++) {\n      c[d[e]] = !0;\n    }\n  }\n  if (a.parent) {\n    for (a = a.parent, d = 0;d < a.length;d++) {\n      axs.constants.addAllPropertiesToSet_(axs.constants.ARIA_ROLES[a[d]], b, c);\n    }\n  }\n};\nfor (var roleName in axs.constants.ARIA_ROLES) {\n  var role = axs.constants.ARIA_ROLES[roleName], propertiesSet = {};\n  axs.constants.addAllPropertiesToSet_(role, \"properties\", propertiesSet);\n  role.propertiesSet = propertiesSet;\n  var requiredPropertiesSet = {};\n  axs.constants.addAllPropertiesToSet_(role, \"requiredProperties\", requiredPropertiesSet);\n  role.requiredPropertiesSet = requiredPropertiesSet;\n  var parentRolesSet = {};\n  axs.constants.addAllParentRolesToSet_(role, parentRolesSet);\n  role.allParentRolesSet = parentRolesSet;\n  \"widget\" in parentRolesSet && (axs.constants.WIDGET_ROLES[roleName] = role);\n}\naxs.constants.ARIA_PROPERTIES = {activedescendant:{type:\"property\", valueType:\"idref\"}, atomic:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, autocomplete:{defaultValue:\"none\", type:\"property\", valueType:\"token\", values:[\"inline\", \"list\", \"both\", \"none\"]}, busy:{defaultValue:\"false\", type:\"state\", valueType:\"boolean\"}, checked:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \"mixed\", \"undefined\"]}, controls:{type:\"property\", valueType:\"idref_list\"}, \ndescribedby:{type:\"property\", valueType:\"idref_list\"}, disabled:{defaultValue:\"false\", type:\"state\", valueType:\"boolean\"}, dropeffect:{defaultValue:\"none\", type:\"property\", valueType:\"token_list\", values:\"copy move link execute popup none\".split(\" \")}, expanded:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \"undefined\"]}, flowto:{type:\"property\", valueType:\"idref_list\"}, grabbed:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \n\"undefined\"]}, haspopup:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, hidden:{defaultValue:\"false\", type:\"state\", valueType:\"boolean\"}, invalid:{defaultValue:\"false\", type:\"state\", valueType:\"token\", values:[\"grammar\", \"false\", \"spelling\", \"true\"]}, label:{type:\"property\", valueType:\"string\"}, labelledby:{type:\"property\", valueType:\"idref_list\"}, level:{type:\"property\", valueType:\"integer\"}, live:{defaultValue:\"off\", type:\"property\", valueType:\"token\", values:[\"off\", \"polite\", \"assertive\"]}, \nmultiline:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, multiselectable:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, orientation:{defaultValue:\"vertical\", type:\"property\", valueType:\"token\", values:[\"horizontal\", \"vertical\"]}, owns:{type:\"property\", valueType:\"idref_list\"}, posinset:{type:\"property\", valueType:\"integer\"}, pressed:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \"mixed\", \"undefined\"]}, readonly:{defaultValue:\"false\", \ntype:\"property\", valueType:\"boolean\"}, relevant:{defaultValue:\"additions text\", type:\"property\", valueType:\"token_list\", values:[\"additions\", \"removals\", \"text\", \"all\"]}, required:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, selected:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \"undefined\"]}, setsize:{type:\"property\", valueType:\"integer\"}, sort:{defaultValue:\"none\", type:\"property\", valueType:\"token\", values:[\"ascending\", \"descending\", \"none\", \n\"other\"]}, valuemax:{type:\"property\", valueType:\"decimal\"}, valuemin:{type:\"property\", valueType:\"decimal\"}, valuenow:{type:\"property\", valueType:\"decimal\"}, valuetext:{type:\"property\", valueType:\"string\"}};\naxs.constants.GLOBAL_PROPERTIES = axs.constants.ARIA_ROLES.roletype.properties;\naxs.constants.NO_ROLE_NAME = \" \";\naxs.constants.WIDGET_ROLE_TO_NAME = {alert:\"aria_role_alert\", alertdialog:\"aria_role_alertdialog\", button:\"aria_role_button\", checkbox:\"aria_role_checkbox\", columnheader:\"aria_role_columnheader\", combobox:\"aria_role_combobox\", dialog:\"aria_role_dialog\", grid:\"aria_role_grid\", gridcell:\"aria_role_gridcell\", link:\"aria_role_link\", listbox:\"aria_role_listbox\", log:\"aria_role_log\", marquee:\"aria_role_marquee\", menu:\"aria_role_menu\", menubar:\"aria_role_menubar\", menuitem:\"aria_role_menuitem\", menuitemcheckbox:\"aria_role_menuitemcheckbox\", \nmenuitemradio:\"aria_role_menuitemradio\", option:axs.constants.NO_ROLE_NAME, progressbar:\"aria_role_progressbar\", radio:\"aria_role_radio\", radiogroup:\"aria_role_radiogroup\", rowheader:\"aria_role_rowheader\", scrollbar:\"aria_role_scrollbar\", slider:\"aria_role_slider\", spinbutton:\"aria_role_spinbutton\", status:\"aria_role_status\", tab:\"aria_role_tab\", tabpanel:\"aria_role_tabpanel\", textbox:\"aria_role_textbox\", timer:\"aria_role_timer\", toolbar:\"aria_role_toolbar\", tooltip:\"aria_role_tooltip\", treeitem:\"aria_role_treeitem\"};\naxs.constants.STRUCTURE_ROLE_TO_NAME = {article:\"aria_role_article\", application:\"aria_role_application\", banner:\"aria_role_banner\", columnheader:\"aria_role_columnheader\", complementary:\"aria_role_complementary\", contentinfo:\"aria_role_contentinfo\", definition:\"aria_role_definition\", directory:\"aria_role_directory\", document:\"aria_role_document\", form:\"aria_role_form\", group:\"aria_role_group\", heading:\"aria_role_heading\", img:\"aria_role_img\", list:\"aria_role_list\", listitem:\"aria_role_listitem\", \nmain:\"aria_role_main\", math:\"aria_role_math\", navigation:\"aria_role_navigation\", note:\"aria_role_note\", region:\"aria_role_region\", rowheader:\"aria_role_rowheader\", search:\"aria_role_search\", separator:\"aria_role_separator\"};\naxs.constants.ATTRIBUTE_VALUE_TO_STATUS = [{name:\"aria-autocomplete\", values:{inline:\"aria_autocomplete_inline\", list:\"aria_autocomplete_list\", both:\"aria_autocomplete_both\"}}, {name:\"aria-checked\", values:{\"true\":\"aria_checked_true\", \"false\":\"aria_checked_false\", mixed:\"aria_checked_mixed\"}}, {name:\"aria-disabled\", values:{\"true\":\"aria_disabled_true\"}}, {name:\"aria-expanded\", values:{\"true\":\"aria_expanded_true\", \"false\":\"aria_expanded_false\"}}, {name:\"aria-invalid\", values:{\"true\":\"aria_invalid_true\", \ngrammar:\"aria_invalid_grammar\", spelling:\"aria_invalid_spelling\"}}, {name:\"aria-multiline\", values:{\"true\":\"aria_multiline_true\"}}, {name:\"aria-multiselectable\", values:{\"true\":\"aria_multiselectable_true\"}}, {name:\"aria-pressed\", values:{\"true\":\"aria_pressed_true\", \"false\":\"aria_pressed_false\", mixed:\"aria_pressed_mixed\"}}, {name:\"aria-readonly\", values:{\"true\":\"aria_readonly_true\"}}, {name:\"aria-required\", values:{\"true\":\"aria_required_true\"}}, {name:\"aria-selected\", values:{\"true\":\"aria_selected_true\", \n\"false\":\"aria_selected_false\"}}];\naxs.constants.INPUT_TYPE_TO_INFORMATION_TABLE_MSG = {button:\"input_type_button\", checkbox:\"input_type_checkbox\", color:\"input_type_color\", datetime:\"input_type_datetime\", \"datetime-local\":\"input_type_datetime_local\", date:\"input_type_date\", email:\"input_type_email\", file:\"input_type_file\", image:\"input_type_image\", month:\"input_type_month\", number:\"input_type_number\", password:\"input_type_password\", radio:\"input_type_radio\", range:\"input_type_range\", reset:\"input_type_reset\", search:\"input_type_search\", \nsubmit:\"input_type_submit\", tel:\"input_type_tel\", text:\"input_type_text\", url:\"input_type_url\", week:\"input_type_week\"};\naxs.constants.TAG_TO_INFORMATION_TABLE_VERBOSE_MSG = {A:\"tag_link\", BUTTON:\"tag_button\", H1:\"tag_h1\", H2:\"tag_h2\", H3:\"tag_h3\", H4:\"tag_h4\", H5:\"tag_h5\", H6:\"tag_h6\", LI:\"tag_li\", OL:\"tag_ol\", SELECT:\"tag_select\", TEXTAREA:\"tag_textarea\", UL:\"tag_ul\", SECTION:\"tag_section\", NAV:\"tag_nav\", ARTICLE:\"tag_article\", ASIDE:\"tag_aside\", HGROUP:\"tag_hgroup\", HEADER:\"tag_header\", FOOTER:\"tag_footer\", TIME:\"tag_time\", MARK:\"tag_mark\"};\naxs.constants.TAG_TO_INFORMATION_TABLE_BRIEF_MSG = {BUTTON:\"tag_button\", SELECT:\"tag_select\", TEXTAREA:\"tag_textarea\"};\naxs.constants.MIXED_VALUES = {\"true\":!0, \"false\":!0, mixed:!0};\n(function() {\n  for (var a in axs.constants.ARIA_PROPERTIES) {\n    var b = axs.constants.ARIA_PROPERTIES[a];\n    if (b.values) {\n      for (var c = {}, d = 0;d < b.values.length;d++) {\n        c[b.values[d]] = !0;\n      }\n      b.valuesSet = c;\n    }\n  }\n})();\naxs.constants.Severity = {INFO:\"Info\", WARNING:\"Warning\", SEVERE:\"Severe\"};\naxs.constants.AuditResult = {PASS:\"PASS\", FAIL:\"FAIL\", NA:\"NA\"};\naxs.constants.InlineElements = {TT:!0, I:!0, B:!0, BIG:!0, SMALL:!0, EM:!0, STRONG:!0, DFN:!0, CODE:!0, SAMP:!0, KBD:!0, VAR:!0, CITE:!0, ABBR:!0, ACRONYM:!0, A:!0, IMG:!0, OBJECT:!0, BR:!0, SCRIPT:!0, MAP:!0, Q:!0, SUB:!0, SUP:!0, SPAN:!0, BDO:!0, INPUT:!0, SELECT:!0, TEXTAREA:!0, LABEL:!0, BUTTON:!0};\naxs.constants.ARIA_TO_HTML_ATTRIBUTE = {\"aria-checked\":\"checked\", \"aria-disabled\":\"disabled\", \"aria-hidden\":\"hidden\", \"aria-expanded\":\"open\", \"aria-valuemax\":\"max\", \"aria-valuemin\":\"min\", \"aria-readonly\":\"readonly\", \"aria-required\":\"required\", \"aria-selected\":\"selected\", \"aria-valuenow\":\"value\"};\naxs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {A:[{role:\"link\", allowed:\"button checkbox menuitem menuitemcheckbox menuitemradio tab treeitem\".split(\" \"), selector:\"a[href]\"}], ADDRESS:[{role:\"\", allowed:[\"contentinfo\", \"presentation\"]}], AREA:[{role:\"link\", selector:\"area[href]\"}], ARTICLE:[{role:\"article\", allowed:[\"presentation\", \"article\", \"document\", \"application\", \"main\"]}], ASIDE:[{role:\"complementary\", allowed:[\"note\", \"complementary\", \"search\", \"presentation\"]}], AUDIO:[{role:\"\", allowed:[\"application\", \n\"presentation\"]}], BASE:[{role:\"\", reserved:!0}], BODY:[{role:\"document\", allowed:[\"presentation\"]}], BUTTON:[{role:\"button\", allowed:[\"link\", \"menuitem\", \"menuitemcheckbox\", \"menuitemradio\", \"radio\"], selector:'button:not([aria-pressed]):not([type=\"menu\"])'}, {role:\"button\", allowed:[\"button\"], selector:\"button[aria-pressed]\"}, {role:\"button\", attributes:{\"aria-haspopup\":!0}, allowed:[\"link\", \"menuitem\", \"menuitemcheckbox\", \"menuitemradio\", \"radio\"], selector:'button[type=\"menu\"]'}], CAPTION:[{role:\"\", \nallowed:[\"presentation\"]}], COL:[{role:\"\", reserved:!0}], COLGROUP:[{role:\"\", reserved:!0}], DATALIST:[{role:\"listbox\", attributes:{\"aria-multiselectable\":!1}, allowed:[\"presentation\"]}], DEL:[{role:\"\", allowed:[\"*\"]}], DD:[{role:\"\", allowed:[\"presentation\"]}], DT:[{role:\"\", allowed:[\"presentation\"]}], DETAILS:[{role:\"group\", allowed:[\"group\", \"presentation\"]}], DIALOG:[{role:\"dialog\", allowed:\"dialog alert alertdialog application log marquee status\".split(\" \"), selector:\"dialog[open]\"}, {role:\"dialog\", \nattributes:{\"aria-hidden\":!0}, allowed:\"dialog alert alertdialog application log marquee status\".split(\" \"), selector:\"dialog:not([open])\"}], DIV:[{role:\"\", allowed:[\"*\"]}], DL:[{role:\"list\", allowed:[\"presentation\"]}], EMBED:[{role:\"\", allowed:[\"application\", \"document\", \"img\", \"presentation\"]}], FIGURE:[{role:\"\", allowed:[\"*\"]}], FOOTER:[{role:\"\", allowed:[\"contentinfo\", \"presentation\"]}], FORM:[{role:\"form\", allowed:[\"presentation\"]}], P:[{role:\"\", allowed:[\"*\"]}], PRE:[{role:\"\", allowed:[\"*\"]}], \nBLOCKQUOTE:[{role:\"\", allowed:[\"*\"]}], H1:[{role:\"heading\"}], H2:[{role:\"heading\"}], H3:[{role:\"heading\"}], H4:[{role:\"heading\"}], H5:[{role:\"heading\"}], H6:[{role:\"heading\"}], HEAD:[{role:\"\", reserved:!0}], HEADER:[{role:\"\", allowed:[\"banner\", \"presentation\"]}], HR:[{role:\"separator\", allowed:[\"presentation\"]}], HTML:[{role:\"\", reserved:!0}], IFRAME:[{role:\"\", allowed:[\"application\", \"document\", \"img\", \"presentation\"], selector:\"iframe:not([seamless])\"}, {role:\"\", allowed:[\"application\", \"document\", \n\"img\", \"presentation\", \"group\"], selector:\"iframe[seamless]\"}], IMG:[{role:\"presentation\", reserved:!0, selector:'img[alt=\"\"]'}, {role:\"img\", allowed:[\"*\"], selector:'img[alt]:not([alt=\"\"])'}], INPUT:[{role:\"button\", allowed:[\"link\", \"menuitem\", \"menuitemcheckbox\", \"menuitemradio\", \"radio\"], selector:'input[type=\"button\"]:not([aria-pressed])'}, {role:\"button\", allowed:[\"button\"], selector:'input[type=\"button\"][aria-pressed]'}, {role:\"checkbox\", allowed:[\"checkbox\"], selector:'input[type=\"checkbox\"]'}, \n{role:\"\", selector:'input[type=\"color\"]'}, {role:\"\", selector:'input[type=\"date\"]'}, {role:\"\", selector:'input[type=\"datetime\"]'}, {role:\"textbox\", selector:'input[type=\"email\"]:not([list])'}, {role:\"\", selector:'input[type=\"file\"]'}, {role:\"\", reserved:!0, selector:'input[type=\"hidden\"]'}, {role:\"button\", allowed:[\"button\"], selector:'input[type=\"image\"][aria-pressed]'}, {role:\"button\", allowed:[\"link\", \"menuitem\", \"menuitemcheckbox\", \"menuitemradio\", \"radio\"], selector:'input[type=\"image\"]:not([aria-pressed])'}, \n{role:\"\", selector:'input[type=\"month\"]'}, {role:\"\", selector:'input[type=\"number\"]'}, {role:\"textbox\", selector:'input[type=\"password\"]'}, {role:\"radio\", allowed:[\"menuitemradio\"], selector:'input[type=\"radio\"]'}, {role:\"slider\", selector:'input[type=\"range\"]'}, {role:\"button\", selector:'input[type=\"reset\"]'}, {role:\"combobox\", selector:'input[type=\"search\"][list]'}, {role:\"textbox\", selector:'input[type=\"search\"]:not([list])'}, {role:\"button\", selector:'input[type=\"submit\"]'}, {role:\"combobox\", \nselector:'input[type=\"tel\"][list]'}, {role:\"textbox\", selector:'input[type=\"tel\"]:not([list])'}, {role:\"combobox\", selector:'input[type=\"text\"][list]'}, {role:\"\", selector:'input[type=\"text\"]:not([list])'}, {role:\"\", selector:'input[type=\"time\"]'}, {role:\"combobox\", selector:'input[type=\"url\"][list]'}, {role:\"textbox\", selector:'input[type=\"url\"]:not([list])'}, {role:\"\", selector:'input[type=\"week\"]'}], INS:[{role:\"\", allowed:[\"*\"]}], KEYGEN:[{role:\"\"}], LABEL:[{role:\"\", allowed:[\"presentation\"]}], \nLI:[{role:\"listitem\", allowed:\"menuitem menuitemcheckbox menuitemradio option tab treeitem presentation\".split(\" \"), selector:'ol:not([role=\"presentation\"])>li, ul:not([role=\"presentation\"])>li'}, {role:\"listitem\", allowed:\"listitem menuitem menuitemcheckbox menuitemradio option tab treeitem presentation\".split(\" \"), selector:'ol[role=\"presentation\"]>li, ul[role=\"presentation\"]>li'}], LINK:[{role:\"link\", reserved:!0, selector:\"link[href]\"}], MAIN:[{role:\"\", allowed:[\"main\", \"presentation\"]}], MAP:[{role:\"\", \nreserved:!0}], MATH:[{role:\"\", allowed:[\"presentation\"]}], MENU:[{role:\"toolbar\", selector:'menu[type=\"toolbar\"]'}], MENUITEM:[{role:\"menuitem\", selector:'menuitem[type=\"command\"]'}, {role:\"menuitemcheckbox\", selector:'menuitem[type=\"checkbox\"]'}, {role:\"menuitemradio\", selector:'menuitem[type=\"radio\"]'}], META:[{role:\"\", reserved:!0}], METER:[{role:\"progressbar\", allowed:[\"presentation\"]}], NAV:[{role:\"navigation\", allowed:[\"navigation\", \"presentation\"]}], NOSCRIPT:[{role:\"\", reserved:!0}], OBJECT:[{role:\"\", \nallowed:[\"application\", \"document\", \"img\", \"presentation\"]}], OL:[{role:\"list\", allowed:\"directory group listbox menu menubar tablist toolbar tree presentation\".split(\" \")}], OPTGROUP:[{role:\"\", allowed:[\"presentation\"]}], OPTION:[{role:\"option\"}], OUTPUT:[{role:\"status\", allowed:[\"*\"]}], PARAM:[{role:\"\", reserved:!0}], PICTURE:[{role:\"\", reserved:!0}], PROGRESS:[{role:\"progressbar\", allowed:[\"presentation\"]}], SCRIPT:[{role:\"\", reserved:!0}], SECTION:[{role:\"region\", allowed:\"alert alertdialog application contentinfo dialog document log marquee search status presentation\".split(\" \")}], \nSELECT:[{role:\"listbox\"}], SOURCE:[{role:\"\", reserved:!0}], SPAN:[{role:\"\", allowed:[\"*\"]}], STYLE:[{role:\"\", reserved:!0}], SVG:[{role:\"\", allowed:[\"application\", \"document\", \"img\", \"presentation\"]}], SUMMARY:[{role:\"\", allowed:[\"presentation\"]}], TABLE:[{role:\"\", allowed:[\"*\"]}], TEMPLATE:[{role:\"\", reserved:!0}], TEXTAREA:[{role:\"textbox\"}], TBODY:[{role:\"rowgroup\", allowed:[\"*\"]}], THEAD:[{role:\"rowgroup\", allowed:[\"*\"]}], TFOOT:[{role:\"rowgroup\", allowed:[\"*\"]}], TITLE:[{role:\"\", reserved:!0}], \nTD:[{role:\"\", allowed:[\"*\"]}], TH:[{role:\"\", allowed:[\"*\"]}], TR:[{role:\"\", allowed:[\"*\"]}], TRACK:[{role:\"\", reserved:!0}], UL:[{role:\"list\", allowed:\"directory group listbox menu menubar tablist toolbar tree presentation\".split(\" \")}], VIDEO:[{role:\"\", allowed:[\"application\", \"presentation\"]}]};\naxs.utils = {};\naxs.utils.FOCUSABLE_ELEMENTS_SELECTOR = \"input:not([type=hidden]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),a[href],iframe,[tabindex]\";\naxs.utils.Color = function(a, b, c, d) {\n  this.red = a;\n  this.green = b;\n  this.blue = c;\n  this.alpha = d;\n};\naxs.utils.calculateContrastRatio = function(a, b) {\n  if (!a || !b) {\n    return null;\n  }\n  1 > a.alpha && (a = axs.utils.flattenColors(a, b));\n  var c = axs.utils.calculateLuminance(a), d = axs.utils.calculateLuminance(b);\n  return (Math.max(c, d) + .05) / (Math.min(c, d) + .05);\n};\naxs.utils.luminanceRatio = function(a, b) {\n  return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);\n};\naxs.utils.parentElement = function(a) {\n  if (!a) {\n    return null;\n  }\n  if (a.nodeType == Node.DOCUMENT_FRAGMENT_NODE) {\n    return a.host;\n  }\n  var b = a.parentElement;\n  if (b) {\n    return b;\n  }\n  a = a.parentNode;\n  if (!a) {\n    return null;\n  }\n  switch(a.nodeType) {\n    case Node.ELEMENT_NODE:\n      return a;\n    case Node.DOCUMENT_FRAGMENT_NODE:\n      return a.host;\n    default:\n      return null;\n  }\n};\naxs.utils.asElement = function(a) {\n  switch(a.nodeType) {\n    case Node.COMMENT_NODE:\n      return null;\n    case Node.ELEMENT_NODE:\n      if (\"script\" == a.tagName.toLowerCase()) {\n        return null;\n      }\n      break;\n    case Node.TEXT_NODE:\n      a = axs.utils.parentElement(a);\n      break;\n    default:\n      return console.warn(\"Unhandled node type: \", a.nodeType), null;\n  }\n  return a;\n};\naxs.utils.elementIsTransparent = function(a) {\n  return \"0\" == a.style.opacity;\n};\naxs.utils.elementHasZeroArea = function(a) {\n  a = a.getBoundingClientRect();\n  var b = a.top - a.bottom;\n  return a.right - a.left && b ? !1 : !0;\n};\naxs.utils.elementIsOutsideScrollArea = function(a) {\n  for (var b = axs.utils.parentElement(a), c = a.ownerDocument.defaultView;b != c.document.body;) {\n    if (axs.utils.isClippedBy(a, b)) {\n      return !0;\n    }\n    if (axs.utils.canScrollTo(a, b) && !axs.utils.elementIsOutsideScrollArea(b)) {\n      return !1;\n    }\n    b = axs.utils.parentElement(b);\n  }\n  return !axs.utils.canScrollTo(a, c.document.body);\n};\naxs.utils.canScrollTo = function(a, b) {\n  var c = a.getBoundingClientRect(), d = b.getBoundingClientRect(), e = d.top, f = d.left, g = e - b.scrollTop, e = e - b.scrollTop + b.scrollHeight, h = f - b.scrollLeft + b.scrollWidth;\n  if (c.right < f - b.scrollLeft || c.bottom < g || c.left > h || c.top > e) {\n    return !1;\n  }\n  f = a.ownerDocument.defaultView;\n  g = f.getComputedStyle(b);\n  return c.left > d.right || c.top > d.bottom ? \"scroll\" == g.overflow || \"auto\" == g.overflow || b instanceof f.HTMLBodyElement : !0;\n};\naxs.utils.isClippedBy = function(a, b) {\n  var c = a.getBoundingClientRect(), d = b.getBoundingClientRect(), e = d.top - b.scrollTop, f = d.left - b.scrollLeft, g = a.ownerDocument.defaultView.getComputedStyle(b);\n  return (c.right < d.left || c.bottom < d.top || c.left > d.right || c.top > d.bottom) && \"hidden\" == g.overflow ? !0 : c.right < f || c.bottom < e ? \"visible\" != g.overflow : !1;\n};\naxs.utils.isAncestor = function(a, b) {\n  return null == b ? !1 : b === a ? !0 : axs.utils.isAncestor(a, b.parentNode);\n};\naxs.utils.overlappingElements = function(a) {\n  if (axs.utils.elementHasZeroArea(a)) {\n    return null;\n  }\n  for (var b = [], c = a.getClientRects(), d = 0;d < c.length;d++) {\n    var e = c[d], e = document.elementFromPoint((e.left + e.right) / 2, (e.top + e.bottom) / 2);\n    if (null != e && e != a && !axs.utils.isAncestor(e, a) && !axs.utils.isAncestor(a, e)) {\n      var f = window.getComputedStyle(e, null);\n      f && (f = axs.utils.getBgColor(f, e)) && 0 < f.alpha && 0 > b.indexOf(e) && b.push(e);\n    }\n  }\n  return b;\n};\naxs.utils.elementIsHtmlControl = function(a) {\n  var b = a.ownerDocument.defaultView;\n  return a instanceof b.HTMLButtonElement || a instanceof b.HTMLInputElement || a instanceof b.HTMLSelectElement || a instanceof b.HTMLTextAreaElement ? !0 : !1;\n};\naxs.utils.elementIsAriaWidget = function(a) {\n  return a.hasAttribute(\"role\") && (a = a.getAttribute(\"role\")) && (a = axs.constants.ARIA_ROLES[a]) && \"widget\" in a.allParentRolesSet ? !0 : !1;\n};\naxs.utils.elementIsVisible = function(a) {\n  return axs.utils.elementIsTransparent(a) || axs.utils.elementHasZeroArea(a) || axs.utils.elementIsOutsideScrollArea(a) || axs.utils.overlappingElements(a).length ? !1 : !0;\n};\naxs.utils.isLargeFont = function(a) {\n  var b = a.fontSize;\n  a = \"bold\" == a.fontWeight;\n  var c = b.match(/(\\d+)px/);\n  if (c) {\n    b = parseInt(c[1], 10);\n    if (c = window.getComputedStyle(document.body, null).fontSize.match(/(\\d+)px/)) {\n      var d = parseInt(c[1], 10), c = 1.2 * d, d = 1.5 * d\n    } else {\n      c = 19.2, d = 24;\n    }\n    return a && b >= c || b >= d;\n  }\n  if (c = b.match(/(\\d+)em/)) {\n    return b = parseInt(c[1], 10), a && 1.2 <= b || 1.5 <= b ? !0 : !1;\n  }\n  if (c = b.match(/(\\d+)%/)) {\n    return b = parseInt(c[1], 10), a && 120 <= b || 150 <= b ? !0 : !1;\n  }\n  if (c = b.match(/(\\d+)pt/)) {\n    if (b = parseInt(c[1], 10), a && 14 <= b || 18 <= b) {\n      return !0;\n    }\n  }\n  return !1;\n};\naxs.utils.getBgColor = function(a, b) {\n  var c = axs.utils.parseColor(a.backgroundColor);\n  if (!c) {\n    return null;\n  }\n  1 > a.opacity && (c.alpha *= a.opacity);\n  if (1 > c.alpha) {\n    var d = axs.utils.getParentBgColor(b);\n    if (null == d) {\n      return null;\n    }\n    c = axs.utils.flattenColors(c, d);\n  }\n  return c;\n};\naxs.utils.getParentBgColor = function(a) {\n  var b = a;\n  a = [];\n  for (var c = null;b = axs.utils.parentElement(b);) {\n    var d = window.getComputedStyle(b, null);\n    if (d) {\n      var e = axs.utils.parseColor(d.backgroundColor);\n      if (e && (1 > d.opacity && (e.alpha *= d.opacity), 0 != e.alpha && (a.push(e), 1 == e.alpha))) {\n        c = !0;\n        break;\n      }\n    }\n  }\n  c || a.push(new axs.utils.Color(255, 255, 255, 1));\n  for (b = a.pop();a.length;) {\n    c = a.pop(), b = axs.utils.flattenColors(c, b);\n  }\n  return b;\n};\naxs.utils.getFgColor = function(a, b, c) {\n  var d = axs.utils.parseColor(a.color);\n  if (!d) {\n    return null;\n  }\n  1 > d.alpha && (d = axs.utils.flattenColors(d, c));\n  1 > a.opacity && (b = axs.utils.getParentBgColor(b), d.alpha *= a.opacity, d = axs.utils.flattenColors(d, b));\n  return d;\n};\naxs.utils.parseColor = function(a) {\n  var b = a.match(/^rgb\\((\\d+), (\\d+), (\\d+)\\)$/);\n  if (b) {\n    a = parseInt(b[1], 10);\n    var c = parseInt(b[2], 10), d = parseInt(b[3], 10);\n    return new axs.utils.Color(a, c, d, 1);\n  }\n  return (b = a.match(/^rgba\\((\\d+), (\\d+), (\\d+), (\\d*(\\.\\d+)?)\\)/)) ? (a = parseInt(b[1], 10), c = parseInt(b[2], 10), d = parseInt(b[3], 10), b = parseFloat(b[4]), new axs.utils.Color(a, c, d, b)) : null;\n};\naxs.utils.colorChannelToString = function(a) {\n  a = Math.round(a);\n  return 15 >= a ? \"0\" + a.toString(16) : a.toString(16);\n};\naxs.utils.colorToString = function(a) {\n  return 1 == a.alpha ? \"#\" + axs.utils.colorChannelToString(a.red) + axs.utils.colorChannelToString(a.green) + axs.utils.colorChannelToString(a.blue) : \"rgba(\" + [a.red, a.green, a.blue, a.alpha].join() + \")\";\n};\naxs.utils.luminanceFromContrastRatio = function(a, b, c) {\n  return c ? (a + .05) * b - .05 : (a + .05) / b - .05;\n};\naxs.utils.translateColor = function(a, b) {\n  var c = a[0], c = (b - c) / ((c > b ? 0 : 1) - c);\n  return axs.utils.fromYCC([b, a[1] - a[1] * c, a[2] - a[2] * c]);\n};\naxs.utils.suggestColors = function(a, b, c, d) {\n  if (!axs.utils.isLowContrast(c, d, !0)) {\n    return null;\n  }\n  var e = {}, f = axs.utils.calculateLuminance(a), g = axs.utils.calculateLuminance(b), h = axs.utils.isLargeFont(d) ? 3 : 4.5, k = axs.utils.isLargeFont(d) ? 4.5 : 7, m = g > f, l = axs.utils.luminanceFromContrastRatio(f, h + .02, m), n = axs.utils.luminanceFromContrastRatio(f, k + .02, m), p = axs.utils.toYCC(b);\n  if (axs.utils.isLowContrast(c, d, !1) && 1 >= l && 0 <= l) {\n    var q = axs.utils.translateColor(p, l), l = axs.utils.calculateContrastRatio(q, a), f = {};\n    f.fg = axs.utils.colorToString(q);\n    f.bg = axs.utils.colorToString(a);\n    f.contrast = l.toFixed(2);\n    e.AA = f;\n  }\n  axs.utils.isLowContrast(c, d, !0) && 1 >= n && 0 <= n && (n = axs.utils.translateColor(p, n), l = axs.utils.calculateContrastRatio(n, a), f = {}, f.fg = axs.utils.colorToString(n), f.bg = axs.utils.colorToString(a), f.contrast = l.toFixed(2), e.AAA = f);\n  h = axs.utils.luminanceFromContrastRatio(g, h + .02, !m);\n  g = axs.utils.luminanceFromContrastRatio(g, k + .02, !m);\n  a = axs.utils.toYCC(a);\n  !(\"AA\" in e) && axs.utils.isLowContrast(c, d, !1) && 1 >= h && 0 <= h && (k = axs.utils.translateColor(a, h), l = axs.utils.calculateContrastRatio(b, k), f = {}, f.bg = axs.utils.colorToString(k), f.fg = axs.utils.colorToString(b), f.contrast = l.toFixed(2), e.AA = f);\n  !(\"AAA\" in e) && axs.utils.isLowContrast(c, d, !0) && 1 >= g && 0 <= g && (c = axs.utils.translateColor(a, g), l = axs.utils.calculateContrastRatio(b, c), f = {}, f.bg = axs.utils.colorToString(c), f.fg = axs.utils.colorToString(b), f.contrast = l.toFixed(2), e.AAA = f);\n  return e;\n};\naxs.utils.flattenColors = function(a, b) {\n  var c = a.alpha;\n  return new axs.utils.Color((1 - c) * b.red + c * a.red, (1 - c) * b.green + c * a.green, (1 - c) * b.blue + c * a.blue, a.alpha + b.alpha * (1 - a.alpha));\n};\naxs.utils.calculateLuminance = function(a) {\n  return axs.utils.toYCC(a)[0];\n};\naxs.utils.RGBToYCCMatrix = function(a, b) {\n  return [[a, 1 - a - b, b], [-a / (2 - 2 * b), (a + b - 1) / (2 - 2 * b), (1 - b) / (2 - 2 * b)], [(1 - a) / (2 - 2 * a), (a + b - 1) / (2 - 2 * a), -b / (2 - 2 * a)]];\n};\naxs.utils.invert3x3Matrix = function(a) {\n  var b = a[0][0], c = a[0][1], d = a[0][2], e = a[1][0], f = a[1][1], g = a[1][2], h = a[2][0], k = a[2][1];\n  a = a[2][2];\n  return axs.utils.scalarMultiplyMatrix([[f * a - g * k, d * k - c * a, c * g - d * f], [g * h - e * a, b * a - d * h, d * e - b * g], [e * k - f * h, h * c - b * k, b * f - c * e]], 1 / (b * (f * a - g * k) - c * (a * e - g * h) + d * (e * k - f * h)));\n};\naxs.utils.scalarMultiplyMatrix = function(a, b) {\n  for (var c = [[], [], []], d = 0;3 > d;d++) {\n    for (var e = 0;3 > e;e++) {\n      c[d][e] = a[d][e] * b;\n    }\n  }\n  return c;\n};\naxs.utils.kR = .2126;\naxs.utils.kB = .0722;\naxs.utils.YCC_MATRIX = axs.utils.RGBToYCCMatrix(axs.utils.kR, axs.utils.kB);\naxs.utils.INVERTED_YCC_MATRIX = axs.utils.invert3x3Matrix(axs.utils.YCC_MATRIX);\naxs.utils.convertColor = function(a, b) {\n  var c = b[0], d = b[1], e = b[2];\n  return [a[0][0] * c + a[0][1] * d + a[0][2] * e, a[1][0] * c + a[1][1] * d + a[1][2] * e, a[2][0] * c + a[2][1] * d + a[2][2] * e];\n};\naxs.utils.multiplyMatrices = function(a, b) {\n  for (var c = [[], [], []], d = 0;3 > d;d++) {\n    for (var e = 0;3 > e;e++) {\n      c[d][e] = a[d][0] * b[0][e] + a[d][1] * b[1][e] + a[d][2] * b[2][e];\n    }\n  }\n  return c;\n};\naxs.utils.toYCC = function(a) {\n  var b = a.red / 255, c = a.green / 255;\n  a = a.blue / 255;\n  b = .03928 >= b ? b / 12.92 : Math.pow((b + .055) / 1.055, 2.4);\n  c = .03928 >= c ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4);\n  a = .03928 >= a ? a / 12.92 : Math.pow((a + .055) / 1.055, 2.4);\n  return axs.utils.convertColor(axs.utils.YCC_MATRIX, [b, c, a]);\n};\naxs.utils.fromYCC = function(a) {\n  var b = axs.utils.convertColor(axs.utils.INVERTED_YCC_MATRIX, a), c = b[0];\n  a = b[1];\n  b = b[2];\n  c = .00303949 >= c ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055;\n  a = .00303949 >= a ? 12.92 * a : 1.055 * Math.pow(a, 1 / 2.4) - .055;\n  b = .00303949 >= b ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - .055;\n  c = Math.min(Math.max(Math.round(255 * c), 0), 255);\n  a = Math.min(Math.max(Math.round(255 * a), 0), 255);\n  b = Math.min(Math.max(Math.round(255 * b), 0), 255);\n  return new axs.utils.Color(c, a, b, 1);\n};\naxs.utils.scalarMultiplyMatrix = function(a, b) {\n  for (var c = [[], [], []], d = 0;3 > d;d++) {\n    for (var e = 0;3 > e;e++) {\n      c[d][e] = a[d][e] * b;\n    }\n  }\n  return c;\n};\naxs.utils.multiplyMatrices = function(a, b) {\n  for (var c = [[], [], []], d = 0;3 > d;d++) {\n    for (var e = 0;3 > e;e++) {\n      c[d][e] = a[d][0] * b[0][e] + a[d][1] * b[1][e] + a[d][2] * b[2][e];\n    }\n  }\n  return c;\n};\naxs.utils.getContrastRatioForElement = function(a) {\n  var b = window.getComputedStyle(a, null);\n  return axs.utils.getContrastRatioForElementWithComputedStyle(b, a);\n};\naxs.utils.getContrastRatioForElementWithComputedStyle = function(a, b) {\n  if (axs.utils.isElementHidden(b)) {\n    return null;\n  }\n  var c = axs.utils.getBgColor(a, b);\n  if (!c) {\n    return null;\n  }\n  var d = axs.utils.getFgColor(a, b, c);\n  return d ? axs.utils.calculateContrastRatio(d, c) : null;\n};\naxs.utils.isNativeTextElement = function(a) {\n  var b = a.tagName.toLowerCase();\n  a = a.type ? a.type.toLowerCase() : \"\";\n  if (\"textarea\" == b) {\n    return !0;\n  }\n  if (\"input\" != b) {\n    return !1;\n  }\n  switch(a) {\n    case \"email\":\n    ;\n    case \"number\":\n    ;\n    case \"password\":\n    ;\n    case \"search\":\n    ;\n    case \"text\":\n    ;\n    case \"tel\":\n    ;\n    case \"url\":\n    ;\n    case \"\":\n      return !0;\n    default:\n      return !1;\n  }\n};\naxs.utils.isLowContrast = function(a, b, c) {\n  a = Math.round(10 * a) / 10;\n  return c ? 4.5 > a || !axs.utils.isLargeFont(b) && 7 > a : 3 > a || !axs.utils.isLargeFont(b) && 4.5 > a;\n};\naxs.utils.hasLabel = function(a) {\n  var b = a.tagName.toLowerCase(), c = a.type ? a.type.toLowerCase() : \"\";\n  if (a.hasAttribute(\"aria-label\") || a.hasAttribute(\"title\") || \"img\" == b && a.hasAttribute(\"alt\") || \"input\" == b && \"image\" == c && a.hasAttribute(\"alt\") || \"input\" == b && (\"submit\" == c || \"reset\" == c) || a.hasAttribute(\"aria-labelledby\") || a.hasAttribute(\"id\") && 0 < document.querySelectorAll('label[for=\"' + a.id + '\"]').length) {\n    return !0;\n  }\n  for (b = axs.utils.parentElement(a);b;) {\n    if (\"label\" == b.tagName.toLowerCase() && b.control == a) {\n      return !0;\n    }\n    b = axs.utils.parentElement(b);\n  }\n  return !1;\n};\naxs.utils.isElementHidden = function(a) {\n  if (!(a instanceof a.ownerDocument.defaultView.HTMLElement)) {\n    return !1;\n  }\n  if (a.hasAttribute(\"chromevoxignoreariahidden\")) {\n    var b = !0\n  }\n  var c = window.getComputedStyle(a, null);\n  return \"none\" == c.display || \"hidden\" == c.visibility ? !0 : a.hasAttribute(\"aria-hidden\") && \"true\" == a.getAttribute(\"aria-hidden\").toLowerCase() ? !b : !1;\n};\naxs.utils.isElementOrAncestorHidden = function(a) {\n  return axs.utils.isElementHidden(a) ? !0 : axs.utils.parentElement(a) ? axs.utils.isElementOrAncestorHidden(axs.utils.parentElement(a)) : !1;\n};\naxs.utils.isInlineElement = function(a) {\n  a = a.tagName.toUpperCase();\n  return axs.constants.InlineElements[a];\n};\naxs.utils.getRoles = function(a, b) {\n  if (!a || a.nodeType !== Node.ELEMENT_NODE || !a.hasAttribute(\"role\") && !b) {\n    return null;\n  }\n  var c = a.getAttribute(\"role\");\n  !c && b && (c = axs.properties.getImplicitRole(a));\n  if (!c) {\n    return null;\n  }\n  for (var c = c.split(\" \"), d = {roles:[], valid:!1}, e = 0;e < c.length;e++) {\n    var f = c[e], g = axs.constants.ARIA_ROLES[f], f = {name:f};\n    g && !g.abstract ? (f.details = g, d.applied || (d.applied = f), f.valid = d.valid = !0) : f.valid = !1;\n    d.roles.push(f);\n  }\n  return d;\n};\naxs.utils.getAriaPropertyValue = function(a, b, c) {\n  var d = a.replace(/^aria-/, \"\"), e = axs.constants.ARIA_PROPERTIES[d], d = {name:a, rawValue:b};\n  if (!e) {\n    return d.valid = !1, d.reason = '\"' + a + '\" is not a valid ARIA property', d;\n  }\n  e = e.valueType;\n  if (!e) {\n    return d.valid = !1, d.reason = '\"' + a + '\" is not a valid ARIA property', d;\n  }\n  switch(e) {\n    case \"idref\":\n      a = axs.utils.isValidIDRefValue(b, c), d.valid = a.valid, d.reason = a.reason, d.idref = a.idref;\n    case \"idref_list\":\n      a = b.split(/\\s+/);\n      d.valid = !0;\n      for (b = 0;b < a.length;b++) {\n        e = axs.utils.isValidIDRefValue(a[b], c), e.valid || (d.valid = !1), d.values ? d.values.push(e) : d.values = [e];\n      }\n      return d;\n    case \"integer\":\n    ;\n    case \"decimal\":\n      c = axs.utils.isValidNumber(b);\n      if (!c.valid) {\n        return d.valid = !1, d.reason = c.reason, d;\n      }\n      Math.floor(c.value) != c.value ? (d.valid = !1, d.reason = \"\" + b + \" is not a whole integer\") : (d.valid = !0, d.value = c.value);\n      return d;\n    case \"number\":\n      c = axs.utils.isValidNumber(b), c.valid && (d.valid = !0, d.value = c.value);\n    case \"string\":\n      return d.valid = !0, d.value = b, d;\n    case \"token\":\n      return c = axs.utils.isValidTokenValue(a, b.toLowerCase()), c.valid ? (d.valid = !0, d.value = c.value) : (d.valid = !1, d.value = b, d.reason = c.reason), d;\n    case \"token_list\":\n      e = b.split(/\\s+/);\n      d.valid = !0;\n      for (b = 0;b < e.length;b++) {\n        c = axs.utils.isValidTokenValue(a, e[b].toLowerCase()), c.valid || (d.valid = !1, d.reason ? (d.reason = [d.reason], d.reason.push(c.reason)) : (d.reason = c.reason, d.possibleValues = c.possibleValues)), d.values ? d.values.push(c.value) : d.values = [c.value];\n      }\n      return d;\n    case \"tristate\":\n      return c = axs.utils.isPossibleValue(b.toLowerCase(), axs.constants.MIXED_VALUES, a), c.valid ? (d.valid = !0, d.value = c.value) : (d.valid = !1, d.value = b, d.reason = c.reason), d;\n    case \"boolean\":\n      return c = axs.utils.isValidBoolean(b), c.valid ? (d.valid = !0, d.value = c.value) : (d.valid = !1, d.value = b, d.reason = c.reason), d;\n  }\n  d.valid = !1;\n  d.reason = \"Not a valid ARIA property\";\n  return d;\n};\naxs.utils.isValidTokenValue = function(a, b) {\n  var c = a.replace(/^aria-/, \"\");\n  return axs.utils.isPossibleValue(b, axs.constants.ARIA_PROPERTIES[c].valuesSet, a);\n};\naxs.utils.isPossibleValue = function(a, b, c) {\n  return b[a] ? {valid:!0, value:a} : {valid:!1, value:a, reason:'\"' + a + '\" is not a valid value for ' + c, possibleValues:Object.keys(b)};\n};\naxs.utils.isValidBoolean = function(a) {\n  try {\n    var b = JSON.parse(a);\n  } catch (c) {\n    b = \"\";\n  }\n  return \"boolean\" != typeof b ? {valid:!1, value:a, reason:'\"' + a + '\" is not a true/false value'} : {valid:!0, value:b};\n};\naxs.utils.isValidIDRefValue = function(a, b) {\n  return 0 == a.length ? {valid:!0, idref:a} : b.ownerDocument.getElementById(a) ? {valid:!0, idref:a} : {valid:!1, idref:a, reason:'No element with ID \"' + a + '\"'};\n};\naxs.utils.isValidNumber = function(a) {\n  try {\n    var b = JSON.parse(a);\n  } catch (c) {\n    return {valid:!1, value:a, reason:'\"' + a + '\" is not a number'};\n  }\n  return \"number\" != typeof b ? {valid:!1, value:a, reason:'\"' + a + '\" is not a number'} : {valid:!0, value:b};\n};\naxs.utils.isElementImplicitlyFocusable = function(a) {\n  var b = a.ownerDocument.defaultView;\n  return a instanceof b.HTMLAnchorElement || a instanceof b.HTMLAreaElement ? a.hasAttribute(\"href\") : a instanceof b.HTMLInputElement || a instanceof b.HTMLSelectElement || a instanceof b.HTMLTextAreaElement || a instanceof b.HTMLButtonElement || a instanceof b.HTMLIFrameElement ? !a.disabled : !1;\n};\naxs.utils.values = function(a) {\n  var b = [], c;\n  for (c in a) {\n    a.hasOwnProperty(c) && \"function\" != typeof a[c] && b.push(a[c]);\n  }\n  return b;\n};\naxs.utils.namedValues = function(a) {\n  var b = {}, c;\n  for (c in a) {\n    a.hasOwnProperty(c) && \"function\" != typeof a[c] && (b[c] = a[c]);\n  }\n  return b;\n};\naxs.utils.getQuerySelectorText = function(a) {\n  if (null == a || \"HTML\" == a.tagName) {\n    return \"html\";\n  }\n  if (\"BODY\" == a.tagName) {\n    return \"body\";\n  }\n  if (a.hasAttribute) {\n    if (a.id) {\n      return \"#\" + a.id;\n    }\n    if (a.className) {\n      for (var b = \"\", c = 0;c < a.classList.length;c++) {\n        b += \".\" + a.classList[c];\n      }\n      var d = 0;\n      if (a.parentNode) {\n        for (c = 0;c < a.parentNode.children.length;c++) {\n          var e = a.parentNode.children[c];\n          axs.browserUtils.matchSelector(e, b) && d++;\n          if (e === a) {\n            break;\n          }\n        }\n      } else {\n        d = 1;\n      }\n      if (1 == d) {\n        return axs.utils.getQuerySelectorText(a.parentNode) + \" > \" + b;\n      }\n    }\n    if (a.parentNode) {\n      b = a.parentNode.children;\n      d = 1;\n      for (c = 0;b[c] !== a;) {\n        b[c].tagName == a.tagName && d++, c++;\n      }\n      c = \"\";\n      \"BODY\" != a.parentNode.tagName && (c = axs.utils.getQuerySelectorText(a.parentNode) + \" > \");\n      return 1 == d ? c + a.tagName : c + a.tagName + \":nth-of-type(\" + d + \")\";\n    }\n  } else {\n    if (a.selectorText) {\n      return a.selectorText;\n    }\n  }\n  return \"\";\n};\naxs.utils.getIdReferrers = function(a, b) {\n  if (!b) {\n    return null;\n  }\n  var c = b.id, d = a.replace(/^aria-/, \"\"), d = axs.constants.ARIA_PROPERTIES[d];\n  if (!c || !d) {\n    return null;\n  }\n  d = d.valueType;\n  return \"idref_list\" === d || \"idref\" === d ? (c = c.replace(/'/g, \"\\\\'\"), b.ownerDocument.querySelectorAll(\"[\" + a + \"~='\" + c + \"']\")) : null;\n};\naxs.utils.getIdReferents = function(a, b) {\n  var c = [], d = a.replace(/^aria-/, \"\"), d = axs.constants.ARIA_PROPERTIES[d];\n  if (!d || !b.hasAttribute(a)) {\n    return c;\n  }\n  d = d.valueType;\n  if (\"idref_list\" === d || \"idref\" === d) {\n    for (var d = b.ownerDocument, e = b.getAttribute(a), e = e.split(/\\s+/), f = 0, g = e.length;f < g;f++) {\n      var h = d.getElementById(e[f]);\n      h && (c[c.length] = h);\n    }\n  }\n  return c;\n};\naxs.utils.getAriaPropertiesByValueType = function(a) {\n  var b = {}, c;\n  for (c in axs.constants.ARIA_PROPERTIES) {\n    var d = axs.constants.ARIA_PROPERTIES[c];\n    d && 0 <= a.indexOf(d.valueType) && (b[c] = d);\n  }\n  return b;\n};\naxs.utils.getSelectorForAriaProperties = function(a) {\n  a = Object.keys(a).map(function(a) {\n    return \"[aria-\" + a + \"]\";\n  });\n  a.sort();\n  return a.join(\",\");\n};\naxs.utils.findDescendantsWithRole = function(a, b) {\n  if (!a || !b) {\n    return [];\n  }\n  var c = axs.properties.getSelectorForRole(b);\n  if (c && (c = a.querySelectorAll(c))) {\n    c = Array.prototype.map.call(c, function(a) {\n      return a;\n    });\n  } else {\n    return [];\n  }\n  return c;\n};\naxs.properties = {};\naxs.properties.TEXT_CONTENT_XPATH = './/text()[normalize-space(.)!=\"\"]/parent::*[name()!=\"script\"]';\naxs.properties.getFocusProperties = function(a) {\n  var b = {}, c = a.getAttribute(\"tabindex\");\n  void 0 != c ? b.tabindex = {value:c, valid:!0} : axs.utils.isElementImplicitlyFocusable(a) && (b.implicitlyFocusable = {value:!0, valid:!0});\n  if (0 == Object.keys(b).length) {\n    return null;\n  }\n  var d = axs.utils.elementIsTransparent(a), e = axs.utils.elementHasZeroArea(a), f = axs.utils.elementIsOutsideScrollArea(a), g = axs.utils.overlappingElements(a);\n  if (d || e || f || 0 < g.length) {\n    var c = axs.utils.isElementOrAncestorHidden(a), h = {value:!1, valid:c};\n    d && (h.transparent = !0);\n    e && (h.zeroArea = !0);\n    f && (h.outsideScrollArea = !0);\n    g && 0 < g.length && (h.overlappingElements = g);\n    d = {value:c, valid:c};\n    c && (d.reason = axs.properties.getHiddenReason(a));\n    h.hidden = d;\n    b.visible = h;\n  } else {\n    b.visible = {value:!0, valid:!0};\n  }\n  return b;\n};\naxs.properties.getHiddenReason = function(a) {\n  if (!(a && a instanceof a.ownerDocument.defaultView.HTMLElement)) {\n    return null;\n  }\n  if (a.hasAttribute(\"chromevoxignoreariahidden\")) {\n    var b = !0\n  }\n  var c = window.getComputedStyle(a, null);\n  return \"none\" == c.display ? {property:\"display: none\", on:a} : \"hidden\" == c.visibility ? {property:\"visibility: hidden\", on:a} : a.hasAttribute(\"aria-hidden\") && \"true\" == a.getAttribute(\"aria-hidden\").toLowerCase() && !b ? {property:\"aria-hidden\", on:a} : axs.properties.getHiddenReason(axs.utils.parentElement(a));\n};\naxs.properties.getColorProperties = function(a) {\n  var b = {};\n  (a = axs.properties.getContrastRatioProperties(a)) && (b.contrastRatio = a);\n  return 0 == Object.keys(b).length ? null : b;\n};\naxs.properties.hasDirectTextDescendant = function(a) {\n  function b() {\n    for (var b = d.evaluate(axs.properties.TEXT_CONTENT_XPATH, a, null, XPathResult.ANY_TYPE, null), c = b.iterateNext();null != c;c = b.iterateNext()) {\n      if (c === a) {\n        return !0;\n      }\n    }\n    return !1;\n  }\n  function c() {\n    for (var b = d.createTreeWalker(a, NodeFilter.SHOW_TEXT, null, !1);b.nextNode();) {\n      var c = b.currentNode, g = c.parentNode.tagName.toLowerCase();\n      if (c.nodeValue.trim() && \"script\" !== g && a !== c) {\n        return !0;\n      }\n    }\n    return !1;\n  }\n  var d;\n  d = a.nodeType == Node.DOCUMENT_NODE ? a : a.ownerDocument;\n  return d.evaluate ? b() : c();\n};\naxs.properties.getContrastRatioProperties = function(a) {\n  if (!axs.properties.hasDirectTextDescendant(a)) {\n    return null;\n  }\n  var b = {}, c = window.getComputedStyle(a, null), d = axs.utils.getBgColor(c, a);\n  if (!d) {\n    return null;\n  }\n  b.backgroundColor = axs.utils.colorToString(d);\n  var e = axs.utils.getFgColor(c, a, d);\n  b.foregroundColor = axs.utils.colorToString(e);\n  a = axs.utils.getContrastRatioForElementWithComputedStyle(c, a);\n  if (!a) {\n    return null;\n  }\n  b.value = a.toFixed(2);\n  axs.utils.isLowContrast(a, c) && (b.alert = !0);\n  (c = axs.utils.suggestColors(d, e, a, c)) && Object.keys(c).length && (b.suggestedColors = c);\n  return b;\n};\naxs.properties.findTextAlternatives = function(a, b, c, d) {\n  var e = c || !1;\n  c = axs.utils.asElement(a);\n  if (!c || !e && !d && axs.utils.isElementOrAncestorHidden(c)) {\n    return null;\n  }\n  if (a.nodeType == Node.TEXT_NODE) {\n    return c = {type:\"text\"}, c.text = a.textContent, c.lastWord = axs.properties.getLastWord(c.text), b.content = c, a.textContent;\n  }\n  a = null;\n  e || (a = axs.properties.getTextFromAriaLabelledby(c, b));\n  c.hasAttribute(\"aria-label\") && (d = {type:\"text\"}, d.text = c.getAttribute(\"aria-label\"), d.lastWord = axs.properties.getLastWord(d.text), a ? d.unused = !0 : e && axs.utils.elementIsHtmlControl(c) || (a = d.text), b.ariaLabel = d);\n  c.hasAttribute(\"role\") && \"presentation\" == c.getAttribute(\"role\") || (a = axs.properties.getTextFromHostLanguageAttributes(c, b, a, e));\n  if (e && axs.utils.elementIsHtmlControl(c)) {\n    d = c.ownerDocument.defaultView;\n    if (c instanceof d.HTMLInputElement) {\n      var f = c;\n      \"text\" == f.type && f.value && 0 < f.value.length && (b.controlValue = {text:f.value});\n      \"range\" == f.type && (b.controlValue = {text:f.value});\n    }\n    c instanceof d.HTMLSelectElement && (b.controlValue = {text:c.value});\n    b.controlValue && (d = b.controlValue, a ? d.unused = !0 : a = d.text);\n  }\n  if (e && axs.utils.elementIsAriaWidget(c)) {\n    e = c.getAttribute(\"role\");\n    \"textbox\" == e && c.textContent && 0 < c.textContent.length && (b.controlValue = {text:c.textContent});\n    if (\"slider\" == e || \"spinbutton\" == e) {\n      c.hasAttribute(\"aria-valuetext\") ? b.controlValue = {text:c.getAttribute(\"aria-valuetext\")} : c.hasAttribute(\"aria-valuenow\") && (b.controlValue = {value:c.getAttribute(\"aria-valuenow\"), text:\"\" + c.getAttribute(\"aria-valuenow\")});\n    }\n    if (\"menu\" == e) {\n      var g = c.querySelectorAll(\"[role=menuitemcheckbox], [role=menuitemradio]\");\n      d = [];\n      for (f = 0;f < g.length;f++) {\n        \"true\" == g[f].getAttribute(\"aria-checked\") && d.push(g[f]);\n      }\n      if (0 < d.length) {\n        g = \"\";\n        for (f = 0;f < d.length;f++) {\n          g += axs.properties.findTextAlternatives(d[f], {}, !0), f < d.length - 1 && (g += \", \");\n        }\n        b.controlValue = {text:g};\n      }\n    }\n    if (\"combobox\" == e || \"select\" == e) {\n      b.controlValue = {text:\"TODO\"};\n    }\n    b.controlValue && (d = b.controlValue, a ? d.unused = !0 : a = d.text);\n  }\n  d = !0;\n  c.hasAttribute(\"role\") && (e = c.getAttribute(\"role\"), (e = axs.constants.ARIA_ROLES[e]) && (!e.namefrom || 0 > e.namefrom.indexOf(\"contents\")) && (d = !1));\n  (e = axs.properties.getTextFromDescendantContent(c)) && d && (d = {type:\"text\"}, d.text = e, d.lastWord = axs.properties.getLastWord(d.text), a ? d.unused = !0 : a = e, b.content = d);\n  c.hasAttribute(\"title\") && (e = {type:\"string\", valid:!0}, e.text = c.getAttribute(\"title\"), e.lastWord = axs.properties.getLastWord(e.lastWord), a ? e.unused = !0 : a = e.text, b.title = e);\n  return 0 == Object.keys(b).length && null == a ? null : a;\n};\naxs.properties.getTextFromDescendantContent = function(a) {\n  var b = a.childNodes;\n  a = [];\n  for (var c = 0;c < b.length;c++) {\n    var d = axs.properties.findTextAlternatives(b[c], {}, !0);\n    d && a.push(d.trim());\n  }\n  if (a.length) {\n    b = \"\";\n    for (c = 0;c < a.length;c++) {\n      b = [b, a[c]].join(\" \").trim();\n    }\n    return b;\n  }\n  return null;\n};\naxs.properties.getTextFromAriaLabelledby = function(a, b) {\n  var c = null;\n  if (!a.hasAttribute(\"aria-labelledby\")) {\n    return c;\n  }\n  for (var d = a.getAttribute(\"aria-labelledby\").split(/\\s+/), e = {valid:!0}, f = [], g = [], h = 0;h < d.length;h++) {\n    var k = {type:\"element\"}, m = d[h];\n    k.value = m;\n    var l = document.getElementById(m);\n    l ? (k.valid = !0, k.text = axs.properties.findTextAlternatives(l, {}, !0), k.lastWord = axs.properties.getLastWord(k.text), f.push(l.textContent.trim()), k.element = l) : (k.valid = !1, e.valid = !1, k.errorMessage = {messageKey:\"noElementWithId\", args:[m]});\n    g.push(k);\n  }\n  0 < g.length && (g[g.length - 1].last = !0, e.values = g, e.text = f.join(\" \"), e.lastWord = axs.properties.getLastWord(e.text), c = e.text, b.ariaLabelledby = e);\n  return c;\n};\naxs.properties.getTextFromHostLanguageAttributes = function(a, b, c, d) {\n  if (axs.browserUtils.matchSelector(a, \"img\")) {\n    if (a.hasAttribute(\"alt\")) {\n      var e = {type:\"string\", valid:!0};\n      e.text = a.getAttribute(\"alt\");\n      c ? e.unused = !0 : c = e.text;\n      b.alt = e;\n    } else {\n      e = {valid:!1, errorMessage:\"No alt value provided\"}, b.alt = e, e = a.src, \"string\" == typeof e && (c = e.split(\"/\").pop(), b.filename = {text:c});\n    }\n  }\n  if (axs.browserUtils.matchSelector(a, 'input:not([type=\"hidden\"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])') && !d) {\n    if (a.hasAttribute(\"id\")) {\n      d = document.querySelectorAll('label[for=\"' + a.id + '\"]');\n      for (var e = {}, f = [], g = [], h = 0;h < d.length;h++) {\n        var k = {type:\"element\"}, m = d[h], l = axs.properties.findTextAlternatives(m, {}, !0);\n        l && 0 < l.trim().length && (k.text = l.trim(), g.push(l.trim()));\n        k.element = m;\n        f.push(k);\n      }\n      0 < f.length && (f[f.length - 1].last = !0, e.values = f, e.text = g.join(\" \"), e.lastWord = axs.properties.getLastWord(e.text), c ? e.unused = !0 : c = e.text, b.labelFor = e);\n    }\n    d = axs.utils.parentElement(a);\n    for (e = {};d;) {\n      if (\"label\" == d.tagName.toLowerCase() && (f = d, f.control == a)) {\n        e.type = \"element\";\n        e.text = axs.properties.findTextAlternatives(f, {}, !0);\n        e.lastWord = axs.properties.getLastWord(e.text);\n        e.element = f;\n        break;\n      }\n      d = axs.utils.parentElement(d);\n    }\n    e.text && (c ? e.unused = !0 : c = e.text, b.labelWrapped = e);\n    Object.keys(b).length || (b.noLabel = !0);\n  }\n  return c;\n};\naxs.properties.getLastWord = function(a) {\n  if (!a) {\n    return null;\n  }\n  var b = a.lastIndexOf(\" \") + 1, c = a.length - 10;\n  return a.substring(b > c ? b : c);\n};\naxs.properties.getTextProperties = function(a) {\n  var b = {};\n  a = axs.properties.findTextAlternatives(a, b, !1, !0);\n  if (0 == Object.keys(b).length) {\n    if (!a) {\n      return null;\n    }\n    b.hasProperties = !1;\n  } else {\n    b.hasProperties = !0;\n  }\n  b.computedText = a;\n  b.lastWord = axs.properties.getLastWord(a);\n  return b;\n};\naxs.properties.getAriaProperties = function(a) {\n  var b = {}, c = axs.properties.getGlobalAriaProperties(a), d;\n  for (d in axs.constants.ARIA_PROPERTIES) {\n    var e = \"aria-\" + d;\n    if (a.hasAttribute(e)) {\n      var f = a.getAttribute(e);\n      c[e] = axs.utils.getAriaPropertyValue(e, f, a);\n    }\n  }\n  0 < Object.keys(c).length && (b.properties = axs.utils.values(c));\n  f = axs.utils.getRoles(a);\n  if (!f) {\n    return Object.keys(b).length ? b : null;\n  }\n  b.roles = f;\n  if (!f.valid || !f.roles) {\n    return b;\n  }\n  for (var e = f.roles, g = 0;g < e.length;g++) {\n    var h = e[g];\n    if (h.details && h.details.propertiesSet) {\n      for (d in h.details.propertiesSet) {\n        d in c || (a.hasAttribute(d) ? (f = a.getAttribute(d), c[d] = axs.utils.getAriaPropertyValue(d, f, a), \"values\" in c[d] && (f = c[d].values, f[f.length - 1].isLast = !0)) : h.details.requiredPropertiesSet[d] && (c[d] = {name:d, valid:!1, reason:\"Required property not set\"}));\n      }\n    }\n  }\n  0 < Object.keys(c).length && (b.properties = axs.utils.values(c));\n  return 0 < Object.keys(b).length ? b : null;\n};\naxs.properties.getGlobalAriaProperties = function(a) {\n  for (var b = {}, c = 0;c < axs.constants.GLOBAL_PROPERTIES.length;c++) {\n    var d = axs.constants.GLOBAL_PROPERTIES[c];\n    if (a.hasAttribute(d)) {\n      var e = a.getAttribute(d);\n      b[d] = axs.utils.getAriaPropertyValue(d, e, a);\n    }\n  }\n  return b;\n};\naxs.properties.getVideoProperties = function(a) {\n  if (!axs.browserUtils.matchSelector(a, \"video\")) {\n    return null;\n  }\n  var b = {};\n  b.captionTracks = axs.properties.getTrackElements(a, \"captions\");\n  b.descriptionTracks = axs.properties.getTrackElements(a, \"descriptions\");\n  b.chapterTracks = axs.properties.getTrackElements(a, \"chapters\");\n  return b;\n};\naxs.properties.getTrackElements = function(a, b) {\n  var c = a.querySelectorAll(\"track[kind=\" + b + \"]\"), d = {};\n  if (!c.length) {\n    return d.valid = !1, d.reason = {messageKey:\"noTracksProvided\", args:[[b]]}, d;\n  }\n  d.valid = !0;\n  for (var e = [], f = 0;f < c.length;f++) {\n    var g = {}, h = c[f].getAttribute(\"src\"), k = c[f].getAttribute(\"srcLang\"), m = c[f].getAttribute(\"label\");\n    h ? (g.valid = !0, g.src = h) : (g.valid = !1, g.reason = {messageKey:\"noSrcProvided\"});\n    h = \"\";\n    m && (h += m, k && (h += \" \"));\n    k && (h += \"(\" + k + \")\");\n    \"\" == h && (h = \"[[object Object]]\");\n    g.name = h;\n    e.push(g);\n  }\n  d.values = e;\n  return d;\n};\naxs.properties.getAllProperties = function(a) {\n  var b = axs.utils.asElement(a);\n  if (!b) {\n    return {};\n  }\n  var c = {};\n  c.ariaProperties = axs.properties.getAriaProperties(b);\n  c.colorProperties = axs.properties.getColorProperties(b);\n  c.focusProperties = axs.properties.getFocusProperties(b);\n  c.textProperties = axs.properties.getTextProperties(a);\n  c.videoProperties = axs.properties.getVideoProperties(b);\n  return c;\n};\n(function() {\n  function a(a) {\n    if (!a) {\n      return null;\n    }\n    var c = a.tagName;\n    if (!c) {\n      return null;\n    }\n    c = c.toUpperCase();\n    c = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[c];\n    if (!c || !c.length) {\n      return null;\n    }\n    for (var d = null, e = 0, f = c.length;e < f;e++) {\n      var g = c[e];\n      if (g.selector) {\n        if (axs.browserUtils.matchSelector(a, g.selector)) {\n          return g;\n        }\n      } else {\n        d = g;\n      }\n    }\n    return d;\n  }\n  axs.properties.getImplicitRole = function(b) {\n    return (b = a(b)) ? b.role : \"\";\n  };\n  axs.properties.canTakeAriaAttributes = function(b) {\n    return (b = a(b)) ? !b.reserved : !0;\n  };\n})();\naxs.properties.getNativelySupportedAttributes = function(a) {\n  var b = [];\n  if (!a) {\n    return b;\n  }\n  a = a.cloneNode(!1);\n  for (var c = Object.keys(axs.constants.ARIA_TO_HTML_ATTRIBUTE), d = 0;d < c.length;d++) {\n    var e = c[d];\n    axs.constants.ARIA_TO_HTML_ATTRIBUTE[e] in a && (b[b.length] = e);\n  }\n  return b;\n};\n(function() {\n  var a = {};\n  axs.properties.getSelectorForRole = function(b) {\n    if (!b) {\n      return \"\";\n    }\n    if (a[b] && a.hasOwnProperty(b)) {\n      return a[b];\n    }\n    var c = ['[role=\"' + b + '\"]'];\n    Object.keys(axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO).forEach(function(a) {\n      var e = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[a];\n      if (e && e.length) {\n        for (var f = 0;f < e.length;f++) {\n          var g = e[f];\n          if (g.role === b) {\n            if (g.selector) {\n              c[c.length] = g.selector;\n            } else {\n              c[c.length] = a;\n              break;\n            }\n          }\n        }\n      }\n    });\n    return a[b] = c.join(\",\");\n  };\n})();\naxs.AuditRule = function(a) {\n  for (var b = !0, c = [], d = 0;d < axs.AuditRule.requiredFields.length;d++) {\n    var e = axs.AuditRule.requiredFields[d];\n    e in a || (b = !1, c.push(e));\n  }\n  if (!b) {\n    throw \"Invalid spec; the following fields were not specified: \" + c.join(\", \") + \"\\n\" + JSON.stringify(a);\n  }\n  this.name = a.name;\n  this.severity = a.severity;\n  this.relevantElementMatcher_ = a.relevantElementMatcher;\n  this.test_ = a.test;\n  this.code = a.code;\n  this.heading = a.heading || \"\";\n  this.url = a.url || \"\";\n  this.requiresConsoleAPI = !!a.opt_requiresConsoleAPI;\n};\naxs.AuditRule.requiredFields = \"name severity relevantElementMatcher test code heading\".split(\" \");\naxs.AuditRule.NOT_APPLICABLE = {result:axs.constants.AuditResult.NA};\naxs.AuditRule.prototype.addElement = function(a, b) {\n  a.push(b);\n};\naxs.AuditRule.collectMatchingElements = function(a, b, c, d) {\n  if (a.nodeType == Node.ELEMENT_NODE) {\n    var e = a\n  }\n  e && b.call(null, e) && c.push(e);\n  if (e) {\n    var f = e.shadowRoot || e.webkitShadowRoot;\n    if (f) {\n      axs.AuditRule.collectMatchingElements(f, b, c, f);\n      return;\n    }\n  }\n  if (e && \"content\" == e.localName) {\n    for (e = e.getDistributedNodes(), f = 0;f < e.length;f++) {\n      axs.AuditRule.collectMatchingElements(e[f], b, c, d);\n    }\n  } else {\n    if (e && \"shadow\" == e.localName) {\n      if (f = e, d) {\n        for (e = f.getDistributedNodes(), f = 0;f < e.length;f++) {\n          axs.AuditRule.collectMatchingElements(e[f], b, c, d);\n        }\n      } else {\n        console.warn(\"ShadowRoot not provided for\", e);\n      }\n    }\n    for (a = a.firstChild;null != a;) {\n      axs.AuditRule.collectMatchingElements(a, b, c, d), a = a.nextSibling;\n    }\n  }\n};\naxs.AuditRule.prototype.run = function(a) {\n  a = a || {};\n  var b = \"ignoreSelectors\" in a ? a.ignoreSelectors : [], c = \"maxResults\" in a ? a.maxResults : null, d = [];\n  axs.AuditRule.collectMatchingElements(\"scope\" in a ? a.scope : document, this.relevantElementMatcher_, d);\n  var e = [];\n  if (!d.length) {\n    return {result:axs.constants.AuditResult.NA};\n  }\n  for (var f = 0;f < d.length && !(null != c && e.length >= c);f++) {\n    var g = d[f], h;\n    a: {\n      h = g;\n      for (var k = 0;k < b.length;k++) {\n        if (axs.browserUtils.matchSelector(h, b[k])) {\n          h = !0;\n          break a;\n        }\n      }\n      h = !1;\n    }\n    !h && this.test_(g, a.config) && this.addElement(e, g);\n  }\n  a = {result:e.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:e};\n  f < d.length && (a.resultsTruncated = !0);\n  return a;\n};\naxs.AuditRules = {};\n(function() {\n  var a = {}, b = {};\n  axs.AuditRules.addRule = function(c) {\n    c = new axs.AuditRule(c);\n    if (c.code in b) {\n      throw Error('Can not add audit rule with same code: \"' + c.code + '\"');\n    }\n    if (c.name in a) {\n      throw Error('Can not add audit rule with same name: \"' + c.name + '\"');\n    }\n    a[c.name] = b[c.code] = c;\n  };\n  axs.AuditRules.getRule = function(c) {\n    return a[c] || b[c] || null;\n  };\n  axs.AuditRules.getRules = function(b) {\n    var d = Object.keys(a);\n    return b ? d : d.map(function(a) {\n      return this.getRule(a);\n    }, axs.AuditRules);\n  };\n})();\naxs.AuditResults = function() {\n  this.errors_ = [];\n  this.warnings_ = [];\n};\ngoog.exportSymbol(\"axs.AuditResults\", axs.AuditResults);\naxs.AuditResults.prototype.addError = function(a) {\n  \"\" != a && this.errors_.push(a);\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"addError\", axs.AuditResults.prototype.addError);\naxs.AuditResults.prototype.addWarning = function(a) {\n  \"\" != a && this.warnings_.push(a);\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"addWarning\", axs.AuditResults.prototype.addWarning);\naxs.AuditResults.prototype.numErrors = function() {\n  return this.errors_.length;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"numErrors\", axs.AuditResults.prototype.numErrors);\naxs.AuditResults.prototype.numWarnings = function() {\n  return this.warnings_.length;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"numWarnings\", axs.AuditResults.prototype.numWarnings);\naxs.AuditResults.prototype.getErrors = function() {\n  return this.errors_;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"getErrors\", axs.AuditResults.prototype.getErrors);\naxs.AuditResults.prototype.getWarnings = function() {\n  return this.warnings_;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"getWarnings\", axs.AuditResults.prototype.getWarnings);\naxs.AuditResults.prototype.toString = function() {\n  for (var a = \"\", b = 0;b < this.errors_.length;b++) {\n    0 == b && (a += \"\\nErrors:\\n\");\n    var c = this.errors_[b], a = a + (c + \"\\n\\n\");\n  }\n  for (b = 0;b < this.warnings_.length;b++) {\n    0 == b && (a += \"\\nWarnings:\\n\"), c = this.warnings_[b], a += c + \"\\n\\n\";\n  }\n  return a;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"toString\", axs.AuditResults.prototype.toString);\naxs.Audit = {};\naxs.AuditConfiguration = function() {\n  this.rules_ = {};\n  this.maxResults = this.auditRulesToIgnore = this.auditRulesToRun = this.scope = null;\n  this.withConsoleApi = !1;\n  this.showUnsupportedRulesWarning = !0;\n  goog.exportProperty(this, \"scope\", this.scope);\n  goog.exportProperty(this, \"auditRulesToRun\", this.auditRulesToRun);\n  goog.exportProperty(this, \"auditRulesToIgnore\", this.auditRulesToIgnore);\n  goog.exportProperty(this, \"withConsoleApi\", this.withConsoleApi);\n  goog.exportProperty(this, \"showUnsupportedRulesWarning\", this.showUnsupportedRulesWarning);\n};\ngoog.exportSymbol(\"axs.AuditConfiguration\", axs.AuditConfiguration);\naxs.AuditConfiguration.prototype = {ignoreSelectors:function(a, b) {\n  a in this.rules_ || (this.rules_[a] = {});\n  \"ignore\" in this.rules_[a] || (this.rules_[a].ignore = []);\n  Array.prototype.push.call(this.rules_[a].ignore, b);\n}, getIgnoreSelectors:function(a) {\n  return a in this.rules_ && \"ignore\" in this.rules_[a] ? this.rules_[a].ignore : [];\n}, setSeverity:function(a, b) {\n  a in this.rules_ || (this.rules_[a] = {});\n  this.rules_[a].severity = b;\n}, getSeverity:function(a) {\n  return a in this.rules_ && \"severity\" in this.rules_[a] ? this.rules_[a].severity : null;\n}, setRuleConfig:function(a, b) {\n  a in this.rules_ || (this.rules_[a] = {});\n  this.rules_[a].config = b;\n}, getRuleConfig:function(a) {\n  return a in this.rules_ && \"config\" in this.rules_[a] ? this.rules_[a].config : null;\n}};\ngoog.exportProperty(axs.AuditConfiguration.prototype, \"ignoreSelectors\", axs.AuditConfiguration.prototype.ignoreSelectors);\ngoog.exportProperty(axs.AuditConfiguration.prototype, \"getIgnoreSelectors\", axs.AuditConfiguration.prototype.getIgnoreSelectors);\naxs.Audit.unsupportedRulesWarningShown = !1;\naxs.Audit.getRulesCannotRun = function(a) {\n  return a.withConsoleApi ? [] : axs.AuditRules.getRules().filter(function(a) {\n    return a.requiresConsoleAPI;\n  }).map(function(a) {\n    return a.code;\n  });\n};\naxs.Audit.run = function(a) {\n  a = a || new axs.AuditConfiguration;\n  var b = a.withConsoleApi, c = [], d;\n  d = a.auditRulesToRun && 0 < a.auditRulesToRun.length ? a.auditRulesToRun : axs.AuditRules.getRules(!0);\n  if (a.auditRulesToIgnore) {\n    for (var e = 0;e < a.auditRulesToIgnore.length;e++) {\n      var f = a.auditRulesToIgnore[e];\n      0 > d.indexOf(f) || d.splice(d.indexOf(f), 1);\n    }\n  }\n  !axs.Audit.unsupportedRulesWarningShown && a.showUnsupportedRulesWarning && (e = axs.Audit.getRulesCannotRun(a), 0 < e.length && (console.warn(\"Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: \" + e.join(\", \")), console.warn(\"To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.showUnsupportedRulesWarning = false.\")), axs.Audit.unsupportedRulesWarningShown = !0);\n  for (e = 0;e < d.length;e++) {\n    var f = d[e], g = axs.AuditRules.getRule(f);\n    if (g && !g.disabled && (b || !g.requiresConsoleAPI)) {\n      var h = {}, k = a.getIgnoreSelectors(g.name);\n      if (0 < k.length || a.scope) {\n        h.ignoreSelectors = k;\n      }\n      k = a.getRuleConfig(g.name);\n      null != k && (h.config = k);\n      a.scope && (h.scope = a.scope);\n      a.maxResults && (h.maxResults = a.maxResults);\n      h = g.run.call(g, h);\n      g = axs.utils.namedValues(g);\n      g.severity = a.getSeverity(f) || g.severity;\n      h.rule = g;\n      c.push(h);\n    }\n  }\n  return c;\n};\ngoog.exportSymbol(\"axs.Audit.run\", axs.Audit.run);\naxs.Audit.auditResults = function(a) {\n  for (var b = new axs.AuditResults, c = 0;c < a.length;c++) {\n    var d = a[c];\n    d.result == axs.constants.AuditResult.FAIL && (d.rule.severity == axs.constants.Severity.SEVERE ? b.addError(axs.Audit.accessibilityErrorMessage(d)) : b.addWarning(axs.Audit.accessibilityErrorMessage(d)));\n  }\n  return b;\n};\ngoog.exportSymbol(\"axs.Audit.auditResults\", axs.Audit.auditResults);\naxs.Audit.createReport = function(a, b) {\n  var c;\n  c = \"*** Begin accessibility audit results ***\\nAn accessibility audit found \" + axs.Audit.auditResults(a).toString();\n  b && (c += \"\\nFor more information, please see \", c += b);\n  return c += \"\\n*** End accessibility audit results ***\";\n};\ngoog.exportSymbol(\"axs.Audit.createReport\", axs.Audit.createReport);\naxs.Audit.accessibilityErrorMessage = function(a) {\n  for (var b = a.rule.severity == axs.constants.Severity.SEVERE ? \"Error: \" : \"Warning: \", b = b + (a.rule.code + \" (\" + a.rule.heading + \") failed on the following \" + (1 == a.elements.length ? \"element\" : \"elements\")), b = 1 == a.elements.length ? b + \":\" : b + (\" (1 - \" + Math.min(5, a.elements.length) + \" of \" + a.elements.length + \"):\"), c = Math.min(a.elements.length, 5), d = 0;d < c;d++) {\n    var e = a.elements[d], b = b + \"\\n\";\n    try {\n      b += axs.utils.getQuerySelectorText(e);\n    } catch (f) {\n      b += \" tagName:\" + e.tagName, b += \" id:\" + e.id;\n    }\n  }\n  \"\" != a.rule.url && (b += \"\\nSee \" + a.rule.url + \" for more information.\");\n  return b;\n};\ngoog.exportSymbol(\"axs.Audit.accessibilityErrorMessage\", axs.Audit.accessibilityErrorMessage);\naxs.AuditRules.addRule({name:\"ariaOnReservedElement\", heading:\"This element does not support ARIA roles, states and properties\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_12\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return !axs.properties.canTakeAriaAttributes(a);\n}, test:function(a) {\n  return null !== axs.properties.getAriaProperties(a);\n}, code:\"AX_ARIA_12\"});\naxs.AuditRules.addRule({name:\"ariaOwnsDescendant\", heading:\"aria-owns should not be used if ownership is implicit in the DOM\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_06\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[aria-owns]\");\n}, test:function(a) {\n  return axs.utils.getIdReferents(\"aria-owns\", a).some(function(b) {\n    return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_CONTAINED_BY;\n  });\n}, code:\"AX_ARIA_06\"});\naxs.AuditRules.addRule({name:\"ariaRoleNotScoped\", heading:\"Elements with ARIA roles must be in the correct scope\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_09\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[role]\");\n}, test:function(a) {\n  var b = axs.utils.getRoles(a);\n  if (!b || !b.applied) {\n    return !1;\n  }\n  b = b.applied.details.scope;\n  if (!b || 0 === b.length) {\n    return !1;\n  }\n  for (var c = a;c = c.parentNode;) {\n    var d = axs.utils.getRoles(c, !0);\n    if (d && d.applied && 0 <= b.indexOf(d.applied.name)) {\n      return !1;\n    }\n  }\n  if (a = axs.utils.getIdReferrers(\"aria-owns\", a)) {\n    for (c = 0;c < a.length;c++) {\n      if ((d = axs.utils.getRoles(a[c], !0)) && d.applied && 0 <= b.indexOf(d.applied.name)) {\n        return !1;\n      }\n    }\n  }\n  return !0;\n}, code:\"AX_ARIA_09\"});\naxs.AuditRules.addRule({name:\"audioWithoutControls\", heading:\"Audio elements should have controls\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_audio_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"audio[autoplay]\");\n}, test:function(a) {\n  return !a.querySelectorAll(\"[controls]\").length && 3 < a.duration;\n}, code:\"AX_AUDIO_01\"});\n(function() {\n  var a = /^aria\\-/;\n  axs.AuditRules.addRule({name:\"badAriaAttribute\", heading:\"This element has an invalid ARIA attribute\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_11\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(b) {\n    b = b.attributes;\n    for (var c = 0, d = b.length;c < d;c++) {\n      if (a.test(b[c].name)) {\n        return !0;\n      }\n    }\n    return !1;\n  }, test:function(b) {\n    b = b.attributes;\n    for (var c = 0, d = b.length;c < d;c++) {\n      var e = b[c].name;\n      if (a.test(e) && (e = e.replace(a, \"\"), !axs.constants.ARIA_PROPERTIES.hasOwnProperty(e))) {\n        return !0;\n      }\n    }\n    return !1;\n  }, code:\"AX_ARIA_11\"});\n})();\naxs.AuditRules.addRule({name:\"badAriaAttributeValue\", heading:\"ARIA state and property values must be valid\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_04\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  var b = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);\n  return axs.browserUtils.matchSelector(a, b);\n}, test:function(a) {\n  for (var b in axs.constants.ARIA_PROPERTIES) {\n    var c = \"aria-\" + b;\n    if (a.hasAttribute(c)) {\n      var d = a.getAttribute(c);\n      if (!axs.utils.getAriaPropertyValue(c, d, a).valid) {\n        return !0;\n      }\n    }\n  }\n  return !1;\n}, code:\"AX_ARIA_04\"});\naxs.AuditRules.addRule({name:\"badAriaRole\", heading:\"Elements with ARIA roles must use a valid, non-abstract ARIA role\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_01\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[role]\");\n}, test:function(a) {\n  return !axs.utils.getRoles(a).valid;\n}, code:\"AX_ARIA_01\"});\naxs.AuditRules.addRule({name:\"controlsWithoutLabel\", heading:\"Controls and media elements should have labels\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_01\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  if (!axs.browserUtils.matchSelector(a, 'input:not([type=\"hidden\"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])') || \"presentation\" == a.getAttribute(\"role\")) {\n    return !1;\n  }\n  if (0 <= a.tabIndex) {\n    return !0;\n  }\n  for (a = axs.utils.parentElement(a);null != a;a = axs.utils.parentElement(a)) {\n    if (axs.utils.elementIsAriaWidget(a)) {\n      return !1;\n    }\n  }\n  return !0;\n}, test:function(a) {\n  return axs.utils.isElementOrAncestorHidden(a) || \"input\" == a.tagName.toLowerCase() && \"button\" == a.type && a.value.length || \"button\" == a.tagName.toLowerCase() && a.textContent.replace(/^\\s+|\\s+$/g, \"\").length ? !1 : axs.utils.hasLabel(a) ? !1 : !0;\n}, code:\"AX_TEXT_01\", ruleName:\"Controls and media elements should have labels\"});\naxs.AuditRules.addRule({name:\"duplicateId\", heading:\"An element's ID must be unique in the DOM\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_02\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[id]\");\n}, test:function(a) {\n  var b = a.id;\n  if (!b) {\n    return !1;\n  }\n  b = \"[id='\" + b.replace(/'/g, \"\\\\'\") + \"']\";\n  return 1 < a.ownerDocument.querySelectorAll(b).length;\n}, code:\"AX_HTML_02\"});\naxs.AuditRules.addRule({name:\"focusableElementNotVisibleAndNotAriaHidden\", heading:\"These elements are focusable but either invisible or obscured by another element\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  if (!axs.browserUtils.matchSelector(a, axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)) {\n    return !1;\n  }\n  if (0 <= a.tabIndex) {\n    return !0;\n  }\n  for (var b = axs.utils.parentElement(a);null != b;b = axs.utils.parentElement(b)) {\n    if (axs.utils.elementIsAriaWidget(b)) {\n      return !1;\n    }\n  }\n  return \"\" === axs.properties.findTextAlternatives(a, {}).trim() ? !1 : !0;\n}, test:function(a) {\n  if (axs.utils.isElementOrAncestorHidden(a)) {\n    return !1;\n  }\n  a.focus();\n  return !axs.utils.elementIsVisible(a);\n}, code:\"AX_FOCUS_01\"});\naxs.AuditRules.addRule({name:\"humanLangMissing\", heading:\"The web page should have the content's human language indicated in the markup\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return a instanceof a.ownerDocument.defaultView.HTMLHtmlElement;\n}, test:function(a) {\n  return a.lang ? !1 : !0;\n}, code:\"AX_HTML_01\"});\naxs.AuditRules.addRule({name:\"imagesWithoutAltText\", heading:\"Images should have an alt attribute\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"img\") && !axs.utils.isElementOrAncestorHidden(a);\n}, test:function(a) {\n  return !a.hasAttribute(\"alt\") && \"presentation\" != a.getAttribute(\"role\");\n}, code:\"AX_TEXT_02\"});\naxs.AuditRules.addRule({name:\"linkWithUnclearPurpose\", heading:\"The purpose of each link should be clear from the link text\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_04\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"a\");\n}, test:function(a, b) {\n  for (var c = b || {}, d = c.blacklistPhrases || [], e = /\\s+/, f = 0;f < d.length;f++) {\n    var g = \"^\\\\s*\" + d[f].trim().replace(e, \"\\\\s*\") + \"s*[^a-z]$\";\n    if ((new RegExp(g, \"i\")).test(a.textContent)) {\n      return !0;\n    }\n  }\n  c = c.stopwords || \"click tap go here learn more this page link about\".split(\" \");\n  d = a.textContent;\n  d = d.replace(/[^a-zA-Z ]/g, \"\");\n  for (f = 0;f < c.length;f++) {\n    if (d = d.replace(new RegExp(\"\\\\b\" + c[f] + \"\\\\b\", \"ig\"), \"\"), \"\" == d.trim()) {\n      return !0;\n    }\n  }\n  return !1;\n}, code:\"AX_TEXT_04\"});\naxs.AuditRules.addRule({name:\"lowContrastElements\", heading:\"Text elements should have a reasonable contrast ratio\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_color_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.properties.hasDirectTextDescendant(a);\n}, test:function(a) {\n  var b = window.getComputedStyle(a, null);\n  return (a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b);\n}, code:\"AX_COLOR_01\"});\naxs.AuditRules.addRule({name:\"mainRoleOnInappropriateElement\", heading:\"role=main should only appear on significant elements\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_05\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[role~=main]\");\n}, test:function(a) {\n  if (axs.utils.isInlineElement(a)) {\n    return !0;\n  }\n  a = axs.properties.getTextFromDescendantContent(a);\n  return !a || 50 > a.length ? !0 : !1;\n}, code:\"AX_ARIA_05\"});\naxs.AuditRules.addRule({name:\"elementsWithMeaningfulBackgroundImage\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return !axs.utils.isElementOrAncestorHidden(a);\n}, heading:\"Meaningful images should not be used in element backgrounds\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_image_01\", test:function(a) {\n  if (a.textContent && 0 < a.textContent.length) {\n    return !1;\n  }\n  a = window.getComputedStyle(a, null);\n  var b = a.backgroundImage;\n  if (!b || \"undefined\" === b || \"none\" === b || 0 != b.indexOf(\"url\")) {\n    return !1;\n  }\n  b = parseInt(a.width, 10);\n  a = parseInt(a.height, 10);\n  return 150 > b && 150 > a;\n}, code:\"AX_IMAGE_01\"});\naxs.AuditRules.addRule({name:\"multipleAriaOwners\", heading:\"An element's ID must not be present in more that one aria-owns attribute at any time\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_07\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[aria-owns]\");\n}, test:function(a) {\n  return axs.utils.getIdReferents(\"aria-owns\", a).some(function(a) {\n    return 1 < axs.utils.getIdReferrers(\"aria-owns\", a).length;\n  });\n}, code:\"AX_ARIA_07\"});\naxs.AuditRules.addRule({name:\"nonExistentAriaRelatedElement\", heading:\"ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  var b = axs.utils.getAriaPropertiesByValueType([\"idref\", \"idref_list\"]), b = axs.utils.getSelectorForAriaProperties(b);\n  return axs.browserUtils.matchSelector(a, b);\n}, test:function(a) {\n  for (var b = axs.utils.getAriaPropertiesByValueType([\"idref\", \"idref_list\"]), b = axs.utils.getSelectorForAriaProperties(b).split(\",\"), c = 0, d = b.length;c < d;c++) {\n    var e = b[c];\n    if (axs.browserUtils.matchSelector(a, e)) {\n      var e = e.match(/aria-[^\\]]+/)[0], f = a.getAttribute(e);\n      if (!axs.utils.getAriaPropertyValue(e, f, a).valid) {\n        return !0;\n      }\n    }\n  }\n  return !1;\n}, code:\"AX_ARIA_02\"});\naxs.AuditRules.addRule({name:\"pageWithoutTitle\", heading:\"The web page should have a title that describes topic or purpose\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_title_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return \"html\" == a.tagName.toLowerCase();\n}, test:function(a) {\n  a = a.querySelector(\"head\");\n  return a ? (a = a.querySelector(\"title\")) ? !a.textContent : !0 : !0;\n}, code:\"AX_TITLE_01\"});\naxs.AuditRules.addRule({name:\"requiredAriaAttributeMissing\", heading:\"Elements with ARIA roles must have all required attributes for that role\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_03\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[role]\");\n}, test:function(a) {\n  var b = axs.utils.getRoles(a);\n  if (!b.valid) {\n    return !1;\n  }\n  for (var c = 0;c < b.roles.length;c++) {\n    var d = b.roles[c].details.requiredPropertiesSet, e;\n    for (e in d) {\n      if (d = e.replace(/^aria-/, \"\"), !(\"defaultValue\" in axs.constants.ARIA_PROPERTIES[d] || a.hasAttribute(e)) && 0 > axs.properties.getNativelySupportedAttributes(a).indexOf(e)) {\n        return !0;\n      }\n    }\n  }\n}, code:\"AX_ARIA_03\"});\n(function() {\n  function a(a) {\n    a = axs.utils.getRoles(a);\n    if (!a || !a.applied) {\n      return [];\n    }\n    a = a.applied;\n    return a.valid ? a.details.mustcontain || [] : [];\n  }\n  axs.AuditRules.addRule({name:\"requiredOwnedAriaRoleMissing\", heading:\"Elements with ARIA roles must ensure required owned elements are present\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_08\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(b) {\n    return axs.browserUtils.matchSelector(b, \"[role]\") ? 0 < a(b).length : !1;\n  }, test:function(b) {\n    if (\"true\" === b.getAttribute(\"aria-busy\")) {\n      return !1;\n    }\n    for (var c = a(b), d = c.length - 1;0 <= d;d--) {\n      var e = axs.utils.findDescendantsWithRole(b, c[d]);\n      if (e && e.length) {\n        return !1;\n      }\n    }\n    b = axs.utils.getIdReferents(\"aria-owns\", b);\n    for (d = b.length - 1;0 <= d;d--) {\n      if ((e = axs.utils.getRoles(b[d], !0)) && e.applied) {\n        for (var e = e.applied, f = c.length - 1;0 <= f;f--) {\n          if (e.name === c[f]) {\n            return !1;\n          }\n        }\n      }\n    }\n    return !0;\n  }, code:\"AX_ARIA_08\"});\n})();\naxs.AuditRules.addRule({name:\"tabIndexGreaterThanZero\", heading:\"Avoid positive integer values for tabIndex\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_03\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[tabindex]\");\n}, test:function(a) {\n  if (0 < a.tabIndex) {\n    return !0;\n  }\n}, code:\"AX_FOCUS_03\"});\naxs.AuditRules.addRule({name:\"unfocusableElementsWithOnClick\", heading:\"Elements with onclick handlers must be focusable\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_02\", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantElementMatcher:function(a) {\n  return a instanceof a.ownerDocument.defaultView.HTMLBodyElement || axs.utils.isElementOrAncestorHidden(a) ? !1 : \"click\" in getEventListeners(a) ? !0 : !1;\n}, test:function(a) {\n  return !a.hasAttribute(\"tabindex\") && !axs.utils.isElementImplicitlyFocusable(a) && !a.disabled;\n}, code:\"AX_FOCUS_02\"});\n(function() {\n  var a = /^aria\\-/, b = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);\n  axs.AuditRules.addRule({name:\"unsupportedAriaAttribute\", heading:\"This element has an unsupported ARIA attribute\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_10\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n    return axs.browserUtils.matchSelector(a, b);\n  }, test:function(b) {\n    var d = axs.utils.getRoles(b, !0), d = d && d.applied ? d.applied.details.propertiesSet : axs.constants.GLOBAL_PROPERTIES;\n    b = b.attributes;\n    for (var e = 0, f = b.length;e < f;e++) {\n      var g = b[e].name;\n      if (a.test(g)) {\n        var h = g.replace(a, \"\");\n        if (axs.constants.ARIA_PROPERTIES.hasOwnProperty(h) && !(g in d)) {\n          return !0;\n        }\n      }\n    }\n    return !1;\n  }, code:\"AX_ARIA_10\"});\n})();\naxs.AuditRules.addRule({name:\"videoWithoutCaptions\", heading:\"Video elements should use <track> elements to provide captions\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_video_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"video\");\n}, test:function(a) {\n  return !a.querySelectorAll(\"track[kind=captions]\").length;\n}, code:\"AX_VIDEO_01\"});\n\n\n"
+	module.exports = "/*\n * Copyright 2015 Google Inc.\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *      http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n *\n * Generated from http://github.com/GoogleChrome/accessibility-developer-tools/tree/952a710bc74ae546473b239e32b76cb3946c6fad\n *\n * See project README for build steps.\n */\n\n// AUTO-GENERATED CONTENT BELOW: DO NOT EDIT! See above for details.\n\nvar fn = (function() {\n  var COMPILED = !0, goog = goog || {};\ngoog.global = this;\ngoog.isDef = function(a) {\n  return void 0 !== a;\n};\ngoog.exportPath_ = function(a, b, c) {\n  a = a.split(\".\");\n  c = c || goog.global;\n  a[0] in c || !c.execScript || c.execScript(\"var \" + a[0]);\n  for (var d;a.length && (d = a.shift());) {\n    !a.length && goog.isDef(b) ? c[d] = b : c = c[d] ? c[d] : c[d] = {};\n  }\n};\ngoog.define = function(a, b) {\n  var c = b;\n  COMPILED || (goog.global.CLOSURE_UNCOMPILED_DEFINES && Object.prototype.hasOwnProperty.call(goog.global.CLOSURE_UNCOMPILED_DEFINES, a) ? c = goog.global.CLOSURE_UNCOMPILED_DEFINES[a] : goog.global.CLOSURE_DEFINES && Object.prototype.hasOwnProperty.call(goog.global.CLOSURE_DEFINES, a) && (c = goog.global.CLOSURE_DEFINES[a]));\n  goog.exportPath_(a, c);\n};\ngoog.DEBUG = !0;\ngoog.LOCALE = \"en\";\ngoog.TRUSTED_SITE = !0;\ngoog.STRICT_MODE_COMPATIBLE = !1;\ngoog.provide = function(a) {\n  if (!COMPILED) {\n    if (goog.isProvided_(a)) {\n      throw Error('Namespace \"' + a + '\" already declared.');\n    }\n    delete goog.implicitNamespaces_[a];\n    for (var b = a;(b = b.substring(0, b.lastIndexOf(\".\"))) && !goog.getObjectByName(b);) {\n      goog.implicitNamespaces_[b] = !0;\n    }\n  }\n  goog.exportPath_(a);\n};\ngoog.setTestOnly = function(a) {\n  if (COMPILED && !goog.DEBUG) {\n    throw a = a || \"\", Error(\"Importing test-only code into non-debug environment\" + a ? \": \" + a : \".\");\n  }\n};\ngoog.forwardDeclare = function(a) {\n};\nCOMPILED || (goog.isProvided_ = function(a) {\n  return !goog.implicitNamespaces_[a] && goog.isDefAndNotNull(goog.getObjectByName(a));\n}, goog.implicitNamespaces_ = {});\ngoog.getObjectByName = function(a, b) {\n  for (var c = a.split(\".\"), d = b || goog.global, e;e = c.shift();) {\n    if (goog.isDefAndNotNull(d[e])) {\n      d = d[e];\n    } else {\n      return null;\n    }\n  }\n  return d;\n};\ngoog.globalize = function(a, b) {\n  var c = b || goog.global, d;\n  for (d in a) {\n    c[d] = a[d];\n  }\n};\ngoog.addDependency = function(a, b, c) {\n  if (goog.DEPENDENCIES_ENABLED) {\n    var d;\n    a = a.replace(/\\\\/g, \"/\");\n    for (var e = goog.dependencies_, f = 0;d = b[f];f++) {\n      e.nameToPath[d] = a, a in e.pathToNames || (e.pathToNames[a] = {}), e.pathToNames[a][d] = !0;\n    }\n    for (d = 0;b = c[d];d++) {\n      a in e.requires || (e.requires[a] = {}), e.requires[a][b] = !0;\n    }\n  }\n};\ngoog.ENABLE_DEBUG_LOADER = !0;\ngoog.require = function(a) {\n  if (!COMPILED && !goog.isProvided_(a)) {\n    if (goog.ENABLE_DEBUG_LOADER) {\n      var b = goog.getPathFromDeps_(a);\n      if (b) {\n        goog.included_[b] = !0;\n        goog.writeScripts_();\n        return;\n      }\n    }\n    a = \"goog.require could not find: \" + a;\n    goog.global.console && goog.global.console.error(a);\n    throw Error(a);\n  }\n};\ngoog.basePath = \"\";\ngoog.nullFunction = function() {\n};\ngoog.identityFunction = function(a, b) {\n  return a;\n};\ngoog.abstractMethod = function() {\n  throw Error(\"unimplemented abstract method\");\n};\ngoog.addSingletonGetter = function(a) {\n  a.getInstance = function() {\n    if (a.instance_) {\n      return a.instance_;\n    }\n    goog.DEBUG && (goog.instantiatedSingletons_[goog.instantiatedSingletons_.length] = a);\n    return a.instance_ = new a;\n  };\n};\ngoog.instantiatedSingletons_ = [];\ngoog.DEPENDENCIES_ENABLED = !COMPILED && goog.ENABLE_DEBUG_LOADER;\ngoog.DEPENDENCIES_ENABLED && (goog.included_ = {}, goog.dependencies_ = {pathToNames:{}, nameToPath:{}, requires:{}, visited:{}, written:{}}, goog.inHtmlDocument_ = function() {\n  var a = goog.global.document;\n  return \"undefined\" != typeof a && \"write\" in a;\n}, goog.findBasePath_ = function() {\n  if (goog.global.CLOSURE_BASE_PATH) {\n    goog.basePath = goog.global.CLOSURE_BASE_PATH;\n  } else {\n    if (goog.inHtmlDocument_()) {\n      for (var a = goog.global.document.getElementsByTagName(\"script\"), b = a.length - 1;0 <= b;--b) {\n        var c = a[b].src, d = c.lastIndexOf(\"?\"), d = -1 == d ? c.length : d;\n        if (\"base.js\" == c.substr(d - 7, 7)) {\n          goog.basePath = c.substr(0, d - 7);\n          break;\n        }\n      }\n    }\n  }\n}, goog.importScript_ = function(a) {\n  var b = goog.global.CLOSURE_IMPORT_SCRIPT || goog.writeScriptTag_;\n  !goog.dependencies_.written[a] && b(a) && (goog.dependencies_.written[a] = !0);\n}, goog.writeScriptTag_ = function(a) {\n  if (goog.inHtmlDocument_()) {\n    var b = goog.global.document;\n    if (\"complete\" == b.readyState) {\n      if (/\\bdeps.js$/.test(a)) {\n        return !1;\n      }\n      throw Error('Cannot write \"' + a + '\" after document load');\n    }\n    b.write('<script type=\"text/javascript\" src=\"' + a + '\">\\x3c/script>');\n    return !0;\n  }\n  return !1;\n}, goog.writeScripts_ = function() {\n  function a(e) {\n    if (!(e in d.written)) {\n      if (!(e in d.visited) && (d.visited[e] = !0, e in d.requires)) {\n        for (var g in d.requires[e]) {\n          if (!goog.isProvided_(g)) {\n            if (g in d.nameToPath) {\n              a(d.nameToPath[g]);\n            } else {\n              throw Error(\"Undefined nameToPath for \" + g);\n            }\n          }\n        }\n      }\n      e in c || (c[e] = !0, b.push(e));\n    }\n  }\n  var b = [], c = {}, d = goog.dependencies_, e;\n  for (e in goog.included_) {\n    d.written[e] || a(e);\n  }\n  for (e = 0;e < b.length;e++) {\n    if (b[e]) {\n      goog.importScript_(goog.basePath + b[e]);\n    } else {\n      throw Error(\"Undefined script input\");\n    }\n  }\n}, goog.getPathFromDeps_ = function(a) {\n  return a in goog.dependencies_.nameToPath ? goog.dependencies_.nameToPath[a] : null;\n}, goog.findBasePath_(), goog.global.CLOSURE_NO_DEPS || goog.importScript_(goog.basePath + \"deps.js\"));\ngoog.typeOf = function(a) {\n  var b = typeof a;\n  if (\"object\" == b) {\n    if (a) {\n      if (a instanceof Array) {\n        return \"array\";\n      }\n      if (a instanceof Object) {\n        return b;\n      }\n      var c = Object.prototype.toString.call(a);\n      if (\"[object Window]\" == c) {\n        return \"object\";\n      }\n      if (\"[object Array]\" == c || \"number\" == typeof a.length && \"undefined\" != typeof a.splice && \"undefined\" != typeof a.propertyIsEnumerable && !a.propertyIsEnumerable(\"splice\")) {\n        return \"array\";\n      }\n      if (\"[object Function]\" == c || \"undefined\" != typeof a.call && \"undefined\" != typeof a.propertyIsEnumerable && !a.propertyIsEnumerable(\"call\")) {\n        return \"function\";\n      }\n    } else {\n      return \"null\";\n    }\n  } else {\n    if (\"function\" == b && \"undefined\" == typeof a.call) {\n      return \"object\";\n    }\n  }\n  return b;\n};\ngoog.isNull = function(a) {\n  return null === a;\n};\ngoog.isDefAndNotNull = function(a) {\n  return null != a;\n};\ngoog.isArray = function(a) {\n  return \"array\" == goog.typeOf(a);\n};\ngoog.isArrayLike = function(a) {\n  var b = goog.typeOf(a);\n  return \"array\" == b || \"object\" == b && \"number\" == typeof a.length;\n};\ngoog.isDateLike = function(a) {\n  return goog.isObject(a) && \"function\" == typeof a.getFullYear;\n};\ngoog.isString = function(a) {\n  return \"string\" == typeof a;\n};\ngoog.isBoolean = function(a) {\n  return \"boolean\" == typeof a;\n};\ngoog.isNumber = function(a) {\n  return \"number\" == typeof a;\n};\ngoog.isFunction = function(a) {\n  return \"function\" == goog.typeOf(a);\n};\ngoog.isObject = function(a) {\n  var b = typeof a;\n  return \"object\" == b && null != a || \"function\" == b;\n};\ngoog.getUid = function(a) {\n  return a[goog.UID_PROPERTY_] || (a[goog.UID_PROPERTY_] = ++goog.uidCounter_);\n};\ngoog.hasUid = function(a) {\n  return !!a[goog.UID_PROPERTY_];\n};\ngoog.removeUid = function(a) {\n  \"removeAttribute\" in a && a.removeAttribute(goog.UID_PROPERTY_);\n  try {\n    delete a[goog.UID_PROPERTY_];\n  } catch (b) {\n  }\n};\ngoog.UID_PROPERTY_ = \"closure_uid_\" + (1E9 * Math.random() >>> 0);\ngoog.uidCounter_ = 0;\ngoog.getHashCode = goog.getUid;\ngoog.removeHashCode = goog.removeUid;\ngoog.cloneObject = function(a) {\n  var b = goog.typeOf(a);\n  if (\"object\" == b || \"array\" == b) {\n    if (a.clone) {\n      return a.clone();\n    }\n    var b = \"array\" == b ? [] : {}, c;\n    for (c in a) {\n      b[c] = goog.cloneObject(a[c]);\n    }\n    return b;\n  }\n  return a;\n};\ngoog.bindNative_ = function(a, b, c) {\n  return a.call.apply(a.bind, arguments);\n};\ngoog.bindJs_ = function(a, b, c) {\n  if (!a) {\n    throw Error();\n  }\n  if (2 < arguments.length) {\n    var d = Array.prototype.slice.call(arguments, 2);\n    return function() {\n      var c = Array.prototype.slice.call(arguments);\n      Array.prototype.unshift.apply(c, d);\n      return a.apply(b, c);\n    };\n  }\n  return function() {\n    return a.apply(b, arguments);\n  };\n};\ngoog.bind = function(a, b, c) {\n  Function.prototype.bind && -1 != Function.prototype.bind.toString().indexOf(\"native code\") ? goog.bind = goog.bindNative_ : goog.bind = goog.bindJs_;\n  return goog.bind.apply(null, arguments);\n};\ngoog.partial = function(a, b) {\n  var c = Array.prototype.slice.call(arguments, 1);\n  return function() {\n    var b = c.slice();\n    b.push.apply(b, arguments);\n    return a.apply(this, b);\n  };\n};\ngoog.mixin = function(a, b) {\n  for (var c in b) {\n    a[c] = b[c];\n  }\n};\ngoog.now = goog.TRUSTED_SITE && Date.now || function() {\n  return +new Date;\n};\ngoog.globalEval = function(a) {\n  if (goog.global.execScript) {\n    goog.global.execScript(a, \"JavaScript\");\n  } else {\n    if (goog.global.eval) {\n      if (null == goog.evalWorksForGlobals_ && (goog.global.eval(\"var _et_ = 1;\"), \"undefined\" != typeof goog.global._et_ ? (delete goog.global._et_, goog.evalWorksForGlobals_ = !0) : goog.evalWorksForGlobals_ = !1), goog.evalWorksForGlobals_) {\n        goog.global.eval(a);\n      } else {\n        var b = goog.global.document, c = b.createElement(\"script\");\n        c.type = \"text/javascript\";\n        c.defer = !1;\n        c.appendChild(b.createTextNode(a));\n        b.body.appendChild(c);\n        b.body.removeChild(c);\n      }\n    } else {\n      throw Error(\"goog.globalEval not available\");\n    }\n  }\n};\ngoog.evalWorksForGlobals_ = null;\ngoog.getCssName = function(a, b) {\n  var c = function(a) {\n    return goog.cssNameMapping_[a] || a;\n  }, d = function(a) {\n    a = a.split(\"-\");\n    for (var b = [], d = 0;d < a.length;d++) {\n      b.push(c(a[d]));\n    }\n    return b.join(\"-\");\n  }, d = goog.cssNameMapping_ ? \"BY_WHOLE\" == goog.cssNameMappingStyle_ ? c : d : function(a) {\n    return a;\n  };\n  return b ? a + \"-\" + d(b) : d(a);\n};\ngoog.setCssNameMapping = function(a, b) {\n  goog.cssNameMapping_ = a;\n  goog.cssNameMappingStyle_ = b;\n};\n!COMPILED && goog.global.CLOSURE_CSS_NAME_MAPPING && (goog.cssNameMapping_ = goog.global.CLOSURE_CSS_NAME_MAPPING);\ngoog.getMsg = function(a, b) {\n  var c = b || {}, d;\n  for (d in c) {\n    var e = (\"\" + c[d]).replace(/\\$/g, \"$$$$\");\n    a = a.replace(new RegExp(\"\\\\{\\\\$\" + d + \"\\\\}\", \"gi\"), e);\n  }\n  return a;\n};\ngoog.getMsgWithFallback = function(a, b) {\n  return a;\n};\ngoog.exportSymbol = function(a, b, c) {\n  goog.exportPath_(a, b, c);\n};\ngoog.exportProperty = function(a, b, c) {\n  a[b] = c;\n};\ngoog.inherits = function(a, b) {\n  function c() {\n  }\n  c.prototype = b.prototype;\n  a.superClass_ = b.prototype;\n  a.prototype = new c;\n  a.prototype.constructor = a;\n  a.base = function(a, c, f) {\n    var g = Array.prototype.slice.call(arguments, 2);\n    return b.prototype[c].apply(a, g);\n  };\n};\ngoog.base = function(a, b, c) {\n  var d = arguments.callee.caller;\n  if (goog.STRICT_MODE_COMPATIBLE || goog.DEBUG && !d) {\n    throw Error(\"arguments.caller not defined.  goog.base() cannot be used with strict mode code. See http://www.ecma-international.org/ecma-262/5.1/#sec-C\");\n  }\n  if (d.superClass_) {\n    return d.superClass_.constructor.apply(a, Array.prototype.slice.call(arguments, 1));\n  }\n  for (var e = Array.prototype.slice.call(arguments, 2), f = !1, g = a.constructor;g;g = g.superClass_ && g.superClass_.constructor) {\n    if (g.prototype[b] === d) {\n      f = !0;\n    } else {\n      if (f) {\n        return g.prototype[b].apply(a, e);\n      }\n    }\n  }\n  if (a[b] === d) {\n    return a.constructor.prototype[b].apply(a, e);\n  }\n  throw Error(\"goog.base called from a method of one name to a method of a different name\");\n};\ngoog.scope = function(a) {\n  a.call(goog.global);\n};\nvar axs = {};\naxs.browserUtils = {};\naxs.browserUtils.matchSelector = function(a, b) {\n  return a.matches ? a.matches(b) : a.webkitMatchesSelector ? a.webkitMatchesSelector(b) : a.mozMatchesSelector ? a.mozMatchesSelector(b) : a.msMatchesSelector ? a.msMatchesSelector(b) : !1;\n};\naxs.constants = {};\naxs.constants.ARIA_ROLES = {alert:{namefrom:[\"author\"], parent:[\"region\"]}, alertdialog:{namefrom:[\"author\"], namerequired:!0, parent:[\"alert\", \"dialog\"]}, application:{namefrom:[\"author\"], namerequired:!0, parent:[\"landmark\"]}, article:{namefrom:[\"author\"], parent:[\"document\", \"region\"]}, banner:{namefrom:[\"author\"], parent:[\"landmark\"]}, button:{childpresentational:!0, namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"command\"], properties:[\"aria-expanded\", \"aria-pressed\"]}, checkbox:{namefrom:[\"contents\", \n\"author\"], namerequired:!0, parent:[\"input\"], requiredProperties:[\"aria-checked\"], properties:[\"aria-checked\"]}, columnheader:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"gridcell\", \"sectionhead\", \"widget\"], properties:[\"aria-sort\"], scope:[\"row\"]}, combobox:{mustcontain:[\"listbox\", \"textbox\"], namefrom:[\"author\"], namerequired:!0, parent:[\"select\"], requiredProperties:[\"aria-expanded\"], properties:[\"aria-expanded\", \"aria-autocomplete\", \"aria-required\"]}, command:{\"abstract\":!0, namefrom:[\"author\"], \nparent:[\"widget\"]}, complementary:{namefrom:[\"author\"], parent:[\"landmark\"]}, composite:{\"abstract\":!0, childpresentational:!1, namefrom:[\"author\"], parent:[\"widget\"], properties:[\"aria-activedescendant\"]}, contentinfo:{namefrom:[\"author\"], parent:[\"landmark\"]}, definition:{namefrom:[\"author\"], parent:[\"section\"]}, dialog:{namefrom:[\"author\"], namerequired:!0, parent:[\"window\"]}, directory:{namefrom:[\"contents\", \"author\"], parent:[\"list\"]}, document:{namefrom:[\" author\"], namerequired:!0, parent:[\"structure\"], \nproperties:[\"aria-expanded\"]}, form:{namefrom:[\"author\"], parent:[\"landmark\"]}, grid:{mustcontain:[\"row\", \"rowgroup\"], namefrom:[\"author\"], namerequired:!0, parent:[\"composite\", \"region\"], properties:[\"aria-level\", \"aria-multiselectable\", \"aria-readonly\"]}, gridcell:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"section\", \"widget\"], properties:[\"aria-readonly\", \"aria-required\", \"aria-selected\"], scope:[\"row\"]}, group:{namefrom:[\" author\"], parent:[\"section\"], properties:[\"aria-activedescendant\"]}, \nheading:{namerequired:!0, parent:[\"sectionhead\"], properties:[\"aria-level\"]}, img:{childpresentational:!0, namefrom:[\"author\"], namerequired:!0, parent:[\"section\"]}, input:{\"abstract\":!0, namefrom:[\"author\"], parent:[\"widget\"]}, landmark:{\"abstract\":!0, namefrom:[\"contents\", \"author\"], namerequired:!1, parent:[\"region\"]}, link:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"command\"], properties:[\"aria-expanded\"]}, list:{mustcontain:[\"group\", \"listitem\"], namefrom:[\"author\"], parent:[\"region\"]}, \nlistbox:{mustcontain:[\"option\"], namefrom:[\"author\"], namerequired:!0, parent:[\"list\", \"select\"], properties:[\"aria-multiselectable\", \"aria-required\"]}, listitem:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"section\"], properties:[\"aria-level\", \"aria-posinset\", \"aria-setsize\"], scope:[\"list\"]}, log:{namefrom:[\" author\"], namerequired:!0, parent:[\"region\"]}, main:{namefrom:[\"author\"], parent:[\"landmark\"]}, marquee:{namerequired:!0, parent:[\"section\"]}, math:{childpresentational:!0, namefrom:[\"author\"], \nparent:[\"section\"]}, menu:{mustcontain:[\"group\", \"menuitemradio\", \"menuitem\", \"menuitemcheckbox\"], namefrom:[\"author\"], namerequired:!0, parent:[\"list\", \"select\"]}, menubar:{namefrom:[\"author\"], parent:[\"menu\"]}, menuitem:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"command\"], scope:[\"menu\", \"menubar\"]}, menuitemcheckbox:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"checkbox\", \"menuitem\"], scope:[\"menu\", \"menubar\"]}, menuitemradio:{namefrom:[\"contents\", \"author\"], namerequired:!0, \nparent:[\"menuitemcheckbox\", \"radio\"], scope:[\"menu\", \"menubar\"]}, navigation:{namefrom:[\"author\"], parent:[\"landmark\"]}, note:{namefrom:[\"author\"], parent:[\"section\"]}, option:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"input\"], properties:[\"aria-checked\", \"aria-posinset\", \"aria-selected\", \"aria-setsize\"]}, presentation:{parent:[\"structure\"]}, progressbar:{childpresentational:!0, namefrom:[\"author\"], namerequired:!0, parent:[\"range\"]}, radio:{namefrom:[\"contents\", \"author\"], namerequired:!0, \nparent:[\"checkbox\", \"option\"]}, radiogroup:{mustcontain:[\"radio\"], namefrom:[\"author\"], namerequired:!0, parent:[\"select\"], properties:[\"aria-required\"]}, range:{\"abstract\":!0, namefrom:[\"author\"], parent:[\"widget\"], properties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\", \"aria-valuetext\"]}, region:{namefrom:[\" author\"], parent:[\"section\"]}, roletype:{\"abstract\":!0, properties:\"aria-atomic aria-busy aria-controls aria-describedby aria-disabled aria-dropeffect aria-flowto aria-grabbed aria-haspopup aria-hidden aria-invalid aria-label aria-labelledby aria-live aria-owns aria-relevant\".split(\" \")}, \nrow:{mustcontain:[\"columnheader\", \"gridcell\", \"rowheader\"], namefrom:[\"contents\", \"author\"], parent:[\"group\", \"widget\"], properties:[\"aria-level\", \"aria-selected\"], scope:[\"grid\", \"rowgroup\", \"treegrid\"]}, rowgroup:{mustcontain:[\"row\"], namefrom:[\"contents\", \"author\"], parent:[\"group\"], scope:[\"grid\"]}, rowheader:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"gridcell\", \"sectionhead\", \"widget\"], properties:[\"aria-sort\"], scope:[\"row\"]}, search:{namefrom:[\"author\"], parent:[\"landmark\"]}, \nsection:{\"abstract\":!0, namefrom:[\"contents\", \"author\"], parent:[\"structure\"], properties:[\"aria-expanded\"]}, sectionhead:{\"abstract\":!0, namefrom:[\"contents\", \"author\"], parent:[\"structure\"], properties:[\"aria-expanded\"]}, select:{\"abstract\":!0, namefrom:[\"author\"], parent:[\"composite\", \"group\", \"input\"]}, separator:{childpresentational:!0, namefrom:[\"author\"], parent:[\"structure\"], properties:[\"aria-expanded\", \"aria-orientation\"]}, scrollbar:{childpresentational:!0, namefrom:[\"author\"], namerequired:!1, \nparent:[\"input\", \"range\"], requiredProperties:[\"aria-controls\", \"aria-orientation\", \"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\"], properties:[\"aria-controls\", \"aria-orientation\", \"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\"]}, slider:{childpresentational:!0, namefrom:[\"author\"], namerequired:!0, parent:[\"input\", \"range\"], requiredProperties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\"], properties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\", \"aria-orientation\"]}, spinbutton:{namefrom:[\"author\"], \nnamerequired:!0, parent:[\"input\", \"range\"], requiredProperties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\"], properties:[\"aria-valuemax\", \"aria-valuemin\", \"aria-valuenow\", \"aria-required\"]}, status:{parent:[\"region\"]}, structure:{\"abstract\":!0, parent:[\"roletype\"]}, tab:{namefrom:[\"contents\", \"author\"], parent:[\"sectionhead\", \"widget\"], properties:[\"aria-selected\"], scope:[\"tablist\"]}, tablist:{mustcontain:[\"tab\"], namefrom:[\"author\"], parent:[\"composite\", \"directory\"], properties:[\"aria-level\"]}, \ntabpanel:{namefrom:[\"author\"], namerequired:!0, parent:[\"region\"]}, textbox:{namefrom:[\"author\"], namerequired:!0, parent:[\"input\"], properties:[\"aria-activedescendant\", \"aria-autocomplete\", \"aria-multiline\", \"aria-readonly\", \"aria-required\"]}, timer:{namefrom:[\"author\"], namerequired:!0, parent:[\"status\"]}, toolbar:{namefrom:[\"author\"], parent:[\"group\"]}, tooltip:{namerequired:!0, parent:[\"section\"]}, tree:{mustcontain:[\"group\", \"treeitem\"], namefrom:[\"author\"], namerequired:!0, parent:[\"select\"], \nproperties:[\"aria-multiselectable\", \"aria-required\"]}, treegrid:{mustcontain:[\"row\"], namefrom:[\"author\"], namerequired:!0, parent:[\"grid\", \"tree\"]}, treeitem:{namefrom:[\"contents\", \"author\"], namerequired:!0, parent:[\"listitem\", \"option\"], scope:[\"group\", \"tree\"]}, widget:{\"abstract\":!0, parent:[\"roletype\"]}, window:{\"abstract\":!0, namefrom:[\" author\"], parent:[\"roletype\"], properties:[\"aria-expanded\"]}};\naxs.constants.WIDGET_ROLES = {};\naxs.constants.addAllParentRolesToSet_ = function(a, b) {\n  if (a.parent) {\n    for (var c = a.parent, d = 0;d < c.length;d++) {\n      var e = c[d];\n      b[e] = !0;\n      axs.constants.addAllParentRolesToSet_(axs.constants.ARIA_ROLES[e], b);\n    }\n  }\n};\naxs.constants.addAllPropertiesToSet_ = function(a, b, c) {\n  var d = a[b];\n  if (d) {\n    for (var e = 0;e < d.length;e++) {\n      c[d[e]] = !0;\n    }\n  }\n  if (a.parent) {\n    for (a = a.parent, d = 0;d < a.length;d++) {\n      axs.constants.addAllPropertiesToSet_(axs.constants.ARIA_ROLES[a[d]], b, c);\n    }\n  }\n};\nfor (var roleName in axs.constants.ARIA_ROLES) {\n  var role = axs.constants.ARIA_ROLES[roleName], propertiesSet = {};\n  axs.constants.addAllPropertiesToSet_(role, \"properties\", propertiesSet);\n  role.propertiesSet = propertiesSet;\n  var requiredPropertiesSet = {};\n  axs.constants.addAllPropertiesToSet_(role, \"requiredProperties\", requiredPropertiesSet);\n  role.requiredPropertiesSet = requiredPropertiesSet;\n  var parentRolesSet = {};\n  axs.constants.addAllParentRolesToSet_(role, parentRolesSet);\n  role.allParentRolesSet = parentRolesSet;\n  \"widget\" in parentRolesSet && (axs.constants.WIDGET_ROLES[roleName] = role);\n}\naxs.constants.ARIA_PROPERTIES = {activedescendant:{type:\"property\", valueType:\"idref\"}, atomic:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, autocomplete:{defaultValue:\"none\", type:\"property\", valueType:\"token\", values:[\"inline\", \"list\", \"both\", \"none\"]}, busy:{defaultValue:\"false\", type:\"state\", valueType:\"boolean\"}, checked:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \"mixed\", \"undefined\"]}, controls:{type:\"property\", valueType:\"idref_list\"}, \ndescribedby:{type:\"property\", valueType:\"idref_list\"}, disabled:{defaultValue:\"false\", type:\"state\", valueType:\"boolean\"}, dropeffect:{defaultValue:\"none\", type:\"property\", valueType:\"token_list\", values:\"copy move link execute popup none\".split(\" \")}, expanded:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \"undefined\"]}, flowto:{type:\"property\", valueType:\"idref_list\"}, grabbed:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \n\"undefined\"]}, haspopup:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, hidden:{defaultValue:\"false\", type:\"state\", valueType:\"boolean\"}, invalid:{defaultValue:\"false\", type:\"state\", valueType:\"token\", values:[\"grammar\", \"false\", \"spelling\", \"true\"]}, label:{type:\"property\", valueType:\"string\"}, labelledby:{type:\"property\", valueType:\"idref_list\"}, level:{type:\"property\", valueType:\"integer\"}, live:{defaultValue:\"off\", type:\"property\", valueType:\"token\", values:[\"off\", \"polite\", \"assertive\"]}, \nmultiline:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, multiselectable:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, orientation:{defaultValue:\"vertical\", type:\"property\", valueType:\"token\", values:[\"horizontal\", \"vertical\"]}, owns:{type:\"property\", valueType:\"idref_list\"}, posinset:{type:\"property\", valueType:\"integer\"}, pressed:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \"mixed\", \"undefined\"]}, readonly:{defaultValue:\"false\", \ntype:\"property\", valueType:\"boolean\"}, relevant:{defaultValue:\"additions text\", type:\"property\", valueType:\"token_list\", values:[\"additions\", \"removals\", \"text\", \"all\"]}, required:{defaultValue:\"false\", type:\"property\", valueType:\"boolean\"}, selected:{defaultValue:\"undefined\", type:\"state\", valueType:\"token\", values:[\"true\", \"false\", \"undefined\"]}, setsize:{type:\"property\", valueType:\"integer\"}, sort:{defaultValue:\"none\", type:\"property\", valueType:\"token\", values:[\"ascending\", \"descending\", \"none\", \n\"other\"]}, valuemax:{type:\"property\", valueType:\"decimal\"}, valuemin:{type:\"property\", valueType:\"decimal\"}, valuenow:{type:\"property\", valueType:\"decimal\"}, valuetext:{type:\"property\", valueType:\"string\"}};\n(function() {\n  for (var a in axs.constants.ARIA_PROPERTIES) {\n    var b = axs.constants.ARIA_PROPERTIES[a];\n    if (b.values) {\n      for (var c = {}, d = 0;d < b.values.length;d++) {\n        c[b.values[d]] = !0;\n      }\n      b.valuesSet = c;\n    }\n  }\n})();\naxs.constants.GLOBAL_PROPERTIES = axs.constants.ARIA_ROLES.roletype.propertiesSet;\naxs.constants.NO_ROLE_NAME = \" \";\naxs.constants.WIDGET_ROLE_TO_NAME = {alert:\"aria_role_alert\", alertdialog:\"aria_role_alertdialog\", button:\"aria_role_button\", checkbox:\"aria_role_checkbox\", columnheader:\"aria_role_columnheader\", combobox:\"aria_role_combobox\", dialog:\"aria_role_dialog\", grid:\"aria_role_grid\", gridcell:\"aria_role_gridcell\", link:\"aria_role_link\", listbox:\"aria_role_listbox\", log:\"aria_role_log\", marquee:\"aria_role_marquee\", menu:\"aria_role_menu\", menubar:\"aria_role_menubar\", menuitem:\"aria_role_menuitem\", menuitemcheckbox:\"aria_role_menuitemcheckbox\", \nmenuitemradio:\"aria_role_menuitemradio\", option:axs.constants.NO_ROLE_NAME, progressbar:\"aria_role_progressbar\", radio:\"aria_role_radio\", radiogroup:\"aria_role_radiogroup\", rowheader:\"aria_role_rowheader\", scrollbar:\"aria_role_scrollbar\", slider:\"aria_role_slider\", spinbutton:\"aria_role_spinbutton\", status:\"aria_role_status\", tab:\"aria_role_tab\", tabpanel:\"aria_role_tabpanel\", textbox:\"aria_role_textbox\", timer:\"aria_role_timer\", toolbar:\"aria_role_toolbar\", tooltip:\"aria_role_tooltip\", treeitem:\"aria_role_treeitem\"};\naxs.constants.STRUCTURE_ROLE_TO_NAME = {article:\"aria_role_article\", application:\"aria_role_application\", banner:\"aria_role_banner\", columnheader:\"aria_role_columnheader\", complementary:\"aria_role_complementary\", contentinfo:\"aria_role_contentinfo\", definition:\"aria_role_definition\", directory:\"aria_role_directory\", document:\"aria_role_document\", form:\"aria_role_form\", group:\"aria_role_group\", heading:\"aria_role_heading\", img:\"aria_role_img\", list:\"aria_role_list\", listitem:\"aria_role_listitem\", \nmain:\"aria_role_main\", math:\"aria_role_math\", navigation:\"aria_role_navigation\", note:\"aria_role_note\", region:\"aria_role_region\", rowheader:\"aria_role_rowheader\", search:\"aria_role_search\", separator:\"aria_role_separator\"};\naxs.constants.ATTRIBUTE_VALUE_TO_STATUS = [{name:\"aria-autocomplete\", values:{inline:\"aria_autocomplete_inline\", list:\"aria_autocomplete_list\", both:\"aria_autocomplete_both\"}}, {name:\"aria-checked\", values:{\"true\":\"aria_checked_true\", \"false\":\"aria_checked_false\", mixed:\"aria_checked_mixed\"}}, {name:\"aria-disabled\", values:{\"true\":\"aria_disabled_true\"}}, {name:\"aria-expanded\", values:{\"true\":\"aria_expanded_true\", \"false\":\"aria_expanded_false\"}}, {name:\"aria-invalid\", values:{\"true\":\"aria_invalid_true\", \ngrammar:\"aria_invalid_grammar\", spelling:\"aria_invalid_spelling\"}}, {name:\"aria-multiline\", values:{\"true\":\"aria_multiline_true\"}}, {name:\"aria-multiselectable\", values:{\"true\":\"aria_multiselectable_true\"}}, {name:\"aria-pressed\", values:{\"true\":\"aria_pressed_true\", \"false\":\"aria_pressed_false\", mixed:\"aria_pressed_mixed\"}}, {name:\"aria-readonly\", values:{\"true\":\"aria_readonly_true\"}}, {name:\"aria-required\", values:{\"true\":\"aria_required_true\"}}, {name:\"aria-selected\", values:{\"true\":\"aria_selected_true\", \n\"false\":\"aria_selected_false\"}}];\naxs.constants.INPUT_TYPE_TO_INFORMATION_TABLE_MSG = {button:\"input_type_button\", checkbox:\"input_type_checkbox\", color:\"input_type_color\", datetime:\"input_type_datetime\", \"datetime-local\":\"input_type_datetime_local\", date:\"input_type_date\", email:\"input_type_email\", file:\"input_type_file\", image:\"input_type_image\", month:\"input_type_month\", number:\"input_type_number\", password:\"input_type_password\", radio:\"input_type_radio\", range:\"input_type_range\", reset:\"input_type_reset\", search:\"input_type_search\", \nsubmit:\"input_type_submit\", tel:\"input_type_tel\", text:\"input_type_text\", url:\"input_type_url\", week:\"input_type_week\"};\naxs.constants.TAG_TO_INFORMATION_TABLE_VERBOSE_MSG = {A:\"tag_link\", BUTTON:\"tag_button\", H1:\"tag_h1\", H2:\"tag_h2\", H3:\"tag_h3\", H4:\"tag_h4\", H5:\"tag_h5\", H6:\"tag_h6\", LI:\"tag_li\", OL:\"tag_ol\", SELECT:\"tag_select\", TEXTAREA:\"tag_textarea\", UL:\"tag_ul\", SECTION:\"tag_section\", NAV:\"tag_nav\", ARTICLE:\"tag_article\", ASIDE:\"tag_aside\", HGROUP:\"tag_hgroup\", HEADER:\"tag_header\", FOOTER:\"tag_footer\", TIME:\"tag_time\", MARK:\"tag_mark\"};\naxs.constants.TAG_TO_INFORMATION_TABLE_BRIEF_MSG = {BUTTON:\"tag_button\", SELECT:\"tag_select\", TEXTAREA:\"tag_textarea\"};\naxs.constants.MIXED_VALUES = {\"true\":!0, \"false\":!0, mixed:!0};\naxs.constants.Severity = {INFO:\"Info\", WARNING:\"Warning\", SEVERE:\"Severe\"};\naxs.constants.AuditResult = {PASS:\"PASS\", FAIL:\"FAIL\", NA:\"NA\"};\naxs.constants.InlineElements = {TT:!0, I:!0, B:!0, BIG:!0, SMALL:!0, EM:!0, STRONG:!0, DFN:!0, CODE:!0, SAMP:!0, KBD:!0, VAR:!0, CITE:!0, ABBR:!0, ACRONYM:!0, A:!0, IMG:!0, OBJECT:!0, BR:!0, SCRIPT:!0, MAP:!0, Q:!0, SUB:!0, SUP:!0, SPAN:!0, BDO:!0, INPUT:!0, SELECT:!0, TEXTAREA:!0, LABEL:!0, BUTTON:!0};\naxs.constants.NATIVELY_DISABLEABLE = {BUTTON:!0, INPUT:!0, SELECT:!0, TEXTAREA:!0, FIELDSET:!0, OPTGROUP:!0, OPTION:!0};\naxs.constants.ARIA_TO_HTML_ATTRIBUTE = {\"aria-checked\":\"checked\", \"aria-disabled\":\"disabled\", \"aria-hidden\":\"hidden\", \"aria-expanded\":\"open\", \"aria-valuemax\":\"max\", \"aria-valuemin\":\"min\", \"aria-readonly\":\"readonly\", \"aria-required\":\"required\", \"aria-selected\":\"selected\", \"aria-valuenow\":\"value\"};\naxs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO = {A:[{role:\"link\", allowed:\"button checkbox menuitem menuitemcheckbox menuitemradio tab treeitem\".split(\" \"), selector:\"a[href]\"}], ADDRESS:[{role:\"\", allowed:[\"contentinfo\", \"presentation\"]}], AREA:[{role:\"link\", selector:\"area[href]\"}], ARTICLE:[{role:\"article\", allowed:[\"presentation\", \"article\", \"document\", \"application\", \"main\"]}], ASIDE:[{role:\"complementary\", allowed:[\"note\", \"complementary\", \"search\", \"presentation\"]}], AUDIO:[{role:\"\", allowed:[\"application\", \n\"presentation\"]}], BASE:[{role:\"\", reserved:!0}], BODY:[{role:\"document\", allowed:[\"presentation\"]}], BUTTON:[{role:\"button\", allowed:[\"link\", \"menuitem\", \"menuitemcheckbox\", \"menuitemradio\", \"radio\"], selector:'button:not([aria-pressed]):not([type=\"menu\"])'}, {role:\"button\", allowed:[\"button\"], selector:\"button[aria-pressed]\"}, {role:\"button\", attributes:{\"aria-haspopup\":!0}, allowed:[\"link\", \"menuitem\", \"menuitemcheckbox\", \"menuitemradio\", \"radio\"], selector:'button[type=\"menu\"]'}], CAPTION:[{role:\"\", \nallowed:[\"presentation\"]}], COL:[{role:\"\", reserved:!0}], COLGROUP:[{role:\"\", reserved:!0}], DATALIST:[{role:\"listbox\", attributes:{\"aria-multiselectable\":!1}, allowed:[\"presentation\"]}], DEL:[{role:\"\", allowed:[\"*\"]}], DD:[{role:\"\", allowed:[\"presentation\"]}], DT:[{role:\"\", allowed:[\"presentation\"]}], DETAILS:[{role:\"group\", allowed:[\"group\", \"presentation\"]}], DIALOG:[{role:\"dialog\", allowed:\"dialog alert alertdialog application log marquee status\".split(\" \"), selector:\"dialog[open]\"}, {role:\"dialog\", \nattributes:{\"aria-hidden\":!0}, allowed:\"dialog alert alertdialog application log marquee status\".split(\" \"), selector:\"dialog:not([open])\"}], DIV:[{role:\"\", allowed:[\"*\"]}], DL:[{role:\"list\", allowed:[\"presentation\"]}], EMBED:[{role:\"\", allowed:[\"application\", \"document\", \"img\", \"presentation\"]}], FIGURE:[{role:\"\", allowed:[\"*\"]}], FOOTER:[{role:\"\", allowed:[\"contentinfo\", \"presentation\"]}], FORM:[{role:\"form\", allowed:[\"presentation\"]}], P:[{role:\"\", allowed:[\"*\"]}], PRE:[{role:\"\", allowed:[\"*\"]}], \nBLOCKQUOTE:[{role:\"\", allowed:[\"*\"]}], H1:[{role:\"heading\"}], H2:[{role:\"heading\"}], H3:[{role:\"heading\"}], H4:[{role:\"heading\"}], H5:[{role:\"heading\"}], H6:[{role:\"heading\"}], HEAD:[{role:\"\", reserved:!0}], HEADER:[{role:\"\", allowed:[\"banner\", \"presentation\"]}], HR:[{role:\"separator\", allowed:[\"presentation\"]}], HTML:[{role:\"\", reserved:!0}], IFRAME:[{role:\"\", allowed:[\"application\", \"document\", \"img\", \"presentation\"], selector:\"iframe:not([seamless])\"}, {role:\"\", allowed:[\"application\", \"document\", \n\"img\", \"presentation\", \"group\"], selector:\"iframe[seamless]\"}], IMG:[{role:\"presentation\", reserved:!0, selector:'img[alt=\"\"]'}, {role:\"img\", allowed:[\"*\"], selector:'img[alt]:not([alt=\"\"])'}], INPUT:[{role:\"button\", allowed:[\"link\", \"menuitem\", \"menuitemcheckbox\", \"menuitemradio\", \"radio\"], selector:'input[type=\"button\"]:not([aria-pressed])'}, {role:\"button\", allowed:[\"button\"], selector:'input[type=\"button\"][aria-pressed]'}, {role:\"checkbox\", allowed:[\"checkbox\"], selector:'input[type=\"checkbox\"]'}, \n{role:\"\", selector:'input[type=\"color\"]'}, {role:\"\", selector:'input[type=\"date\"]'}, {role:\"\", selector:'input[type=\"datetime\"]'}, {role:\"textbox\", selector:'input[type=\"email\"]:not([list])'}, {role:\"\", selector:'input[type=\"file\"]'}, {role:\"\", reserved:!0, selector:'input[type=\"hidden\"]'}, {role:\"button\", allowed:[\"button\"], selector:'input[type=\"image\"][aria-pressed]'}, {role:\"button\", allowed:[\"link\", \"menuitem\", \"menuitemcheckbox\", \"menuitemradio\", \"radio\"], selector:'input[type=\"image\"]:not([aria-pressed])'}, \n{role:\"\", selector:'input[type=\"month\"]'}, {role:\"\", selector:'input[type=\"number\"]'}, {role:\"textbox\", selector:'input[type=\"password\"]'}, {role:\"radio\", allowed:[\"menuitemradio\"], selector:'input[type=\"radio\"]'}, {role:\"slider\", selector:'input[type=\"range\"]'}, {role:\"button\", selector:'input[type=\"reset\"]'}, {role:\"combobox\", selector:'input[type=\"search\"][list]'}, {role:\"textbox\", selector:'input[type=\"search\"]:not([list])'}, {role:\"button\", selector:'input[type=\"submit\"]'}, {role:\"combobox\", \nselector:'input[type=\"tel\"][list]'}, {role:\"textbox\", selector:'input[type=\"tel\"]:not([list])'}, {role:\"combobox\", selector:'input[type=\"text\"][list]'}, {role:\"textbox\", selector:'input[type=\"text\"]:not([list])'}, {role:\"textbox\", selector:\"input:not([type])\"}, {role:\"\", selector:'input[type=\"time\"]'}, {role:\"combobox\", selector:'input[type=\"url\"][list]'}, {role:\"textbox\", selector:'input[type=\"url\"]:not([list])'}, {role:\"\", selector:'input[type=\"week\"]'}], INS:[{role:\"\", allowed:[\"*\"]}], KEYGEN:[{role:\"\"}], \nLABEL:[{role:\"\", allowed:[\"presentation\"]}], LI:[{role:\"listitem\", allowed:\"menuitem menuitemcheckbox menuitemradio option tab treeitem presentation\".split(\" \"), selector:'ol:not([role=\"presentation\"])>li, ul:not([role=\"presentation\"])>li'}, {role:\"listitem\", allowed:\"listitem menuitem menuitemcheckbox menuitemradio option tab treeitem presentation\".split(\" \"), selector:'ol[role=\"presentation\"]>li, ul[role=\"presentation\"]>li'}], LINK:[{role:\"link\", reserved:!0, selector:\"link[href]\"}], MAIN:[{role:\"\", \nallowed:[\"main\", \"presentation\"]}], MAP:[{role:\"\", reserved:!0}], MATH:[{role:\"\", allowed:[\"presentation\"]}], MENU:[{role:\"toolbar\", selector:'menu[type=\"toolbar\"]'}], MENUITEM:[{role:\"menuitem\", selector:'menuitem[type=\"command\"]'}, {role:\"menuitemcheckbox\", selector:'menuitem[type=\"checkbox\"]'}, {role:\"menuitemradio\", selector:'menuitem[type=\"radio\"]'}], META:[{role:\"\", reserved:!0}], METER:[{role:\"progressbar\", allowed:[\"presentation\"]}], NAV:[{role:\"navigation\", allowed:[\"navigation\", \"presentation\"]}], \nNOSCRIPT:[{role:\"\", reserved:!0}], OBJECT:[{role:\"\", allowed:[\"application\", \"document\", \"img\", \"presentation\"]}], OL:[{role:\"list\", allowed:\"directory group listbox menu menubar tablist toolbar tree presentation\".split(\" \")}], OPTGROUP:[{role:\"\", allowed:[\"presentation\"]}], OPTION:[{role:\"option\"}], OUTPUT:[{role:\"status\", allowed:[\"*\"]}], PARAM:[{role:\"\", reserved:!0}], PICTURE:[{role:\"\", reserved:!0}], PROGRESS:[{role:\"progressbar\", allowed:[\"presentation\"]}], SCRIPT:[{role:\"\", reserved:!0}], \nSECTION:[{role:\"region\", allowed:\"alert alertdialog application contentinfo dialog document log marquee search status presentation\".split(\" \")}], SELECT:[{role:\"listbox\"}], SOURCE:[{role:\"\", reserved:!0}], SPAN:[{role:\"\", allowed:[\"*\"]}], STYLE:[{role:\"\", reserved:!0}], SVG:[{role:\"\", allowed:[\"application\", \"document\", \"img\", \"presentation\"]}], SUMMARY:[{role:\"\", allowed:[\"presentation\"]}], TABLE:[{role:\"\", allowed:[\"*\"]}], TEMPLATE:[{role:\"\", reserved:!0}], TEXTAREA:[{role:\"textbox\"}], TBODY:[{role:\"rowgroup\", \nallowed:[\"*\"]}], THEAD:[{role:\"rowgroup\", allowed:[\"*\"]}], TFOOT:[{role:\"rowgroup\", allowed:[\"*\"]}], TITLE:[{role:\"\", reserved:!0}], TD:[{role:\"\", allowed:[\"*\"]}], TH:[{role:\"\", allowed:[\"*\"]}], TR:[{role:\"\", allowed:[\"*\"]}], TRACK:[{role:\"\", reserved:!0}], UL:[{role:\"list\", allowed:\"directory group listbox menu menubar tablist toolbar tree presentation\".split(\" \")}], VIDEO:[{role:\"\", allowed:[\"application\", \"presentation\"]}]};\naxs.color = {};\naxs.color.Color = function(a, b, c, d) {\n  this.red = a;\n  this.green = b;\n  this.blue = c;\n  this.alpha = d;\n};\naxs.color.YCbCr = function(a) {\n  this.luma = this.z = a[0];\n  this.Cb = this.x = a[1];\n  this.Cr = this.y = a[2];\n};\naxs.color.YCbCr.prototype = {multiply:function(a) {\n  return new axs.color.YCbCr([this.luma * a, this.Cb * a, this.Cr * a]);\n}, add:function(a) {\n  return new axs.color.YCbCr([this.luma + a.luma, this.Cb + a.Cb, this.Cr + a.Cr]);\n}, subtract:function(a) {\n  return new axs.color.YCbCr([this.luma - a.luma, this.Cb - a.Cb, this.Cr - a.Cr]);\n}};\naxs.color.calculateContrastRatio = function(a, b) {\n  1 > a.alpha && (a = axs.color.flattenColors(a, b));\n  var c = axs.color.calculateLuminance(a), d = axs.color.calculateLuminance(b);\n  return (Math.max(c, d) + .05) / (Math.min(c, d) + .05);\n};\naxs.color.calculateLuminance = function(a) {\n  return axs.color.toYCbCr(a).luma;\n};\naxs.color.luminanceRatio = function(a, b) {\n  return (Math.max(a, b) + .05) / (Math.min(a, b) + .05);\n};\naxs.color.parseColor = function(a) {\n  if (\"transparent\" === a) {\n    return new axs.color.Color(0, 0, 0, 0);\n  }\n  var b = a.match(/^rgb\\((\\d+), (\\d+), (\\d+)\\)$/);\n  if (b) {\n    a = parseInt(b[1], 10);\n    var c = parseInt(b[2], 10), d = parseInt(b[3], 10);\n    return new axs.color.Color(a, c, d, 1);\n  }\n  return (b = a.match(/^rgba\\((\\d+), (\\d+), (\\d+), (\\d*(\\.\\d+)?)\\)/)) ? (a = parseInt(b[1], 10), c = parseInt(b[2], 10), d = parseInt(b[3], 10), b = parseFloat(b[4]), new axs.color.Color(a, c, d, b)) : null;\n};\naxs.color.colorChannelToString = function(a) {\n  a = Math.round(a);\n  return 15 >= a ? \"0\" + a.toString(16) : a.toString(16);\n};\naxs.color.colorToString = function(a) {\n  return 1 == a.alpha ? \"#\" + axs.color.colorChannelToString(a.red) + axs.color.colorChannelToString(a.green) + axs.color.colorChannelToString(a.blue) : \"rgba(\" + [a.red, a.green, a.blue, a.alpha].join() + \")\";\n};\naxs.color.luminanceFromContrastRatio = function(a, b, c) {\n  return c ? (a + .05) * b - .05 : (a + .05) / b - .05;\n};\naxs.color.translateColor = function(a, b) {\n  for (var c = b > a.luma ? axs.color.WHITE_YCC : axs.color.BLACK_YCC, d = c == axs.color.WHITE_YCC ? axs.color.YCC_CUBE_FACES_WHITE : axs.color.YCC_CUBE_FACES_BLACK, e = new axs.color.YCbCr([0, a.Cb, a.Cr]), f = new axs.color.YCbCr([1, a.Cb, a.Cr]), f = {a:e, b:f}, e = null, g = 0;g < d.length && !(e = axs.color.findIntersection(f, d[g]), 0 <= e.z && 1 >= e.z);g++) {\n  }\n  if (!e) {\n    throw \"Couldn't find intersection with YCbCr color cube for Cb=\" + a.Cb + \", Cr=\" + a.Cr + \".\";\n  }\n  if (e.x != a.x || e.y != a.y) {\n    throw \"Intersection has wrong Cb/Cr values.\";\n  }\n  if (Math.abs(c.luma - e.luma) < Math.abs(c.luma - b)) {\n    return c = [b, a.Cb, a.Cr], axs.color.fromYCbCrArray(c);\n  }\n  c = (b - e.luma) / (c.luma - e.luma);\n  c = [b, e.Cb - e.Cb * c, e.Cr - e.Cr * c];\n  return axs.color.fromYCbCrArray(c);\n};\naxs.color.suggestColors = function(a, b, c) {\n  var d = {}, e = axs.color.calculateLuminance(a), f = axs.color.calculateLuminance(b), g = f > e, h = axs.color.toYCbCr(b), k = axs.color.toYCbCr(a), m;\n  for (m in c) {\n    var l = c[m], n = axs.color.luminanceFromContrastRatio(e, l + .02, g);\n    if (1 >= n && 0 <= n) {\n      var p = axs.color.translateColor(h, n), l = axs.color.calculateContrastRatio(p, a), n = {};\n      n.fg = axs.color.colorToString(p);\n      n.bg = axs.color.colorToString(a);\n      n.contrast = l.toFixed(2);\n      d[m] = n;\n    } else {\n      l = axs.color.luminanceFromContrastRatio(f, l + .02, !g), 1 >= l && 0 <= l && (p = axs.color.translateColor(k, l), l = axs.color.calculateContrastRatio(b, p), n = {}, n.bg = axs.color.colorToString(p), n.fg = axs.color.colorToString(b), n.contrast = l.toFixed(2), d[m] = n);\n    }\n  }\n  return d;\n};\naxs.color.flattenColors = function(a, b) {\n  var c = a.alpha;\n  return new axs.color.Color((1 - c) * b.red + c * a.red, (1 - c) * b.green + c * a.green, (1 - c) * b.blue + c * a.blue, a.alpha + b.alpha * (1 - a.alpha));\n};\naxs.color.multiplyMatrixVector = function(a, b) {\n  var c = b[0], d = b[1], e = b[2];\n  return [a[0][0] * c + a[0][1] * d + a[0][2] * e, a[1][0] * c + a[1][1] * d + a[1][2] * e, a[2][0] * c + a[2][1] * d + a[2][2] * e];\n};\naxs.color.toYCbCr = function(a) {\n  var b = a.red / 255, c = a.green / 255;\n  a = a.blue / 255;\n  b = .03928 >= b ? b / 12.92 : Math.pow((b + .055) / 1.055, 2.4);\n  c = .03928 >= c ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4);\n  a = .03928 >= a ? a / 12.92 : Math.pow((a + .055) / 1.055, 2.4);\n  return new axs.color.YCbCr(axs.color.multiplyMatrixVector(axs.color.YCC_MATRIX, [b, c, a]));\n};\naxs.color.fromYCbCr = function(a) {\n  return axs.color.fromYCbCrArray([a.luma, a.Cb, a.Cr]);\n};\naxs.color.fromYCbCrArray = function(a) {\n  var b = axs.color.multiplyMatrixVector(axs.color.INVERTED_YCC_MATRIX, a), c = b[0];\n  a = b[1];\n  b = b[2];\n  c = .00303949 >= c ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - .055;\n  a = .00303949 >= a ? 12.92 * a : 1.055 * Math.pow(a, 1 / 2.4) - .055;\n  b = .00303949 >= b ? 12.92 * b : 1.055 * Math.pow(b, 1 / 2.4) - .055;\n  c = Math.min(Math.max(Math.round(255 * c), 0), 255);\n  a = Math.min(Math.max(Math.round(255 * a), 0), 255);\n  b = Math.min(Math.max(Math.round(255 * b), 0), 255);\n  return new axs.color.Color(c, a, b, 1);\n};\naxs.color.RGBToYCbCrMatrix = function(a, b) {\n  return [[a, 1 - a - b, b], [-a / (2 - 2 * b), (a + b - 1) / (2 - 2 * b), (1 - b) / (2 - 2 * b)], [(1 - a) / (2 - 2 * a), (a + b - 1) / (2 - 2 * a), -b / (2 - 2 * a)]];\n};\naxs.color.invert3x3Matrix = function(a) {\n  var b = a[0][0], c = a[0][1], d = a[0][2], e = a[1][0], f = a[1][1], g = a[1][2], h = a[2][0], k = a[2][1];\n  a = a[2][2];\n  return axs.color.scalarMultiplyMatrix([[f * a - g * k, d * k - c * a, c * g - d * f], [g * h - e * a, b * a - d * h, d * e - b * g], [e * k - f * h, h * c - b * k, b * f - c * e]], 1 / (b * (f * a - g * k) - c * (a * e - g * h) + d * (e * k - f * h)));\n};\naxs.color.findIntersection = function(a, b) {\n  var c = [a.a.x - b.p0.x, a.a.y - b.p0.y, a.a.z - b.p0.z], d = axs.color.invert3x3Matrix([[a.a.x - a.b.x, b.p1.x - b.p0.x, b.p2.x - b.p0.x], [a.a.y - a.b.y, b.p1.y - b.p0.y, b.p2.y - b.p0.y], [a.a.z - a.b.z, b.p1.z - b.p0.z, b.p2.z - b.p0.z]]), c = axs.color.multiplyMatrixVector(d, c)[0];\n  return a.a.add(a.b.subtract(a.a).multiply(c));\n};\naxs.color.scalarMultiplyMatrix = function(a, b) {\n  for (var c = [], d = 0;3 > d;d++) {\n    c[d] = axs.color.scalarMultiplyVector(a[d], b);\n  }\n  return c;\n};\naxs.color.scalarMultiplyVector = function(a, b) {\n  for (var c = [], d = 0;d < a.length;d++) {\n    c[d] = a[d] * b;\n  }\n  return c;\n};\naxs.color.kR = .2126;\naxs.color.kB = .0722;\naxs.color.YCC_MATRIX = axs.color.RGBToYCbCrMatrix(axs.color.kR, axs.color.kB);\naxs.color.INVERTED_YCC_MATRIX = axs.color.invert3x3Matrix(axs.color.YCC_MATRIX);\naxs.color.BLACK = new axs.color.Color(0, 0, 0, 1);\naxs.color.BLACK_YCC = axs.color.toYCbCr(axs.color.BLACK);\naxs.color.WHITE = new axs.color.Color(255, 255, 255, 1);\naxs.color.WHITE_YCC = axs.color.toYCbCr(axs.color.WHITE);\naxs.color.RED = new axs.color.Color(255, 0, 0, 1);\naxs.color.RED_YCC = axs.color.toYCbCr(axs.color.RED);\naxs.color.GREEN = new axs.color.Color(0, 255, 0, 1);\naxs.color.GREEN_YCC = axs.color.toYCbCr(axs.color.GREEN);\naxs.color.BLUE = new axs.color.Color(0, 0, 255, 1);\naxs.color.BLUE_YCC = axs.color.toYCbCr(axs.color.BLUE);\naxs.color.CYAN = new axs.color.Color(0, 255, 255, 1);\naxs.color.CYAN_YCC = axs.color.toYCbCr(axs.color.CYAN);\naxs.color.MAGENTA = new axs.color.Color(255, 0, 255, 1);\naxs.color.MAGENTA_YCC = axs.color.toYCbCr(axs.color.MAGENTA);\naxs.color.YELLOW = new axs.color.Color(255, 255, 0, 1);\naxs.color.YELLOW_YCC = axs.color.toYCbCr(axs.color.YELLOW);\naxs.color.YCC_CUBE_FACES_BLACK = [{p0:axs.color.BLACK_YCC, p1:axs.color.RED_YCC, p2:axs.color.GREEN_YCC}, {p0:axs.color.BLACK_YCC, p1:axs.color.GREEN_YCC, p2:axs.color.BLUE_YCC}, {p0:axs.color.BLACK_YCC, p1:axs.color.BLUE_YCC, p2:axs.color.RED_YCC}];\naxs.color.YCC_CUBE_FACES_WHITE = [{p0:axs.color.WHITE_YCC, p1:axs.color.CYAN_YCC, p2:axs.color.MAGENTA_YCC}, {p0:axs.color.WHITE_YCC, p1:axs.color.MAGENTA_YCC, p2:axs.color.YELLOW_YCC}, {p0:axs.color.WHITE_YCC, p1:axs.color.YELLOW_YCC, p2:axs.color.CYAN_YCC}];\naxs.utils = {};\naxs.utils.FOCUSABLE_ELEMENTS_SELECTOR = \"input:not([type=hidden]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),a[href],iframe,[tabindex]\";\naxs.utils.LABELABLE_ELEMENTS_SELECTOR = \"button,input:not([type=hidden]),keygen,meter,output,progress,select,textarea\";\naxs.utils.parentElement = function(a) {\n  if (!a) {\n    return null;\n  }\n  if (a.nodeType == Node.DOCUMENT_FRAGMENT_NODE) {\n    return a.host;\n  }\n  var b = a.parentElement;\n  if (b) {\n    return b;\n  }\n  a = a.parentNode;\n  if (!a) {\n    return null;\n  }\n  switch(a.nodeType) {\n    case Node.ELEMENT_NODE:\n      return a;\n    case Node.DOCUMENT_FRAGMENT_NODE:\n      return a.host;\n    default:\n      return null;\n  }\n};\naxs.utils.asElement = function(a) {\n  switch(a.nodeType) {\n    case Node.COMMENT_NODE:\n      return null;\n    case Node.ELEMENT_NODE:\n      if (\"script\" == a.tagName.toLowerCase()) {\n        return null;\n      }\n      break;\n    case Node.TEXT_NODE:\n      a = axs.utils.parentElement(a);\n      break;\n    default:\n      return console.warn(\"Unhandled node type: \", a.nodeType), null;\n  }\n  return a;\n};\naxs.utils.elementIsTransparent = function(a) {\n  return \"0\" == a.style.opacity;\n};\naxs.utils.elementHasZeroArea = function(a) {\n  a = a.getBoundingClientRect();\n  var b = a.top - a.bottom;\n  return a.right - a.left && b ? !1 : !0;\n};\naxs.utils.elementIsOutsideScrollArea = function(a) {\n  for (var b = axs.utils.parentElement(a), c = a.ownerDocument.defaultView;b != c.document.body;) {\n    if (axs.utils.isClippedBy(a, b)) {\n      return !0;\n    }\n    if (axs.utils.canScrollTo(a, b) && !axs.utils.elementIsOutsideScrollArea(b)) {\n      return !1;\n    }\n    b = axs.utils.parentElement(b);\n  }\n  return !axs.utils.canScrollTo(a, c.document.body);\n};\naxs.utils.canScrollTo = function(a, b) {\n  var c = a.getBoundingClientRect(), d = b.getBoundingClientRect(), e = d.top, f = d.left, g = e - b.scrollTop, e = e - b.scrollTop + b.scrollHeight, h = f - b.scrollLeft + b.scrollWidth;\n  if (c.right < f - b.scrollLeft || c.bottom < g || c.left > h || c.top > e) {\n    return !1;\n  }\n  f = a.ownerDocument.defaultView;\n  g = f.getComputedStyle(b);\n  return c.left > d.right || c.top > d.bottom ? \"scroll\" == g.overflow || \"auto\" == g.overflow || b instanceof f.HTMLBodyElement : !0;\n};\naxs.utils.isClippedBy = function(a, b) {\n  var c = a.getBoundingClientRect(), d = b.getBoundingClientRect(), e = d.top - b.scrollTop, f = d.left - b.scrollLeft, g = a.ownerDocument.defaultView.getComputedStyle(b);\n  return (c.right < d.left || c.bottom < d.top || c.left > d.right || c.top > d.bottom) && \"hidden\" == g.overflow ? !0 : c.right < f || c.bottom < e ? \"visible\" != g.overflow : !1;\n};\naxs.utils.isAncestor = function(a, b) {\n  return null == b ? !1 : b === a ? !0 : axs.utils.isAncestor(a, b.parentNode);\n};\naxs.utils.overlappingElements = function(a) {\n  if (axs.utils.elementHasZeroArea(a)) {\n    return null;\n  }\n  for (var b = [], c = a.getClientRects(), d = 0;d < c.length;d++) {\n    var e = c[d], e = document.elementFromPoint((e.left + e.right) / 2, (e.top + e.bottom) / 2);\n    if (null != e && e != a && !axs.utils.isAncestor(e, a) && !axs.utils.isAncestor(a, e)) {\n      var f = window.getComputedStyle(e, null);\n      f && (f = axs.utils.getBgColor(f, e)) && 0 < f.alpha && 0 > b.indexOf(e) && b.push(e);\n    }\n  }\n  return b;\n};\naxs.utils.elementIsHtmlControl = function(a) {\n  var b = a.ownerDocument.defaultView;\n  return a instanceof b.HTMLButtonElement || a instanceof b.HTMLInputElement || a instanceof b.HTMLSelectElement || a instanceof b.HTMLTextAreaElement ? !0 : !1;\n};\naxs.utils.elementIsAriaWidget = function(a) {\n  return a.hasAttribute(\"role\") && (a = a.getAttribute(\"role\")) && (a = axs.constants.ARIA_ROLES[a]) && \"widget\" in a.allParentRolesSet ? !0 : !1;\n};\naxs.utils.elementIsVisible = function(a) {\n  return axs.utils.elementIsTransparent(a) || axs.utils.elementHasZeroArea(a) || axs.utils.elementIsOutsideScrollArea(a) || axs.utils.overlappingElements(a).length ? !1 : !0;\n};\naxs.utils.isLargeFont = function(a) {\n  var b = a.fontSize;\n  a = \"bold\" == a.fontWeight;\n  var c = b.match(/(\\d+)px/);\n  if (c) {\n    b = parseInt(c[1], 10);\n    if (c = window.getComputedStyle(document.body, null).fontSize.match(/(\\d+)px/)) {\n      var d = parseInt(c[1], 10), c = 1.2 * d, d = 1.5 * d\n    } else {\n      c = 19.2, d = 24;\n    }\n    return a && b >= c || b >= d;\n  }\n  if (c = b.match(/(\\d+)em/)) {\n    return b = parseInt(c[1], 10), a && 1.2 <= b || 1.5 <= b ? !0 : !1;\n  }\n  if (c = b.match(/(\\d+)%/)) {\n    return b = parseInt(c[1], 10), a && 120 <= b || 150 <= b ? !0 : !1;\n  }\n  if (c = b.match(/(\\d+)pt/)) {\n    if (b = parseInt(c[1], 10), a && 14 <= b || 18 <= b) {\n      return !0;\n    }\n  }\n  return !1;\n};\naxs.utils.getBgColor = function(a, b) {\n  var c = axs.color.parseColor(a.backgroundColor);\n  if (!c) {\n    return null;\n  }\n  1 > a.opacity && (c.alpha *= a.opacity);\n  if (1 > c.alpha) {\n    var d = axs.utils.getParentBgColor(b);\n    if (null == d) {\n      return null;\n    }\n    c = axs.color.flattenColors(c, d);\n  }\n  return c;\n};\naxs.utils.getParentBgColor = function(a) {\n  var b = a;\n  a = [];\n  for (var c = null;b = axs.utils.parentElement(b);) {\n    var d = window.getComputedStyle(b, null);\n    if (d) {\n      var e = axs.color.parseColor(d.backgroundColor);\n      if (e && (1 > d.opacity && (e.alpha *= d.opacity), 0 != e.alpha && (a.push(e), 1 == e.alpha))) {\n        c = !0;\n        break;\n      }\n    }\n  }\n  c || a.push(new axs.color.Color(255, 255, 255, 1));\n  for (b = a.pop();a.length;) {\n    c = a.pop(), b = axs.color.flattenColors(c, b);\n  }\n  return b;\n};\naxs.utils.getFgColor = function(a, b, c) {\n  var d = axs.color.parseColor(a.color);\n  if (!d) {\n    return null;\n  }\n  1 > d.alpha && (d = axs.color.flattenColors(d, c));\n  1 > a.opacity && (b = axs.utils.getParentBgColor(b), d.alpha *= a.opacity, d = axs.color.flattenColors(d, b));\n  return d;\n};\naxs.utils.getContrastRatioForElement = function(a) {\n  var b = window.getComputedStyle(a, null);\n  return axs.utils.getContrastRatioForElementWithComputedStyle(b, a);\n};\naxs.utils.getContrastRatioForElementWithComputedStyle = function(a, b) {\n  if (axs.utils.isElementHidden(b)) {\n    return null;\n  }\n  var c = axs.utils.getBgColor(a, b);\n  if (!c) {\n    return null;\n  }\n  var d = axs.utils.getFgColor(a, b, c);\n  return d ? axs.color.calculateContrastRatio(d, c) : null;\n};\naxs.utils.isNativeTextElement = function(a) {\n  var b = a.tagName.toLowerCase();\n  a = a.type ? a.type.toLowerCase() : \"\";\n  if (\"textarea\" == b) {\n    return !0;\n  }\n  if (\"input\" != b) {\n    return !1;\n  }\n  switch(a) {\n    case \"email\":\n    ;\n    case \"number\":\n    ;\n    case \"password\":\n    ;\n    case \"search\":\n    ;\n    case \"text\":\n    ;\n    case \"tel\":\n    ;\n    case \"url\":\n    ;\n    case \"\":\n      return !0;\n    default:\n      return !1;\n  }\n};\naxs.utils.isLowContrast = function(a, b, c) {\n  a = Math.round(10 * a) / 10;\n  return c ? 4.5 > a || !axs.utils.isLargeFont(b) && 7 > a : 3 > a || !axs.utils.isLargeFont(b) && 4.5 > a;\n};\naxs.utils.hasLabel = function(a) {\n  var b = a.tagName.toLowerCase(), c = a.type ? a.type.toLowerCase() : \"\";\n  if (a.hasAttribute(\"aria-label\") || a.hasAttribute(\"title\") || \"img\" == b && a.hasAttribute(\"alt\") || \"input\" == b && \"image\" == c && a.hasAttribute(\"alt\") || \"input\" == b && (\"submit\" == c || \"reset\" == c) || a.hasAttribute(\"aria-labelledby\") || a.hasAttribute(\"id\") && 0 < document.querySelectorAll('label[for=\"' + a.id + '\"]').length) {\n    return !0;\n  }\n  for (b = axs.utils.parentElement(a);b;) {\n    if (\"label\" == b.tagName.toLowerCase() && b.control == a) {\n      return !0;\n    }\n    b = axs.utils.parentElement(b);\n  }\n  return !1;\n};\naxs.utils.isNativelyDisableable = function(a) {\n  return a.tagName.toUpperCase() in axs.constants.NATIVELY_DISABLEABLE;\n};\naxs.utils.isElementDisabled = function(a) {\n  if (axs.browserUtils.matchSelector(a, \"[aria-disabled=true], [aria-disabled=true] *\")) {\n    return !0;\n  }\n  if (!axs.utils.isNativelyDisableable(a) || axs.browserUtils.matchSelector(a, \"fieldset>legend:first-of-type *\")) {\n    return !1;\n  }\n  for (;null !== a;a = axs.utils.parentElement(a)) {\n    if (axs.utils.isNativelyDisableable(a) && a.hasAttribute(\"disabled\")) {\n      return !0;\n    }\n  }\n  return !1;\n};\naxs.utils.isElementHidden = function(a) {\n  if (!(a instanceof a.ownerDocument.defaultView.HTMLElement)) {\n    return !1;\n  }\n  if (a.hasAttribute(\"chromevoxignoreariahidden\")) {\n    var b = !0\n  }\n  var c = window.getComputedStyle(a, null);\n  return \"none\" == c.display || \"hidden\" == c.visibility ? !0 : a.hasAttribute(\"aria-hidden\") && \"true\" == a.getAttribute(\"aria-hidden\").toLowerCase() ? !b : !1;\n};\naxs.utils.isElementOrAncestorHidden = function(a) {\n  return axs.utils.isElementHidden(a) ? !0 : axs.utils.parentElement(a) ? axs.utils.isElementOrAncestorHidden(axs.utils.parentElement(a)) : !1;\n};\naxs.utils.isInlineElement = function(a) {\n  a = a.tagName.toUpperCase();\n  return axs.constants.InlineElements[a];\n};\naxs.utils.getRoles = function(a, b) {\n  if (!a || a.nodeType !== Node.ELEMENT_NODE || !a.hasAttribute(\"role\") && !b) {\n    return null;\n  }\n  var c = a.getAttribute(\"role\");\n  !c && b && (c = axs.properties.getImplicitRole(a));\n  if (!c) {\n    return null;\n  }\n  for (var c = c.split(\" \"), d = {roles:[], valid:!1}, e = 0;e < c.length;e++) {\n    var f = c[e], g = axs.constants.ARIA_ROLES[f], f = {name:f};\n    g && !g.abstract ? (f.details = g, d.applied || (d.applied = f), f.valid = d.valid = !0) : f.valid = !1;\n    d.roles.push(f);\n  }\n  return d;\n};\naxs.utils.getAriaPropertyValue = function(a, b, c) {\n  var d = a.replace(/^aria-/, \"\"), e = axs.constants.ARIA_PROPERTIES[d], d = {name:a, rawValue:b};\n  if (!e) {\n    return d.valid = !1, d.reason = '\"' + a + '\" is not a valid ARIA property', d;\n  }\n  e = e.valueType;\n  if (!e) {\n    return d.valid = !1, d.reason = '\"' + a + '\" is not a valid ARIA property', d;\n  }\n  switch(e) {\n    case \"idref\":\n      a = axs.utils.isValidIDRefValue(b, c), d.valid = a.valid, d.reason = a.reason, d.idref = a.idref;\n    case \"idref_list\":\n      a = b.split(/\\s+/);\n      d.valid = !0;\n      for (b = 0;b < a.length;b++) {\n        e = axs.utils.isValidIDRefValue(a[b], c), e.valid || (d.valid = !1), d.values ? d.values.push(e) : d.values = [e];\n      }\n      return d;\n    case \"integer\":\n      c = axs.utils.isValidNumber(b);\n      if (!c.valid) {\n        return d.valid = !1, d.reason = c.reason, d;\n      }\n      Math.floor(c.value) !== c.value ? (d.valid = !1, d.reason = \"\" + b + \" is not a whole integer\") : (d.valid = !0, d.value = c.value);\n      return d;\n    case \"decimal\":\n    ;\n    case \"number\":\n      c = axs.utils.isValidNumber(b);\n      d.valid = c.valid;\n      if (!c.valid) {\n        return d.reason = c.reason, d;\n      }\n      d.value = c.value;\n      return d;\n    case \"string\":\n      return d.valid = !0, d.value = b, d;\n    case \"token\":\n      return c = axs.utils.isValidTokenValue(a, b.toLowerCase()), c.valid ? (d.valid = !0, d.value = c.value) : (d.valid = !1, d.value = b, d.reason = c.reason), d;\n    case \"token_list\":\n      e = b.split(/\\s+/);\n      d.valid = !0;\n      for (b = 0;b < e.length;b++) {\n        c = axs.utils.isValidTokenValue(a, e[b].toLowerCase()), c.valid || (d.valid = !1, d.reason ? (d.reason = [d.reason], d.reason.push(c.reason)) : (d.reason = c.reason, d.possibleValues = c.possibleValues)), d.values ? d.values.push(c.value) : d.values = [c.value];\n      }\n      return d;\n    case \"tristate\":\n      return c = axs.utils.isPossibleValue(b.toLowerCase(), axs.constants.MIXED_VALUES, a), c.valid ? (d.valid = !0, d.value = c.value) : (d.valid = !1, d.value = b, d.reason = c.reason), d;\n    case \"boolean\":\n      return c = axs.utils.isValidBoolean(b), c.valid ? (d.valid = !0, d.value = c.value) : (d.valid = !1, d.value = b, d.reason = c.reason), d;\n  }\n  d.valid = !1;\n  d.reason = \"Not a valid ARIA property\";\n  return d;\n};\naxs.utils.isValidTokenValue = function(a, b) {\n  var c = a.replace(/^aria-/, \"\");\n  return axs.utils.isPossibleValue(b, axs.constants.ARIA_PROPERTIES[c].valuesSet, a);\n};\naxs.utils.isPossibleValue = function(a, b, c) {\n  return b[a] ? {valid:!0, value:a} : {valid:!1, value:a, reason:'\"' + a + '\" is not a valid value for ' + c, possibleValues:Object.keys(b)};\n};\naxs.utils.isValidBoolean = function(a) {\n  try {\n    var b = JSON.parse(a);\n  } catch (c) {\n    b = \"\";\n  }\n  return \"boolean\" != typeof b ? {valid:!1, value:a, reason:'\"' + a + '\" is not a true/false value'} : {valid:!0, value:b};\n};\naxs.utils.isValidIDRefValue = function(a, b) {\n  return 0 == a.length ? {valid:!0, idref:a} : b.ownerDocument.getElementById(a) ? {valid:!0, idref:a} : {valid:!1, idref:a, reason:'No element with ID \"' + a + '\"'};\n};\naxs.utils.isValidNumber = function(a) {\n  var b = {valid:!1, value:a, reason:'\"' + a + '\" is not a number'};\n  if (!a) {\n    return b;\n  }\n  if (/^0x/i.test(a)) {\n    return b.reason = '\"' + a + '\" is not a decimal number', b;\n  }\n  a *= 1;\n  return isFinite(a) ? {valid:!0, value:a} : b;\n};\naxs.utils.isElementImplicitlyFocusable = function(a) {\n  var b = a.ownerDocument.defaultView;\n  return a instanceof b.HTMLAnchorElement || a instanceof b.HTMLAreaElement ? a.hasAttribute(\"href\") : a instanceof b.HTMLInputElement || a instanceof b.HTMLSelectElement || a instanceof b.HTMLTextAreaElement || a instanceof b.HTMLButtonElement || a instanceof b.HTMLIFrameElement ? !a.disabled : !1;\n};\naxs.utils.values = function(a) {\n  var b = [], c;\n  for (c in a) {\n    a.hasOwnProperty(c) && \"function\" != typeof a[c] && b.push(a[c]);\n  }\n  return b;\n};\naxs.utils.namedValues = function(a) {\n  var b = {}, c;\n  for (c in a) {\n    a.hasOwnProperty(c) && \"function\" != typeof a[c] && (b[c] = a[c]);\n  }\n  return b;\n};\naxs.utils.getQuerySelectorText = function(a) {\n  if (null == a || \"HTML\" == a.tagName) {\n    return \"html\";\n  }\n  if (\"BODY\" == a.tagName) {\n    return \"body\";\n  }\n  if (a.hasAttribute) {\n    if (a.id) {\n      return \"#\" + a.id;\n    }\n    if (a.className) {\n      for (var b = \"\", c = 0;c < a.classList.length;c++) {\n        b += \".\" + a.classList[c];\n      }\n      var d = 0;\n      if (a.parentNode) {\n        for (c = 0;c < a.parentNode.children.length;c++) {\n          var e = a.parentNode.children[c];\n          axs.browserUtils.matchSelector(e, b) && d++;\n          if (e === a) {\n            break;\n          }\n        }\n      } else {\n        d = 1;\n      }\n      if (1 == d) {\n        return axs.utils.getQuerySelectorText(a.parentNode) + \" > \" + b;\n      }\n    }\n    if (a.parentNode) {\n      b = a.parentNode.children;\n      d = 1;\n      for (c = 0;b[c] !== a;) {\n        b[c].tagName == a.tagName && d++, c++;\n      }\n      c = \"\";\n      \"BODY\" != a.parentNode.tagName && (c = axs.utils.getQuerySelectorText(a.parentNode) + \" > \");\n      return 1 == d ? c + a.tagName : c + a.tagName + \":nth-of-type(\" + d + \")\";\n    }\n  } else {\n    if (a.selectorText) {\n      return a.selectorText;\n    }\n  }\n  return \"\";\n};\naxs.utils.getIdReferrers = function(a, b) {\n  if (!b) {\n    return null;\n  }\n  var c = b.id, d = a.replace(/^aria-/, \"\"), d = axs.constants.ARIA_PROPERTIES[d];\n  if (!c || !d) {\n    return null;\n  }\n  d = d.valueType;\n  return \"idref_list\" === d || \"idref\" === d ? (c = c.replace(/'/g, \"\\\\'\"), b.ownerDocument.querySelectorAll(\"[\" + a + \"~='\" + c + \"']\")) : null;\n};\naxs.utils.getIdReferents = function(a, b) {\n  var c = [], d = a.replace(/^aria-/, \"\"), d = axs.constants.ARIA_PROPERTIES[d];\n  if (!d || !b.hasAttribute(a)) {\n    return c;\n  }\n  d = d.valueType;\n  if (\"idref_list\" === d || \"idref\" === d) {\n    for (var d = b.ownerDocument, e = b.getAttribute(a), e = e.split(/\\s+/), f = 0, g = e.length;f < g;f++) {\n      var h = d.getElementById(e[f]);\n      h && (c[c.length] = h);\n    }\n  }\n  return c;\n};\naxs.utils.getAriaPropertiesByValueType = function(a) {\n  var b = {}, c;\n  for (c in axs.constants.ARIA_PROPERTIES) {\n    var d = axs.constants.ARIA_PROPERTIES[c];\n    d && 0 <= a.indexOf(d.valueType) && (b[c] = d);\n  }\n  return b;\n};\naxs.utils.getSelectorForAriaProperties = function(a) {\n  a = Object.keys(a).map(function(a) {\n    return \"[aria-\" + a + \"]\";\n  });\n  a.sort();\n  return a.join(\",\");\n};\naxs.utils.findDescendantsWithRole = function(a, b) {\n  if (!a || !b) {\n    return [];\n  }\n  var c = axs.properties.getSelectorForRole(b);\n  if (c && (c = a.querySelectorAll(c))) {\n    c = Array.prototype.map.call(c, function(a) {\n      return a;\n    });\n  } else {\n    return [];\n  }\n  return c;\n};\naxs.properties = {};\naxs.properties.TEXT_CONTENT_XPATH = './/text()[normalize-space(.)!=\"\"]/parent::*[name()!=\"script\"]';\naxs.properties.getFocusProperties = function(a) {\n  var b = {}, c = a.getAttribute(\"tabindex\");\n  void 0 != c ? b.tabindex = {value:c, valid:!0} : axs.utils.isElementImplicitlyFocusable(a) && (b.implicitlyFocusable = {value:!0, valid:!0});\n  if (0 == Object.keys(b).length) {\n    return null;\n  }\n  var d = axs.utils.elementIsTransparent(a), e = axs.utils.elementHasZeroArea(a), f = axs.utils.elementIsOutsideScrollArea(a), g = axs.utils.overlappingElements(a);\n  if (d || e || f || 0 < g.length) {\n    var c = axs.utils.isElementOrAncestorHidden(a), h = {value:!1, valid:c};\n    d && (h.transparent = !0);\n    e && (h.zeroArea = !0);\n    f && (h.outsideScrollArea = !0);\n    g && 0 < g.length && (h.overlappingElements = g);\n    d = {value:c, valid:c};\n    c && (d.reason = axs.properties.getHiddenReason(a));\n    h.hidden = d;\n    b.visible = h;\n  } else {\n    b.visible = {value:!0, valid:!0};\n  }\n  return b;\n};\naxs.properties.getHiddenReason = function(a) {\n  if (!(a && a instanceof a.ownerDocument.defaultView.HTMLElement)) {\n    return null;\n  }\n  if (a.hasAttribute(\"chromevoxignoreariahidden\")) {\n    var b = !0\n  }\n  var c = window.getComputedStyle(a, null);\n  return \"none\" == c.display ? {property:\"display: none\", on:a} : \"hidden\" == c.visibility ? {property:\"visibility: hidden\", on:a} : a.hasAttribute(\"aria-hidden\") && \"true\" == a.getAttribute(\"aria-hidden\").toLowerCase() && !b ? {property:\"aria-hidden\", on:a} : axs.properties.getHiddenReason(axs.utils.parentElement(a));\n};\naxs.properties.getColorProperties = function(a) {\n  var b = {};\n  (a = axs.properties.getContrastRatioProperties(a)) && (b.contrastRatio = a);\n  return 0 == Object.keys(b).length ? null : b;\n};\naxs.properties.hasDirectTextDescendant = function(a) {\n  function b() {\n    for (var b = c.evaluate(axs.properties.TEXT_CONTENT_XPATH, a, null, XPathResult.ANY_TYPE, null), e = b.iterateNext();null != e;e = b.iterateNext()) {\n      if (e === a) {\n        return !0;\n      }\n    }\n    return !1;\n  }\n  var c;\n  c = a.nodeType == Node.DOCUMENT_NODE ? a : a.ownerDocument;\n  return c.evaluate ? b() : function() {\n    for (var b = c.createTreeWalker(a, NodeFilter.SHOW_TEXT, null, !1);b.nextNode();) {\n      var e = b.currentNode, f = e.parentNode.tagName.toLowerCase();\n      if (e.nodeValue.trim() && \"script\" !== f && a !== e) {\n        return !0;\n      }\n    }\n    return !1;\n  }();\n};\naxs.properties.getContrastRatioProperties = function(a) {\n  if (!axs.properties.hasDirectTextDescendant(a)) {\n    return null;\n  }\n  var b = {}, c = window.getComputedStyle(a, null), d = axs.utils.getBgColor(c, a);\n  if (!d) {\n    return null;\n  }\n  b.backgroundColor = axs.color.colorToString(d);\n  var e = axs.utils.getFgColor(c, a, d);\n  b.foregroundColor = axs.color.colorToString(e);\n  a = axs.utils.getContrastRatioForElementWithComputedStyle(c, a);\n  if (!a) {\n    return null;\n  }\n  b.value = a.toFixed(2);\n  axs.utils.isLowContrast(a, c) && (b.alert = !0);\n  var f = axs.utils.isLargeFont(c) ? 3 : 4.5, c = axs.utils.isLargeFont(c) ? 4.5 : 7, g = {};\n  f > a && (g.AA = f);\n  c > a && (g.AAA = c);\n  if (!Object.keys(g).length) {\n    return b;\n  }\n  (d = axs.color.suggestColors(d, e, g)) && Object.keys(d).length && (b.suggestedColors = d);\n  return b;\n};\naxs.properties.findTextAlternatives = function(a, b, c, d) {\n  var e = c || !1;\n  c = axs.utils.asElement(a);\n  if (!c || !e && !d && axs.utils.isElementOrAncestorHidden(c)) {\n    return null;\n  }\n  if (a.nodeType == Node.TEXT_NODE) {\n    return c = {type:\"text\"}, c.text = a.textContent, c.lastWord = axs.properties.getLastWord(c.text), b.content = c, a.textContent;\n  }\n  a = null;\n  e || (a = axs.properties.getTextFromAriaLabelledby(c, b));\n  c.hasAttribute(\"aria-label\") && (d = {type:\"text\"}, d.text = c.getAttribute(\"aria-label\"), d.lastWord = axs.properties.getLastWord(d.text), a ? d.unused = !0 : e && axs.utils.elementIsHtmlControl(c) || (a = d.text), b.ariaLabel = d);\n  c.hasAttribute(\"role\") && \"presentation\" == c.getAttribute(\"role\") || (a = axs.properties.getTextFromHostLanguageAttributes(c, b, a, e));\n  if (e && axs.utils.elementIsHtmlControl(c)) {\n    d = c.ownerDocument.defaultView;\n    if (c instanceof d.HTMLInputElement) {\n      var f = c;\n      \"text\" == f.type && f.value && 0 < f.value.length && (b.controlValue = {text:f.value});\n      \"range\" == f.type && (b.controlValue = {text:f.value});\n    }\n    c instanceof d.HTMLSelectElement && (b.controlValue = {text:c.value});\n    b.controlValue && (d = b.controlValue, a ? d.unused = !0 : a = d.text);\n  }\n  if (e && axs.utils.elementIsAriaWidget(c)) {\n    e = c.getAttribute(\"role\");\n    \"textbox\" == e && c.textContent && 0 < c.textContent.length && (b.controlValue = {text:c.textContent});\n    if (\"slider\" == e || \"spinbutton\" == e) {\n      c.hasAttribute(\"aria-valuetext\") ? b.controlValue = {text:c.getAttribute(\"aria-valuetext\")} : c.hasAttribute(\"aria-valuenow\") && (b.controlValue = {value:c.getAttribute(\"aria-valuenow\"), text:\"\" + c.getAttribute(\"aria-valuenow\")});\n    }\n    if (\"menu\" == e) {\n      var g = c.querySelectorAll(\"[role=menuitemcheckbox], [role=menuitemradio]\");\n      d = [];\n      for (f = 0;f < g.length;f++) {\n        \"true\" == g[f].getAttribute(\"aria-checked\") && d.push(g[f]);\n      }\n      if (0 < d.length) {\n        g = \"\";\n        for (f = 0;f < d.length;f++) {\n          g += axs.properties.findTextAlternatives(d[f], {}, !0), f < d.length - 1 && (g += \", \");\n        }\n        b.controlValue = {text:g};\n      }\n    }\n    if (\"combobox\" == e || \"select\" == e) {\n      b.controlValue = {text:\"TODO\"};\n    }\n    b.controlValue && (d = b.controlValue, a ? d.unused = !0 : a = d.text);\n  }\n  d = !0;\n  c.hasAttribute(\"role\") && (e = c.getAttribute(\"role\"), (e = axs.constants.ARIA_ROLES[e]) && (!e.namefrom || 0 > e.namefrom.indexOf(\"contents\")) && (d = !1));\n  (e = axs.properties.getTextFromDescendantContent(c)) && d && (d = {type:\"text\"}, d.text = e, d.lastWord = axs.properties.getLastWord(d.text), a ? d.unused = !0 : a = e, b.content = d);\n  c.hasAttribute(\"title\") && (e = {type:\"string\", valid:!0}, e.text = c.getAttribute(\"title\"), e.lastWord = axs.properties.getLastWord(e.lastWord), a ? e.unused = !0 : a = e.text, b.title = e);\n  return 0 == Object.keys(b).length && null == a ? null : a;\n};\naxs.properties.getTextFromDescendantContent = function(a) {\n  var b = a.childNodes;\n  a = [];\n  for (var c = 0;c < b.length;c++) {\n    var d = axs.properties.findTextAlternatives(b[c], {}, !0);\n    d && a.push(d.trim());\n  }\n  if (a.length) {\n    b = \"\";\n    for (c = 0;c < a.length;c++) {\n      b = [b, a[c]].join(\" \").trim();\n    }\n    return b;\n  }\n  return null;\n};\naxs.properties.getTextFromAriaLabelledby = function(a, b) {\n  var c = null;\n  if (!a.hasAttribute(\"aria-labelledby\")) {\n    return c;\n  }\n  for (var d = a.getAttribute(\"aria-labelledby\").split(/\\s+/), e = {valid:!0}, f = [], g = [], h = 0;h < d.length;h++) {\n    var k = {type:\"element\"}, m = d[h];\n    k.value = m;\n    var l = document.getElementById(m);\n    l ? (k.valid = !0, k.text = axs.properties.findTextAlternatives(l, {}, !0), k.lastWord = axs.properties.getLastWord(k.text), f.push(l.textContent.trim()), k.element = l) : (k.valid = !1, e.valid = !1, k.errorMessage = {messageKey:\"noElementWithId\", args:[m]});\n    g.push(k);\n  }\n  0 < g.length && (g[g.length - 1].last = !0, e.values = g, e.text = f.join(\" \"), e.lastWord = axs.properties.getLastWord(e.text), c = e.text, b.ariaLabelledby = e);\n  return c;\n};\naxs.properties.getTextFromHostLanguageAttributes = function(a, b, c, d) {\n  if (axs.browserUtils.matchSelector(a, \"img\") && a.hasAttribute(\"alt\")) {\n    var e = {type:\"string\", valid:!0};\n    e.text = a.getAttribute(\"alt\");\n    c ? e.unused = !0 : c = e.text;\n    b.alt = e;\n  }\n  if (axs.browserUtils.matchSelector(a, 'input:not([type=\"hidden\"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])') && !d) {\n    if (a.hasAttribute(\"id\")) {\n      d = document.querySelectorAll('label[for=\"' + a.id + '\"]');\n      for (var e = {}, f = [], g = [], h = 0;h < d.length;h++) {\n        var k = {type:\"element\"}, m = d[h], l = axs.properties.findTextAlternatives(m, {}, !0);\n        l && 0 < l.trim().length && (k.text = l.trim(), g.push(l.trim()));\n        k.element = m;\n        f.push(k);\n      }\n      0 < f.length && (f[f.length - 1].last = !0, e.values = f, e.text = g.join(\" \"), e.lastWord = axs.properties.getLastWord(e.text), c ? e.unused = !0 : c = e.text, b.labelFor = e);\n    }\n    d = axs.utils.parentElement(a);\n    for (e = {};d;) {\n      if (\"label\" == d.tagName.toLowerCase() && (f = d, f.control == a)) {\n        e.type = \"element\";\n        e.text = axs.properties.findTextAlternatives(f, {}, !0);\n        e.lastWord = axs.properties.getLastWord(e.text);\n        e.element = f;\n        break;\n      }\n      d = axs.utils.parentElement(d);\n    }\n    e.text && (c ? e.unused = !0 : c = e.text, b.labelWrapped = e);\n    Object.keys(b).length || (b.noLabel = !0);\n  }\n  return c;\n};\naxs.properties.getLastWord = function(a) {\n  if (!a) {\n    return null;\n  }\n  var b = a.lastIndexOf(\" \") + 1, c = a.length - 10;\n  return a.substring(b > c ? b : c);\n};\naxs.properties.getTextProperties = function(a) {\n  var b = {}, c = axs.properties.findTextAlternatives(a, b, !1, !0);\n  if (0 == Object.keys(b).length && ((a = axs.utils.asElement(a)) && axs.browserUtils.matchSelector(a, \"img\") && (b.alt = {valid:!1, errorMessage:\"No alt value provided\"}, a = a.src, \"string\" == typeof a && (c = a.split(\"/\").pop(), b.filename = {text:c})), !c)) {\n    return null;\n  }\n  b.hasProperties = Boolean(Object.keys(b).length);\n  b.computedText = c;\n  b.lastWord = axs.properties.getLastWord(c);\n  return b;\n};\naxs.properties.getAriaProperties = function(a) {\n  var b = {}, c = axs.properties.getGlobalAriaProperties(a), d;\n  for (d in axs.constants.ARIA_PROPERTIES) {\n    var e = \"aria-\" + d;\n    if (a.hasAttribute(e)) {\n      var f = a.getAttribute(e);\n      c[e] = axs.utils.getAriaPropertyValue(e, f, a);\n    }\n  }\n  0 < Object.keys(c).length && (b.properties = axs.utils.values(c));\n  f = axs.utils.getRoles(a);\n  if (!f) {\n    return Object.keys(b).length ? b : null;\n  }\n  b.roles = f;\n  if (!f.valid || !f.roles) {\n    return b;\n  }\n  for (var e = f.roles, g = 0;g < e.length;g++) {\n    var h = e[g];\n    if (h.details && h.details.propertiesSet) {\n      for (d in h.details.propertiesSet) {\n        d in c || (a.hasAttribute(d) ? (f = a.getAttribute(d), c[d] = axs.utils.getAriaPropertyValue(d, f, a), \"values\" in c[d] && (f = c[d].values, f[f.length - 1].isLast = !0)) : h.details.requiredPropertiesSet[d] && (c[d] = {name:d, valid:!1, reason:\"Required property not set\"}));\n      }\n    }\n  }\n  0 < Object.keys(c).length && (b.properties = axs.utils.values(c));\n  return 0 < Object.keys(b).length ? b : null;\n};\naxs.properties.getGlobalAriaProperties = function(a) {\n  var b = {}, c;\n  for (c in axs.constants.GLOBAL_PROPERTIES) {\n    if (a.hasAttribute(c)) {\n      var d = a.getAttribute(c);\n      b[c] = axs.utils.getAriaPropertyValue(c, d, a);\n    }\n  }\n  return b;\n};\naxs.properties.getVideoProperties = function(a) {\n  if (!axs.browserUtils.matchSelector(a, \"video\")) {\n    return null;\n  }\n  var b = {};\n  b.captionTracks = axs.properties.getTrackElements(a, \"captions\");\n  b.descriptionTracks = axs.properties.getTrackElements(a, \"descriptions\");\n  b.chapterTracks = axs.properties.getTrackElements(a, \"chapters\");\n  return b;\n};\naxs.properties.getTrackElements = function(a, b) {\n  var c = a.querySelectorAll(\"track[kind=\" + b + \"]\"), d = {};\n  if (!c.length) {\n    return d.valid = !1, d.reason = {messageKey:\"noTracksProvided\", args:[[b]]}, d;\n  }\n  d.valid = !0;\n  for (var e = [], f = 0;f < c.length;f++) {\n    var g = {}, h = c[f].getAttribute(\"src\"), k = c[f].getAttribute(\"srcLang\"), m = c[f].getAttribute(\"label\");\n    h ? (g.valid = !0, g.src = h) : (g.valid = !1, g.reason = {messageKey:\"noSrcProvided\"});\n    h = \"\";\n    m && (h += m, k && (h += \" \"));\n    k && (h += \"(\" + k + \")\");\n    \"\" == h && (h = \"[[object Object]]\");\n    g.name = h;\n    e.push(g);\n  }\n  d.values = e;\n  return d;\n};\naxs.properties.getAllProperties = function(a) {\n  var b = axs.utils.asElement(a);\n  if (!b) {\n    return {};\n  }\n  var c = {};\n  c.ariaProperties = axs.properties.getAriaProperties(b);\n  c.colorProperties = axs.properties.getColorProperties(b);\n  c.focusProperties = axs.properties.getFocusProperties(b);\n  c.textProperties = axs.properties.getTextProperties(a);\n  c.videoProperties = axs.properties.getVideoProperties(b);\n  return c;\n};\n(function() {\n  function a(a) {\n    if (!a) {\n      return null;\n    }\n    var c = a.tagName;\n    if (!c) {\n      return null;\n    }\n    c = c.toUpperCase();\n    c = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[c];\n    if (!c || !c.length) {\n      return null;\n    }\n    for (var d = null, e = 0, f = c.length;e < f;e++) {\n      var g = c[e];\n      if (g.selector) {\n        if (axs.browserUtils.matchSelector(a, g.selector)) {\n          return g;\n        }\n      } else {\n        d = g;\n      }\n    }\n    return d;\n  }\n  axs.properties.getImplicitRole = function(b) {\n    return (b = a(b)) ? b.role : \"\";\n  };\n  axs.properties.canTakeAriaAttributes = function(b) {\n    return (b = a(b)) ? !b.reserved : !0;\n  };\n})();\naxs.properties.getNativelySupportedAttributes = function(a) {\n  var b = [];\n  if (!a) {\n    return b;\n  }\n  a = a.cloneNode(!1);\n  for (var c = Object.keys(axs.constants.ARIA_TO_HTML_ATTRIBUTE), d = 0;d < c.length;d++) {\n    var e = c[d];\n    axs.constants.ARIA_TO_HTML_ATTRIBUTE[e] in a && (b[b.length] = e);\n  }\n  return b;\n};\n(function() {\n  var a = {};\n  axs.properties.getSelectorForRole = function(b) {\n    if (!b) {\n      return \"\";\n    }\n    if (a[b] && a.hasOwnProperty(b)) {\n      return a[b];\n    }\n    var c = ['[role=\"' + b + '\"]'];\n    Object.keys(axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO).forEach(function(a) {\n      var e = axs.constants.TAG_TO_IMPLICIT_SEMANTIC_INFO[a];\n      if (e && e.length) {\n        for (var f = 0;f < e.length;f++) {\n          var g = e[f];\n          if (g.role === b) {\n            if (g.selector) {\n              c[c.length] = g.selector;\n            } else {\n              c[c.length] = a;\n              break;\n            }\n          }\n        }\n      }\n    });\n    return a[b] = c.join(\",\");\n  };\n})();\naxs.AuditRule = function(a) {\n  for (var b = !0, c = [], d = 0;d < axs.AuditRule.requiredFields.length;d++) {\n    var e = axs.AuditRule.requiredFields[d];\n    e in a || (b = !1, c.push(e));\n  }\n  if (!b) {\n    throw \"Invalid spec; the following fields were not specified: \" + c.join(\", \") + \"\\n\" + JSON.stringify(a);\n  }\n  this.name = a.name;\n  this.severity = a.severity;\n  this.relevantElementMatcher_ = a.relevantElementMatcher;\n  this.test_ = a.test;\n  this.code = a.code;\n  this.heading = a.heading || \"\";\n  this.url = a.url || \"\";\n  this.requiresConsoleAPI = !!a.opt_requiresConsoleAPI;\n};\naxs.AuditRule.requiredFields = \"name severity relevantElementMatcher test code heading\".split(\" \");\naxs.AuditRule.NOT_APPLICABLE = {result:axs.constants.AuditResult.NA};\naxs.AuditRule.prototype.addElement = function(a, b) {\n  a.push(b);\n};\naxs.AuditRule.collectMatchingElements = function(a, b, c, d) {\n  if (a.nodeType == Node.ELEMENT_NODE) {\n    var e = a\n  }\n  e && b.call(null, e) && c.push(e);\n  if (e) {\n    var f = e.shadowRoot || e.webkitShadowRoot;\n    if (f) {\n      axs.AuditRule.collectMatchingElements(f, b, c, f);\n      return;\n    }\n  }\n  if (e && \"content\" == e.localName) {\n    for (var f = e.getDistributedNodes(), g = 0;g < f.length;g++) {\n      axs.AuditRule.collectMatchingElements(f[g], b, c, d);\n    }\n  } else {\n    if (e && \"shadow\" == e.localName) {\n      if (f = e, d) {\n        for (f = f.getDistributedNodes(), g = 0;g < f.length;g++) {\n          axs.AuditRule.collectMatchingElements(f[g], b, c, d);\n        }\n      } else {\n        console.warn(\"ShadowRoot not provided for\", e);\n      }\n    }\n    e && \"iframe\" == e.localName && e.contentDocument && axs.AuditRule.collectMatchingElements(e.contentDocument, b, c, d);\n    for (a = a.firstChild;null != a;) {\n      axs.AuditRule.collectMatchingElements(a, b, c, d), a = a.nextSibling;\n    }\n  }\n};\naxs.AuditRule.prototype.run = function(a) {\n  a = a || {};\n  var b = \"ignoreSelectors\" in a ? a.ignoreSelectors : [], c = \"maxResults\" in a ? a.maxResults : null, d = [];\n  axs.AuditRule.collectMatchingElements(\"scope\" in a ? a.scope : document, this.relevantElementMatcher_, d);\n  var e = [];\n  if (!d.length) {\n    return {result:axs.constants.AuditResult.NA};\n  }\n  for (var f = 0;f < d.length && !(null != c && e.length >= c);f++) {\n    var g = d[f], h;\n    a: {\n      h = g;\n      for (var k = 0;k < b.length;k++) {\n        if (axs.browserUtils.matchSelector(h, b[k])) {\n          h = !0;\n          break a;\n        }\n      }\n      h = !1;\n    }\n    !h && this.test_(g, a.config) && this.addElement(e, g);\n  }\n  a = {result:e.length ? axs.constants.AuditResult.FAIL : axs.constants.AuditResult.PASS, elements:e};\n  f < d.length && (a.resultsTruncated = !0);\n  return a;\n};\naxs.AuditRules = {};\n(function() {\n  var a = {}, b = {};\n  axs.AuditRules.specs = {};\n  axs.AuditRules.addRule = function(c) {\n    var d = new axs.AuditRule(c);\n    if (d.code in b) {\n      throw Error('Can not add audit rule with same code: \"' + d.code + '\"');\n    }\n    if (d.name in a) {\n      throw Error('Can not add audit rule with same name: \"' + d.name + '\"');\n    }\n    a[d.name] = b[d.code] = d;\n    axs.AuditRules.specs[c.name] = c;\n  };\n  axs.AuditRules.getRule = function(c) {\n    return a[c] || b[c] || null;\n  };\n  axs.AuditRules.getRules = function(b) {\n    var d = Object.keys(a);\n    return b ? d : d.map(function(a) {\n      return this.getRule(a);\n    }, axs.AuditRules);\n  };\n})();\naxs.AuditResults = function() {\n  this.errors_ = [];\n  this.warnings_ = [];\n};\ngoog.exportSymbol(\"axs.AuditResults\", axs.AuditResults);\naxs.AuditResults.prototype.addError = function(a) {\n  \"\" != a && this.errors_.push(a);\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"addError\", axs.AuditResults.prototype.addError);\naxs.AuditResults.prototype.addWarning = function(a) {\n  \"\" != a && this.warnings_.push(a);\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"addWarning\", axs.AuditResults.prototype.addWarning);\naxs.AuditResults.prototype.numErrors = function() {\n  return this.errors_.length;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"numErrors\", axs.AuditResults.prototype.numErrors);\naxs.AuditResults.prototype.numWarnings = function() {\n  return this.warnings_.length;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"numWarnings\", axs.AuditResults.prototype.numWarnings);\naxs.AuditResults.prototype.getErrors = function() {\n  return this.errors_;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"getErrors\", axs.AuditResults.prototype.getErrors);\naxs.AuditResults.prototype.getWarnings = function() {\n  return this.warnings_;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"getWarnings\", axs.AuditResults.prototype.getWarnings);\naxs.AuditResults.prototype.toString = function() {\n  for (var a = \"\", b = 0;b < this.errors_.length;b++) {\n    0 == b && (a += \"\\nErrors:\\n\");\n    var c = this.errors_[b], a = a + (c + \"\\n\\n\");\n  }\n  for (b = 0;b < this.warnings_.length;b++) {\n    0 == b && (a += \"\\nWarnings:\\n\"), c = this.warnings_[b], a += c + \"\\n\\n\";\n  }\n  return a;\n};\ngoog.exportProperty(axs.AuditResults.prototype, \"toString\", axs.AuditResults.prototype.toString);\naxs.Audit = {};\naxs.AuditConfiguration = function(a) {\n  null == a && (a = {});\n  this.rules_ = {};\n  this.maxResults = this.auditRulesToIgnore = this.auditRulesToRun = this.scope = null;\n  this.withConsoleApi = !1;\n  this.showUnsupportedRulesWarning = !0;\n  for (var b in this) {\n    this.hasOwnProperty(b) && b in a && (this[b] = a[b]);\n  }\n  goog.exportProperty(this, \"scope\", this.scope);\n  goog.exportProperty(this, \"auditRulesToRun\", this.auditRulesToRun);\n  goog.exportProperty(this, \"auditRulesToIgnore\", this.auditRulesToIgnore);\n  goog.exportProperty(this, \"withConsoleApi\", this.withConsoleApi);\n  goog.exportProperty(this, \"showUnsupportedRulesWarning\", this.showUnsupportedRulesWarning);\n};\ngoog.exportSymbol(\"axs.AuditConfiguration\", axs.AuditConfiguration);\naxs.AuditConfiguration.prototype = {ignoreSelectors:function(a, b) {\n  a in this.rules_ || (this.rules_[a] = {});\n  \"ignore\" in this.rules_[a] || (this.rules_[a].ignore = []);\n  Array.prototype.push.call(this.rules_[a].ignore, b);\n}, getIgnoreSelectors:function(a) {\n  return a in this.rules_ && \"ignore\" in this.rules_[a] ? this.rules_[a].ignore : [];\n}, setSeverity:function(a, b) {\n  a in this.rules_ || (this.rules_[a] = {});\n  this.rules_[a].severity = b;\n}, getSeverity:function(a) {\n  return a in this.rules_ && \"severity\" in this.rules_[a] ? this.rules_[a].severity : null;\n}, setRuleConfig:function(a, b) {\n  a in this.rules_ || (this.rules_[a] = {});\n  this.rules_[a].config = b;\n}, getRuleConfig:function(a) {\n  return a in this.rules_ && \"config\" in this.rules_[a] ? this.rules_[a].config : null;\n}};\ngoog.exportProperty(axs.AuditConfiguration.prototype, \"ignoreSelectors\", axs.AuditConfiguration.prototype.ignoreSelectors);\ngoog.exportProperty(axs.AuditConfiguration.prototype, \"getIgnoreSelectors\", axs.AuditConfiguration.prototype.getIgnoreSelectors);\naxs.Audit.unsupportedRulesWarningShown = !1;\naxs.Audit.getRulesCannotRun = function(a) {\n  return a.withConsoleApi ? [] : axs.AuditRules.getRules().filter(function(a) {\n    return a.requiresConsoleAPI;\n  }).map(function(a) {\n    return a.code;\n  });\n};\naxs.Audit.run = function(a) {\n  a = a || new axs.AuditConfiguration;\n  var b = a.withConsoleApi, c = [], d;\n  d = a.auditRulesToRun && 0 < a.auditRulesToRun.length ? a.auditRulesToRun : axs.AuditRules.getRules(!0);\n  if (a.auditRulesToIgnore) {\n    for (var e = 0;e < a.auditRulesToIgnore.length;e++) {\n      var f = a.auditRulesToIgnore[e];\n      0 > d.indexOf(f) || d.splice(d.indexOf(f), 1);\n    }\n  }\n  !axs.Audit.unsupportedRulesWarningShown && a.showUnsupportedRulesWarning && (e = axs.Audit.getRulesCannotRun(a), 0 < e.length && (console.warn(\"Some rules cannot be checked using the axs.Audit.run() method call. Use the Chrome plugin to check these rules: \" + e.join(\", \")), console.warn(\"To remove this message, pass an AuditConfiguration object to axs.Audit.run() and set configuration.showUnsupportedRulesWarning = false.\")), axs.Audit.unsupportedRulesWarningShown = !0);\n  for (e = 0;e < d.length;e++) {\n    var f = d[e], g = axs.AuditRules.getRule(f);\n    if (g && !g.disabled && (b || !g.requiresConsoleAPI)) {\n      var h = {}, k = a.getIgnoreSelectors(g.name);\n      if (0 < k.length || a.scope) {\n        h.ignoreSelectors = k;\n      }\n      k = a.getRuleConfig(g.name);\n      null != k && (h.config = k);\n      a.scope && (h.scope = a.scope);\n      a.maxResults && (h.maxResults = a.maxResults);\n      h = g.run.call(g, h);\n      g = axs.utils.namedValues(g);\n      g.severity = a.getSeverity(f) || g.severity;\n      h.rule = g;\n      c.push(h);\n    }\n  }\n  return c;\n};\ngoog.exportSymbol(\"axs.Audit.run\", axs.Audit.run);\naxs.Audit.auditResults = function(a) {\n  for (var b = new axs.AuditResults, c = 0;c < a.length;c++) {\n    var d = a[c];\n    d.result == axs.constants.AuditResult.FAIL && (d.rule.severity == axs.constants.Severity.SEVERE ? b.addError(axs.Audit.accessibilityErrorMessage(d)) : b.addWarning(axs.Audit.accessibilityErrorMessage(d)));\n  }\n  return b;\n};\ngoog.exportSymbol(\"axs.Audit.auditResults\", axs.Audit.auditResults);\naxs.Audit.createReport = function(a, b) {\n  var c;\n  c = \"*** Begin accessibility audit results ***\\nAn accessibility audit found \" + axs.Audit.auditResults(a).toString();\n  b && (c += \"\\nFor more information, please see \", c += b);\n  return c += \"\\n*** End accessibility audit results ***\";\n};\ngoog.exportSymbol(\"axs.Audit.createReport\", axs.Audit.createReport);\naxs.Audit.accessibilityErrorMessage = function(a) {\n  for (var b = a.rule.severity == axs.constants.Severity.SEVERE ? \"Error: \" : \"Warning: \", b = b + (a.rule.code + \" (\" + a.rule.heading + \") failed on the following \" + (1 == a.elements.length ? \"element\" : \"elements\")), b = 1 == a.elements.length ? b + \":\" : b + (\" (1 - \" + Math.min(5, a.elements.length) + \" of \" + a.elements.length + \"):\"), c = Math.min(a.elements.length, 5), d = 0;d < c;d++) {\n    var e = a.elements[d], b = b + \"\\n\";\n    try {\n      b += axs.utils.getQuerySelectorText(e);\n    } catch (f) {\n      b += \" tagName:\" + e.tagName, b += \" id:\" + e.id;\n    }\n  }\n  \"\" != a.rule.url && (b += \"\\nSee \" + a.rule.url + \" for more information.\");\n  return b;\n};\ngoog.exportSymbol(\"axs.Audit.accessibilityErrorMessage\", axs.Audit.accessibilityErrorMessage);\naxs.AuditRules.addRule({name:\"ariaOnReservedElement\", heading:\"This element does not support ARIA roles, states and properties\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_12\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return !axs.properties.canTakeAriaAttributes(a);\n}, test:function(a) {\n  return null !== axs.properties.getAriaProperties(a);\n}, code:\"AX_ARIA_12\"});\naxs.AuditRules.addRule({name:\"ariaOwnsDescendant\", heading:\"aria-owns should not be used if ownership is implicit in the DOM\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_06\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[aria-owns]\");\n}, test:function(a) {\n  return axs.utils.getIdReferents(\"aria-owns\", a).some(function(b) {\n    return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_CONTAINED_BY;\n  });\n}, code:\"AX_ARIA_06\"});\naxs.AuditRules.addRule({name:\"ariaRoleNotScoped\", heading:\"Elements with ARIA roles must be in the correct scope\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_09\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[role]\");\n}, test:function(a) {\n  var b = axs.utils.getRoles(a);\n  if (!b || !b.applied) {\n    return !1;\n  }\n  b = b.applied.details.scope;\n  if (!b || 0 === b.length) {\n    return !1;\n  }\n  for (var c = a;c = c.parentNode;) {\n    var d = axs.utils.getRoles(c, !0);\n    if (d && d.applied && 0 <= b.indexOf(d.applied.name)) {\n      return !1;\n    }\n  }\n  if (a = axs.utils.getIdReferrers(\"aria-owns\", a)) {\n    for (c = 0;c < a.length;c++) {\n      if ((d = axs.utils.getRoles(a[c], !0)) && d.applied && 0 <= b.indexOf(d.applied.name)) {\n        return !1;\n      }\n    }\n  }\n  return !0;\n}, code:\"AX_ARIA_09\"});\naxs.AuditRules.addRule({name:\"audioWithoutControls\", heading:\"Audio elements should have controls\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_audio_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"audio[autoplay]\");\n}, test:function(a) {\n  return !a.querySelectorAll(\"[controls]\").length && 3 < a.duration;\n}, code:\"AX_AUDIO_01\"});\n(function() {\n  var a = /^aria\\-/;\n  axs.AuditRules.addRule({name:\"badAriaAttribute\", heading:\"This element has an invalid ARIA attribute\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_11\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(b) {\n    b = b.attributes;\n    for (var c = 0, d = b.length;c < d;c++) {\n      if (a.test(b[c].name)) {\n        return !0;\n      }\n    }\n    return !1;\n  }, test:function(b) {\n    b = b.attributes;\n    for (var c = 0, d = b.length;c < d;c++) {\n      var e = b[c].name;\n      if (a.test(e) && (e = e.replace(a, \"\"), !axs.constants.ARIA_PROPERTIES.hasOwnProperty(e))) {\n        return !0;\n      }\n    }\n    return !1;\n  }, code:\"AX_ARIA_11\"});\n})();\naxs.AuditRules.addRule({name:\"badAriaAttributeValue\", heading:\"ARIA state and property values must be valid\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_04\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  var b = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);\n  return axs.browserUtils.matchSelector(a, b);\n}, test:function(a) {\n  for (var b in axs.constants.ARIA_PROPERTIES) {\n    var c = \"aria-\" + b;\n    if (a.hasAttribute(c)) {\n      var d = a.getAttribute(c);\n      if (!axs.utils.getAriaPropertyValue(c, d, a).valid) {\n        return !0;\n      }\n    }\n  }\n  return !1;\n}, code:\"AX_ARIA_04\"});\naxs.AuditRules.addRule({name:\"badAriaRole\", heading:\"Elements with ARIA roles must use a valid, non-abstract ARIA role\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_01\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[role]\");\n}, test:function(a) {\n  return !axs.utils.getRoles(a).valid;\n}, code:\"AX_ARIA_01\"});\naxs.AuditRules.addRule({name:\"controlsWithoutLabel\", heading:\"Controls and media elements should have labels\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_01\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  if (!axs.browserUtils.matchSelector(a, 'input:not([type=\"hidden\"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), video:not([disabled])') || \"presentation\" == a.getAttribute(\"role\")) {\n    return !1;\n  }\n  if (0 <= a.tabIndex) {\n    return !0;\n  }\n  for (a = axs.utils.parentElement(a);null != a;a = axs.utils.parentElement(a)) {\n    if (axs.utils.elementIsAriaWidget(a)) {\n      return !1;\n    }\n  }\n  return !0;\n}, test:function(a) {\n  if (axs.utils.isElementOrAncestorHidden(a) || \"input\" == a.tagName.toLowerCase() && \"button\" == a.type && a.value.length || \"button\" == a.tagName.toLowerCase() && a.textContent.replace(/^\\s+|\\s+$/g, \"\").length || axs.utils.hasLabel(a)) {\n    return !1;\n  }\n  a = axs.properties.findTextAlternatives(a, {});\n  return null === a || \"\" === a.trim() ? !0 : !1;\n}, code:\"AX_TEXT_01\", ruleName:\"Controls and media elements should have labels\"});\naxs.AuditRules.addRule({name:\"duplicateId\", heading:\"An element's ID must be unique in the DOM\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_02\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[id]\");\n}, test:function(a) {\n  var b = a.id;\n  if (!b) {\n    return !1;\n  }\n  b = \"[id='\" + b.replace(/'/g, \"\\\\'\") + \"']\";\n  return 1 < a.ownerDocument.querySelectorAll(b).length;\n}, code:\"AX_HTML_02\"});\naxs.AuditRules.addRule({name:\"focusableElementNotVisibleAndNotAriaHidden\", heading:\"These elements are focusable but either invisible or obscured by another element\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  if (!axs.browserUtils.matchSelector(a, axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)) {\n    return !1;\n  }\n  if (0 <= a.tabIndex) {\n    return !0;\n  }\n  for (var b = axs.utils.parentElement(a);null != b;b = axs.utils.parentElement(b)) {\n    if (axs.utils.elementIsAriaWidget(b)) {\n      return !1;\n    }\n  }\n  a = axs.properties.findTextAlternatives(a, {});\n  return null === a || \"\" === a.trim() ? !1 : !0;\n}, test:function(a) {\n  if (axs.utils.isElementOrAncestorHidden(a)) {\n    return !1;\n  }\n  a.focus();\n  return !axs.utils.elementIsVisible(a);\n}, code:\"AX_FOCUS_01\"});\naxs.AuditRules.addRule({name:\"humanLangMissing\", heading:\"The web page should have the content's human language indicated in the markup\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_html_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return a instanceof a.ownerDocument.defaultView.HTMLHtmlElement;\n}, test:function(a) {\n  return a.lang ? !1 : !0;\n}, code:\"AX_HTML_01\"});\naxs.AuditRules.addRule({name:\"imagesWithoutAltText\", heading:\"Images should have a text alternative or presentational role\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_02\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"img\") && !axs.utils.isElementOrAncestorHidden(a);\n}, test:function(a) {\n  if (a.hasAttribute(\"alt\") && \"\" == a.alt || \"presentation\" == a.getAttribute(\"role\")) {\n    return !1;\n  }\n  var b = {};\n  axs.properties.findTextAlternatives(a, b);\n  return 0 == Object.keys(b).length ? !0 : !1;\n}, code:\"AX_TEXT_02\"});\naxs.AuditRules.addRule({name:\"linkWithUnclearPurpose\", heading:\"The purpose of each link should be clear from the link text\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_text_04\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"a\") && !axs.utils.isElementOrAncestorHidden(a);\n}, test:function(a, b) {\n  for (var c = b || {}, d = c.blacklistPhrases || [], e = /\\s+/, f = 0;f < d.length;f++) {\n    var g = \"^\\\\s*\" + d[f].trim().replace(e, \"\\\\s*\") + \"s*[^a-z]$\";\n    if ((new RegExp(g, \"i\")).test(a.textContent)) {\n      return !0;\n    }\n  }\n  c = c.stopwords || \"click tap go here learn more this page link about\".split(\" \");\n  d = axs.properties.findTextAlternatives(a, {});\n  if (null === d || \"\" === d.trim()) {\n    return !0;\n  }\n  d = d.replace(/[^a-zA-Z ]/g, \"\");\n  for (f = 0;f < c.length;f++) {\n    if (d = d.replace(new RegExp(\"\\\\b\" + c[f] + \"\\\\b\", \"ig\"), \"\"), \"\" == d.trim()) {\n      return !0;\n    }\n  }\n  return !1;\n}, code:\"AX_TEXT_04\"});\naxs.AuditRules.addRule({name:\"lowContrastElements\", heading:\"Text elements should have a reasonable contrast ratio\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_color_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.properties.hasDirectTextDescendant(a) && !axs.utils.isElementDisabled(a);\n}, test:function(a) {\n  var b = window.getComputedStyle(a, null);\n  return (a = axs.utils.getContrastRatioForElementWithComputedStyle(b, a)) && axs.utils.isLowContrast(a, b);\n}, code:\"AX_COLOR_01\"});\naxs.AuditRules.addRule({name:\"mainRoleOnInappropriateElement\", heading:\"role=main should only appear on significant elements\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_05\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[role~=main]\");\n}, test:function(a) {\n  if (axs.utils.isInlineElement(a)) {\n    return !0;\n  }\n  a = axs.properties.getTextFromDescendantContent(a);\n  return !a || 50 > a.length ? !0 : !1;\n}, code:\"AX_ARIA_05\"});\naxs.AuditRules.addRule({name:\"elementsWithMeaningfulBackgroundImage\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return !axs.utils.isElementOrAncestorHidden(a);\n}, heading:\"Meaningful images should not be used in element backgrounds\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_image_01\", test:function(a) {\n  if (a.textContent && 0 < a.textContent.length) {\n    return !1;\n  }\n  a = window.getComputedStyle(a, null);\n  var b = a.backgroundImage;\n  if (!b || \"undefined\" === b || \"none\" === b || 0 != b.indexOf(\"url\")) {\n    return !1;\n  }\n  b = parseInt(a.width, 10);\n  a = parseInt(a.height, 10);\n  return 150 > b && 150 > a;\n}, code:\"AX_IMAGE_01\"});\naxs.AuditRules.addRule({name:\"multipleAriaOwners\", heading:\"An element's ID must not be present in more that one aria-owns attribute at any time\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_07\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[aria-owns]\");\n}, test:function(a) {\n  return axs.utils.getIdReferents(\"aria-owns\", a).some(function(a) {\n    return 1 < axs.utils.getIdReferrers(\"aria-owns\", a).length;\n  });\n}, code:\"AX_ARIA_07\"});\naxs.AuditRules.addRule({name:\"multipleLabelableElementsPerLabel\", heading:\"A label element may not have labelable descendants other than its labeled control.\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#-ax_text_03--labels-should-only-contain-one-labelable-element\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"label\");\n}, test:function(a) {\n  if (1 < a.querySelectorAll(axs.utils.LABELABLE_ELEMENTS_SELECTOR).length) {\n    return !0;\n  }\n}, code:\"AX_TEXT_03\"});\naxs.AuditRules.addRule({name:\"nonExistentAriaRelatedElement\", heading:\"ARIA attributes which refer to other elements by ID should refer to elements which exist in the DOM\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_02\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  var b = axs.utils.getAriaPropertiesByValueType([\"idref\", \"idref_list\"]), b = axs.utils.getSelectorForAriaProperties(b);\n  return axs.browserUtils.matchSelector(a, b);\n}, test:function(a) {\n  for (var b = axs.utils.getAriaPropertiesByValueType([\"idref\", \"idref_list\"]), b = axs.utils.getSelectorForAriaProperties(b).split(\",\"), c = 0, d = b.length;c < d;c++) {\n    var e = b[c];\n    if (axs.browserUtils.matchSelector(a, e)) {\n      var e = e.match(/aria-[^\\]]+/)[0], f = a.getAttribute(e);\n      if (!axs.utils.getAriaPropertyValue(e, f, a).valid) {\n        return !0;\n      }\n    }\n  }\n  return !1;\n}, code:\"AX_ARIA_02\"});\naxs.AuditRules.addRule({name:\"pageWithoutTitle\", heading:\"The web page should have a title that describes topic or purpose\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_title_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return \"html\" == a.tagName.toLowerCase();\n}, test:function(a) {\n  a = a.querySelector(\"head\");\n  return a ? (a = a.querySelector(\"title\")) ? !a.textContent : !0 : !0;\n}, code:\"AX_TITLE_01\"});\naxs.AuditRules.addRule({name:\"requiredAriaAttributeMissing\", heading:\"Elements with ARIA roles must have all required attributes for that role\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_03\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[role]\");\n}, test:function(a) {\n  var b = axs.utils.getRoles(a);\n  if (!b.valid) {\n    return !1;\n  }\n  for (var c = 0;c < b.roles.length;c++) {\n    var d = b.roles[c].details.requiredPropertiesSet, e;\n    for (e in d) {\n      if (d = e.replace(/^aria-/, \"\"), !(\"defaultValue\" in axs.constants.ARIA_PROPERTIES[d] || a.hasAttribute(e)) && 0 > axs.properties.getNativelySupportedAttributes(a).indexOf(e)) {\n        return !0;\n      }\n    }\n  }\n}, code:\"AX_ARIA_03\"});\n(function() {\n  function a(a) {\n    a = axs.utils.getRoles(a);\n    if (!a || !a.applied) {\n      return [];\n    }\n    a = a.applied;\n    return a.valid ? a.details.mustcontain || [] : [];\n  }\n  axs.AuditRules.addRule({name:\"requiredOwnedAriaRoleMissing\", heading:\"Elements with ARIA roles must ensure required owned elements are present\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_08\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(b) {\n    return axs.browserUtils.matchSelector(b, \"[role]\") ? 0 < a(b).length : !1;\n  }, test:function(b) {\n    if (\"true\" === b.getAttribute(\"aria-busy\")) {\n      return !1;\n    }\n    for (var c = a(b), d = c.length - 1;0 <= d;d--) {\n      var e = axs.utils.findDescendantsWithRole(b, c[d]);\n      if (e && e.length) {\n        return !1;\n      }\n    }\n    b = axs.utils.getIdReferents(\"aria-owns\", b);\n    for (d = b.length - 1;0 <= d;d--) {\n      if ((e = axs.utils.getRoles(b[d], !0)) && e.applied) {\n        for (var e = e.applied, f = c.length - 1;0 <= f;f--) {\n          if (e.name === c[f]) {\n            return !1;\n          }\n        }\n      }\n    }\n    return !0;\n  }, code:\"AX_ARIA_08\"});\n})();\naxs.AuditRules.addRule({name:\"tabIndexGreaterThanZero\", heading:\"Avoid positive integer values for tabIndex\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_03\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"[tabindex]\");\n}, test:function(a) {\n  if (0 < a.tabIndex) {\n    return !0;\n  }\n}, code:\"AX_FOCUS_03\"});\naxs.AuditRules.addRule({name:\"unfocusableElementsWithOnClick\", heading:\"Elements with onclick handlers must be focusable\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_focus_02\", severity:axs.constants.Severity.WARNING, opt_requiresConsoleAPI:!0, relevantElementMatcher:function(a) {\n  return a instanceof a.ownerDocument.defaultView.HTMLBodyElement || axs.utils.isElementOrAncestorHidden(a) ? !1 : \"click\" in getEventListeners(a) ? !0 : !1;\n}, test:function(a) {\n  return !a.hasAttribute(\"tabindex\") && !axs.utils.isElementImplicitlyFocusable(a) && !a.disabled;\n}, code:\"AX_FOCUS_02\"});\n(function() {\n  var a = /^aria\\-/, b = axs.utils.getSelectorForAriaProperties(axs.constants.ARIA_PROPERTIES);\n  axs.AuditRules.addRule({name:\"unsupportedAriaAttribute\", heading:\"This element has an unsupported ARIA attribute\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_aria_10\", severity:axs.constants.Severity.SEVERE, relevantElementMatcher:function(a) {\n    return axs.browserUtils.matchSelector(a, b);\n  }, test:function(b) {\n    var d = axs.utils.getRoles(b, !0), d = d && d.applied ? d.applied.details.propertiesSet : axs.constants.GLOBAL_PROPERTIES;\n    b = b.attributes;\n    for (var e = 0, f = b.length;e < f;e++) {\n      var g = b[e].name;\n      if (a.test(g)) {\n        var h = g.replace(a, \"\");\n        if (axs.constants.ARIA_PROPERTIES.hasOwnProperty(h) && !(g in d)) {\n          return !0;\n        }\n      }\n    }\n    return !1;\n  }, code:\"AX_ARIA_10\"});\n})();\naxs.AuditRules.addRule({name:\"videoWithoutCaptions\", heading:\"Video elements should use <track> elements to provide captions\", url:\"https://github.com/GoogleChrome/accessibility-developer-tools/wiki/Audit-Rules#ax_video_01\", severity:axs.constants.Severity.WARNING, relevantElementMatcher:function(a) {\n  return axs.browserUtils.matchSelector(a, \"video\");\n}, test:function(a) {\n  return !a.querySelectorAll(\"track[kind=captions]\").length;\n}, code:\"AX_VIDEO_01\"});\n\n  return axs;\n});\n\n// Define AMD module if possible, export globals otherwise.\nif (typeof define !== 'undefined' && define.amd) {\n  define([], fn);\n} else {\n  var axs = fn.call(this);\n}\n\n"
 
 /***/ }
 /******/ ]);

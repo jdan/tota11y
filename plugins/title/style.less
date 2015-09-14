@@ -1,0 +1,38 @@
+@import "../../less/variables.less";
+
+.tota11y-heading {
+    &-outline {
+        color: @darkGray;
+    }
+
+    &-outline-entry {
+        margin-bottom: 8px;
+
+        &.heading-level-1 {
+            margin-left: 0;
+        }
+        &.heading-level-2 {
+            margin-left: 20px;
+        }
+        &.heading-level-3 {
+            margin-left: 40px;
+        }
+        &.heading-level-4 {
+            margin-left: 60px;
+        }
+        &.heading-level-5 {
+            margin-left: 80px;
+        }
+        &.heading-level-6 {
+            margin-left: 100px;
+        }
+
+    }
+
+    &-outline-level {
+        .position(relative, -2px, auto, auto, auto);
+        margin-right: 5px;
+        padding: 2px 3px;
+        pointer-events: none;
+    }
+}
