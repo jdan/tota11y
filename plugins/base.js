@@ -14,9 +14,12 @@ let InfoPanel = require("./shared/info-panel");
 let template = require("../templates/plugin.handlebars");
 
 class Plugin {
-    constructor() {
+    constructor(inputData) {
         this.panel = new InfoPanel(this.getTitle());
         this.$checkbox = null;
+	this.input = null;
+	this.inputData = inputData;
+	this.errors = this.analyze();
     }
 
     getTitle() {
@@ -25,6 +28,10 @@ class Plugin {
 
     getDescription() {
         return "";
+    }
+
+    addInput(input) {
+	this.input = input;
     }
 
     /**
