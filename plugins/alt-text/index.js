@@ -18,7 +18,7 @@ class AltTextPlugin extends Plugin {
 
     reportError(el) {
         let $el = $(el);
-        let src = $el.prop("src") || "..";
+        let src = $el.attr("src") || "..";
         let title = "Image is missing alt text";
         let $error = (
             <div>
