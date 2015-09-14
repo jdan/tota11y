@@ -18,6 +18,7 @@ class AltTextPlugin extends Plugin {
 
     reportError(el) {
         let $el = $(el);
+        let src = $el.prop("src") || "..";
         let title = "Image is missing alt text";
         let $error = (
             <div>
@@ -27,7 +28,7 @@ class AltTextPlugin extends Plugin {
                 </p>
 
                 <pre><code>
-                    {`&lt;img src=".." alt="Image description"&gt`}
+                    {`&lt;img src="${src}" alt="Image description"&gt`}
                 </code></pre>
 
                 <p>
@@ -38,9 +39,9 @@ class AltTextPlugin extends Plugin {
                 </p>
 
                 <pre><code>
-                    {`&lt;img src=".." alt=""&gt;`}
+                    {`&lt;img src="${src}" alt=""&gt;`}
                     <br />
-                    {`&lt;img src=".." role="presentation"&gt;`}
+                    {`&lt;img src="${src}" role="presentation"&gt;`}
                 </code></pre>
             </div>
         );
