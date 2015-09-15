@@ -183,6 +183,19 @@
             padding: 10px 0 0;
             user-select: text;
 
+            &-code {
+                margin-top: 10px;
+
+                code {
+                    display: -webkit-box;
+                    margin-top: 10px; 
+                    overflow: hidden; 
+                    padding: 10px;
+                    word-wrap: break-word;
+                    -webkit-line-clamp: 15;
+                    -webkit-box-orient: vertical;
+                }
+            }
             &.tota11y-collapsed {
                 display: none
             }
