@@ -183,17 +183,14 @@
             padding: 10px 0 0;
             user-select: text;
 
-            &-code {
+            &-code-container {
                 margin-top: @panelPadding;
 
                 code {
-                    display: -webkit-box;
+                    display: block;
                     margin-top: 10px; 
-                    overflow: hidden;
                     padding: 5px @panelPadding;
                     word-wrap: break-word;
-                    -webkit-line-clamp: 15;
-                    -webkit-box-orient: vertical;
                 }
             }
             &.tota11y-collapsed {

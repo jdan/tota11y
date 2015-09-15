@@ -280,13 +280,18 @@ class InfoPanel {
                 annotate.toggleHighlight(error.$el, $trigger);
                 annotate.toggleHighlight(error.$el, $scroll);
 
-                // Add surrounding code from error.$el to the information panel
+                // Add code from error.$el to the information panel
                 // The code will appear in the error description inside
-                // tota11y-info-error-description-code
+                // tota11y-info-error-description-code-container
 
-                //Grab parent wrapper's html and trim the returned string
-                let surroundingCode = $(error.$el).parent().html().trim();
-                $error.find(".tota11y-info-error-description-code code").text(surroundingCode);
+                let errorHTML = $(error.$el)[0].outerHTML;
+
+                // Trim the code block if it is over 300 characters
+                if (errorHTML.length > 300) {
+                    errorHTML = errorHTML.substring(0, 300) + "...";
+                }
+
+                $error.find(".tota11y-info-error-description-code-container code").text(errorHTML);
             });
 
             $errorsTab = $activeTab = this._addTab("Errors", $errors);
