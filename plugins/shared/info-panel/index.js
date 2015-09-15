@@ -218,7 +218,7 @@ class InfoPanel {
                 // so that functionality can be inserted.
                 $error
                     .find(".tota11y-info-error-description")
-                    .append(error.$description);
+                    .prepend(error.$description);
 
                 $errors.append($error);
 
@@ -279,6 +279,18 @@ class InfoPanel {
                 // highlight when scrolling to the element with the button.
                 annotate.toggleHighlight(error.$el, $trigger);
                 annotate.toggleHighlight(error.$el, $scroll);
+
+                // Add code from error.$el to the information panel
+                let errorHTML = error.$el[0].outerHTML;
+
+                // Trim the code block if it is over 300 characters
+                if (errorHTML.length > 300) {
+                    errorHTML = errorHTML.substring(0, 300) + "...";
+                }
+
+                let $relevantCode = $error.find(
+                    ".tota11y-info-error-description-code-container code");
+                $relevantCode.text(errorHTML);
             });
 
             $errorsTab = $activeTab = this._addTab("Errors", $errors);
