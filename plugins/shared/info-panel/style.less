@@ -183,6 +183,16 @@
             padding: 10px 0 0;
             user-select: text;
 
+            &-code-container {
+                margin-top: @panelPadding;
+
+                code {
+                    display: block;
+                    margin-top: 10px; 
+                    padding: 5px @panelPadding;
+                    word-wrap: break-word;
+                }
+            }
             &.tota11y-collapsed {
                 display: none
             }
