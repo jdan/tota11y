@@ -1,6 +1,6 @@
 {
   "name": "tota11y",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "An accessibility visualization toolkit",
   "repository": {
     "type": "git",
