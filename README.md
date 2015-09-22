@@ -19,12 +19,12 @@ Then, include it right before `</body>` like so:
 
 ## Development
 
-Want to contribute to tota11y? Awesome!
+Want to contribute to tota11y? Awesome! Run the following in your terminal:
 
 ```
-$ git clone https://github.com/Khan/tota11y.git
-$ cd tota11y/
-$ npm install
+git clone https://github.com/Khan/tota11y.git
+cd tota11y/
+npm install
 ```
 
 ## Architecture Overview
@@ -44,20 +44,20 @@ tota11y uses a variety of technologies, including [jQuery](https://jquery.com/),
 You can run unit tests on tota11y with the following:
 
 ```
-$ npm test
+npm test
 ```
 
 Or lint with:
 
 ```
-$ npm run lint
+npm run lint
 ```
 
 To perform manual testing as you work, you can run a live dev-server with the
 following:
 
 ```
-$ npm run live-test
+npm run live-test
 ```
 
 Then navigate to `http://localhost:8080/webpack-dev-server/test/`. This page
@@ -68,7 +68,7 @@ will automatically reload with changes.
 You can build a bundled copy of tota11y with:
 
 ```
-$ npm run build
+npm run build
 ```
 
 ## Special thanks
