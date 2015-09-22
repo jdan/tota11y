@@ -17,38 +17,59 @@ Then, include it right before `</body>` like so:
 <script src="tota11y.min.js"></script>
 ```
 
-## Building
+## Development
 
-You can build tota11y with:
+Want to contribute to tota11y? Awesome!
 
 ```
-npm install
-npm run build
+$ git clone https://github.com/Khan/tota11y.git
+$ cd tota11y/
+$ npm install
 ```
+
+## Architecture Overview
+
+Most of the functionality in tota11y comes from its **plugins**. Each plugin
+gets its own directory in [`plugins/`](https://github.com/Khan/tota11y/tree/master/plugins) and maintains its own JavaScript, CSS,
+and even handlebars. [Here's what the simple LandmarksPlugin looks like](https://github.com/Khan/tota11y/blob/master/plugins/landmarks/index.js).
+
+[`plugins/shared/`](https://github.com/Khan/tota11y/tree/master/plugins/shared) contains a variety of shared utilities for the plugins, namely the [info-panel](https://github.com/Khan/tota11y/tree/master/plugins/shared/info-panel) and [annotate](https://github.com/Khan/tota11y/tree/master/plugins/shared/annotate) modules, which are used to report accessibility violations on the screen.
+
+[`index.js`](https://github.com/Khan/tota11y/blob/master/index.js) brings it all together.
+
+tota11y uses a variety of technologies, including [jQuery](https://jquery.com/), [webpack](https://webpack.github.io/), [babel](https://babeljs.io/), and [JSX](https://facebook.github.io/jsx/). **There's no need to know all (or any!) of these to contribute to tota11y, but we hope tota11y is a good place to learn something new and interesting.**
 
 ## Testing
 
 You can run unit tests on tota11y with the following:
 
 ```
-npm test
+$ npm test
 ```
 
 Or lint with:
 
 ```
-npm run lint
+$ npm run lint
 ```
 
 To perform manual testing as you work, you can run a live dev-server with the
 following:
 
 ```
-npm run live-test
+$ npm run live-test
 ```
 
 Then navigate to `http://localhost:8080/webpack-dev-server/test/`. This page
 will automatically reload with changes.
+
+## Building
+
+You can build a bundled copy of tota11y with:
+
+```
+$ npm run build
+```
 
 ## Special thanks
 
