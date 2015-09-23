@@ -106,8 +106,8 @@ class InfoPanel {
      * panel draggable
      */
     initAndPosition() {
-        let panelLeftPx = INITIAL_PANEL_MARGIN_PX;
-        let panelTopPx = INITIAL_PANEL_MARGIN_PX;
+        let panelLeftPx, panelTopPx;
+
         // Wire up the dismiss button
         this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
             e.preventDefault();
@@ -119,6 +119,7 @@ class InfoPanel {
         // it directly adjacent to the toolbar.
         $("body").append(this.$el);
 
+        // Position info panel on the bottom left of the window
         panelLeftPx = window.innerWidth - this.$el.width() - INITIAL_PANEL_MARGIN_PX;
         panelTopPx = window.innerHeight - this.$el.height() - INITIAL_PANEL_MARGIN_PX;
 
