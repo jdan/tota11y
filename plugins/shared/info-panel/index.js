@@ -119,7 +119,7 @@ class InfoPanel {
         // it directly adjacent to the toolbar.
         $("body").append(this.$el);
 
-        // Position info panel on the bottom left of the window
+        // Position info panel on the bottom right of the window
         panelLeftPx = window.innerWidth - this.$el.width() - INITIAL_PANEL_MARGIN_PX;
         panelTopPx = window.innerHeight - this.$el.height() - INITIAL_PANEL_MARGIN_PX;
 
