@@ -82,20 +82,24 @@ class Toolbar {
             e.preventDefault();
             e.stopPropagation();
             $toolbar.toggleClass("tota11y-expanded");
+            $toolbar.attr("aria-expanded", $toolbar.is(".tota11y-expanded"));
         };
 
         let $toggle = (
-            <a href="#"
-               className="tota11y-toolbar-toggle"
-               onClick={handleToggleClick}>
-                <div className="tota11y-toolbar-logo">
+            <button aria-controls="tota11y-toolbar"
+                    className="tota11y-toolbar-toggle"
+                    onClick={handleToggleClick}
+                    aria-label="[tota11y] Toggle menu">
+                <div aria-hidden="true" className="tota11y-toolbar-logo">
                     {$logo}
                 </div>
-            </a>
+            </button>
         );
 
         $toolbar = (
-            <div className="tota11y tota11y-toolbar">
+            <div id="tota11y-toolbar" className="tota11y tota11y-toolbar"
+                 role="region"
+                 aria-expanded="false">
                 <div className="tota11y-toolbar-body">
                     {$plugins}
                 </div>

@@ -31,6 +31,14 @@ function buildElement(type, props, ...children) {
                 if (propName === "onClick") {
                     let handler = props[propName];
                     $el.click(handler);
+
+                // Some passed-in props need to be set with $.attr
+                // Currently we do this for role and aria-*
+                } else if (/^aria-/.test(propName) || propName === "role") {
+                    let value = props[propName];
+                    $el.attr(propName, value);
+
+                // All other props can go right to $.prop
                 } else {
                     let value = props[propName];
                     $el.prop(propName, value);

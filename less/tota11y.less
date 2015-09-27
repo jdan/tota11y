@@ -1,12 +1,6 @@
 @import "variables.less";
 @import "base.less";
 
-@descriptionWidth: 200px;
-@pluginPadding: 12px;
-@controlMargin: 15px;
-@indicatorSize: 16px;
-@indicatorFontSize: 13px;
-
 @togglePadding: 7px;
 @toggleCollapsedWidth: 35px;
 @toggleHeight: 25px;
@@ -21,8 +15,10 @@
     z-index: @z-index--UI;
 
     &-toggle {
+        background-color: @darkGray;
         display: block;
         padding: @togglePadding;
+        width: 100%;
     }
 
     &-logo {
@@ -44,61 +40,13 @@
     }
 }
 
-.tota11y-plugins {
-    &-separator {
-        font-size: 12px;
-        margin: @togglePadding @controlMargin 0;
-        text-transform: uppercase;
-    }
-}
-
-.tota11y-plugin {
-    .tota11y-no-select;
-    border-bottom: 1px solid @darkBorderColor;
-
-    &-label {
-        align-items: center;
-        display: flex;
-        padding: @pluginPadding @pluginPadding @pluginPadding 0;
-        margin: 0;
-
-        &:hover {
-            cursor: pointer;
-        }
-    }
-
-    &-control {
-        margin: 0 @controlMargin;
-    }
-
-    &-checkbox {
-        display: none;
-    }
-
-    &-indicator {
-        border-radius: @indicatorSize;
-        border: 1px solid @lightBorderColor;
-        color: transparent;
-        font-size: @indicatorFontSize;
-        height: @indicatorSize;
-        line-height: @indicatorSize;
-        padding: 0 0 0 1px;
-        width: @indicatorSize;
-    }
-    &-checkbox:checked + &-indicator {
-        background-color: @kaGreen;
-        border-color: @kaGreen;
-        color: white;
-    }
-
-    &-title {
-        font-weight: bold;
-    }
-
-    &-description {
-        font-size: @fontSizeSmall;
-        font-style: italic;
-        width: @descriptionWidth;
-        margin-right: 3px;
-    }
+.tota11y-sr-only {
+    border: 0;
+    clip: rect(0,0,0,0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
 }
