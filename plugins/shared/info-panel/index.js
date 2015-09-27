@@ -106,8 +106,7 @@ class InfoPanel {
      * panel draggable
      */
     initAndPosition() {
-        let panelRightPx = INITIAL_PANEL_MARGIN_PX;
-        let panelBottomPx = INITIAL_PANEL_MARGIN_PX;
+        let panelLeftPx, panelTopPx;
 
         // Wire up the dismiss button
         this.$el.find(".tota11y-info-dismiss-trigger").click((e) => {
@@ -120,13 +119,17 @@ class InfoPanel {
         // it directly adjacent to the toolbar.
         $("body").append(this.$el);
 
+        // Position info panel on the bottom right of the window
+        panelLeftPx = window.innerWidth - this.$el.width() - INITIAL_PANEL_MARGIN_PX;
+        panelTopPx = window.innerHeight - this.$el.height() - INITIAL_PANEL_MARGIN_PX;
+
         // Wire up draggable surface
         let $draggable = this.$el.find(".tota11y-info-title");
         let isDragging = false;
 
         // Variables for the starting positions of the mouse and panel
         let initMouseX, initMouseY;
-        let initPanelRight, initPanelBottom;
+        let initPanelLeft, initPanelTop;
 
         $draggable
             .on("mousedown", (e) => {
@@ -139,8 +142,8 @@ class InfoPanel {
                 initMouseX = e.pageX;
                 initMouseY = e.pageY;
 
-                initPanelRight = panelRightPx;
-                initPanelBottom = panelBottomPx;
+                initPanelLeft = panelLeftPx;
+                initPanelTop = panelTopPx;
             })
             .on("mouseup", (e) => {
                 e.preventDefault();
@@ -156,18 +159,19 @@ class InfoPanel {
             let deltaX = e.pageX - initMouseX;
             let deltaY = e.pageY - initMouseY;
 
-            panelRightPx = initPanelRight - deltaX;
-            panelBottomPx = initPanelBottom - deltaY;
+            panelLeftPx = initPanelLeft + deltaX;
+            panelTopPx = initPanelTop + deltaY;
 
             this.$el.css({
-                right: panelRightPx,
-                bottom: panelBottomPx
+                left: panelLeftPx,
+                top: panelTopPx
             });
         });
 
+
         this.$el.css({
-            right: panelRightPx,
-            bottom: panelBottomPx
+            left: panelLeftPx,
+            top: panelTopPx
         });
     }
 
