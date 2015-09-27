@@ -26,6 +26,7 @@ function createWhitelist(ruleName) {
     return config;
 }
 
+/*eslint-disable*/
 // Patch collectMatchingElements to match
 // https://github.com/GoogleChrome/accessibility-developer-tools/blob/0062f77258eb4eb8508dad3c92fd2df63c2381fc/src/js/AuditRule.js
 //
@@ -41,8 +42,8 @@ function patchCollectMatchingElements() {
      * @param {ShadowRoot=} opt_shadowRoot The nearest ShadowRoot ancestor, if any.
      */
     $.axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
-                                                     opt_shadowRoot) {
-        if (node.nodeType == Node.ELEMENT_NODE)
+                                                       opt_shadowRoot) {
+        if (node.nodeType == $.window.Node.ELEMENT_NODE)
             var element = /** @type {Element} */ (node);
 
         if (element && matcher.call(null, element))
@@ -57,10 +58,10 @@ function patchCollectMatchingElements() {
             // code, be sure to run the tests in the browser before committing.
             var shadowRoot = element.shadowRoot || element.webkitShadowRoot;
             if (shadowRoot) {
-                axs.AuditRule.collectMatchingElements(shadowRoot,
-                                                      matcher,
-                                                      collection,
-                                                      shadowRoot);
+                $.axs.AuditRule.collectMatchingElements(shadowRoot,
+                                                        matcher,
+                                                        collection,
+                                                        shadowRoot);
                 return;
             }
         }
@@ -72,10 +73,10 @@ function patchCollectMatchingElements() {
             var content = /** @type {HTMLContentElement} */ (element);
             var distributedNodes = content.getDistributedNodes();
             for (var i = 0; i < distributedNodes.length; i++) {
-                axs.AuditRule.collectMatchingElements(distributedNodes[i],
-                                                      matcher,
-                                                      collection,
-                                                      opt_shadowRoot);
+                $.axs.AuditRule.collectMatchingElements(distributedNodes[i],
+                                                        matcher,
+                                                        collection,
+                                                        opt_shadowRoot);
             }
             return;
         }
@@ -89,10 +90,10 @@ function patchCollectMatchingElements() {
             } else {
                 var distributedNodes = shadow.getDistributedNodes();
                 for (var i = 0; i < distributedNodes.length; i++) {
-                    axs.AuditRule.collectMatchingElements(distributedNodes[i],
-                                                          matcher,
-                                                          collection,
-                                                          opt_shadowRoot);
+                    $.axs.AuditRule.collectMatchingElements(distributedNodes[i],
+                                                            matcher,
+                                                            collection,
+                                                            opt_shadowRoot);
                 }
             }
         }
@@ -101,14 +102,15 @@ function patchCollectMatchingElements() {
         // a <shadow> element recurse normally.
         var child = node.firstChild;
         while (child != null) {
-            axs.AuditRule.collectMatchingElements(child,
-                                                  matcher,
-                                                  collection,
-                                                  opt_shadowRoot);
+            $.axs.AuditRule.collectMatchingElements(child,
+                                                    matcher,
+                                                    collection,
+                                                    opt_shadowRoot);
             child = child.nextSibling;
         }
     };
 }
+/*eslint-enable*/
 
 // Audits for a single rule (by name) and returns the results for only that
 // rule
