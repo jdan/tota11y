@@ -25,6 +25,3 @@ $.fn.expandedText = function() {
 
 // Bind the global `axs` object from Accessibility Developer Tools to jQuery
 $.axs = window.axs;
-
-// Bind the global `window` object as well as a catch-all
-$.window = window;
