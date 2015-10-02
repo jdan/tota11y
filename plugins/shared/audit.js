@@ -43,7 +43,9 @@ function patchCollectMatchingElements() {
      */
     $.axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
                                                        opt_shadowRoot) {
-        if (node.nodeType == $.window.Node.ELEMENT_NODE)
+        // Only create element if the node is an element
+        // node (e.g Node.ELEMENT_NODE === 1)
+        if (node.nodeType === 1)
             var element = /** @type {Element} */ (node);
 
         if (element && matcher.call(null, element))
