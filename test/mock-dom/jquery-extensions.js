@@ -5,8 +5,6 @@
  * This file will be loaded into test documents by the mock-dom utility.
  */
 
-var $ = window.jQuery;
-
 $.fn.hasLabel = function() {
     return !!$(this).data("has-label");
 };
