@@ -75,7 +75,7 @@ class LinkTextPlugin extends Plugin {
             // TODO: Read from `alts` to determine where the text is coming
             // from (for tailored error messages)
             let alts = {};
-            let extractedText = $.axs.properties.findTextAlternatives(
+            let extractedText = axs.properties.findTextAlternatives(
                 el, alts);
 
             if (!this.isDescriptiveText(extractedText)) {
