@@ -2,8 +2,6 @@
  * Abstractions for how we use Accessibility Developer Tools
  */
 
-let $ = require("jquery");
-
 function allRuleNames() {
     return axs.AuditRules.getRules().map(rule => rule.name);
 }
