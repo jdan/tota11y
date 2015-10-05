@@ -296,7 +296,7 @@ class InfoPanel {
                     e.stopPropagation();
 
                     // Add tabIndex if element is not currently focusable
-                    if(!error.$el.is(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)){
+                    if (!error.$el.is(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)){
                         error.$el.attr("tabindex", -1);
                     }
 
