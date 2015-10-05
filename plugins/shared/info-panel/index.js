@@ -295,8 +295,12 @@ class InfoPanel {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    // TODO: This attempts to scroll to fixed elements
-                    $(document).scrollTop(error.$el.offset().top - 80);
+                    // Add tabIndex if element is not currently focusable
+                    if(!error.$el.is(axs.utils.FOCUSABLE_ELEMENTS_SELECTOR)){
+                        error.$el.attr("tabindex", -1);
+                    }
+
+                    error.$el.focus();
                 });
 
                 // Expand the first violation
