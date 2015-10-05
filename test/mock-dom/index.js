@@ -2,17 +2,13 @@
  * A utility that allows us to mock the DOM and run plugins exactly as they
  * are written.
  *
- * This utility also universally changes the behavior of "require", allowing
- * us to stub out annotations, less/handlebars modules, and even replace
- * requests for jQuery with our own copy.
+ * This module changes the behavior of "require," allowing us to stub out
+ * imports of jQuery and the annotations module.
  *
- * Exported is a `createDom` function, which sets up a jsdom environment and
- * sends to the callback an object containing the following:
- *
- *   - setHTML: which allows tests to change the HTML content of the page
- *   - $: which allows tests to access the jQuery instance running on the page
- *   - destroy: which allows tests to destroy the page. This is typically run
- *              in the magic `after` function of a mocha test group.
+ * Additionally, the module exposes a number of variables from the jsdom
+ * instance to the global namespace. Allowing us to code as if we're in
+ * a browser environment (i.e. using "document") while skipping the webpack
+ * bundling step.
  */
 
 let fs = require("fs");
