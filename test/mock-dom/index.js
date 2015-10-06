@@ -2,17 +2,13 @@
  * A utility that allows us to mock the DOM and run plugins exactly as they
  * are written.
  *
- * This utility also universally changes the behavior of "require", allowing
- * us to stub out annotations, less/handlebars modules, and even replace
- * requests for jQuery with our own copy.
+ * This module changes the behavior of "require," allowing us to stub out
+ * imports of jQuery and the annotations module.
  *
- * Exported is a `createDom` function, which sets up a jsdom environment and
- * sends to the callback an object containing the following:
- *
- *   - setHTML: which allows tests to change the HTML content of the page
- *   - $: which allows tests to access the jQuery instance running on the page
- *   - destroy: which allows tests to destroy the page. This is typically run
- *              in the magic `after` function of a mocha test group.
+ * Additionally, the module exposes a number of variables from the jsdom
+ * instance to the global namespace. Allowing us to code as if we're in
+ * a browser environment (i.e. using "document") while skipping the webpack
+ * bundling step.
  */
 
 let fs = require("fs");
@@ -35,6 +31,15 @@ exports.createDom = function(callback) {
         html: "",
         src: [axsSrc, jquerySrc, jqueryExtSrc],
         done: function(errors, window) {
+            // Expose some fields from `window` onto the global namespace
+            //
+            // TODO: Currently we add fields here as we need them, but this
+            // may prove tricky to maintain.
+            global.document = window.document;
+            global.$ = window.jQuery;
+            global.axs = window.axs;
+            global.Node = window.Node;
+
             // Overwrite the default module loader.
             //
             // Here we intercept `require()` calls to stub out the annotations
@@ -61,17 +66,7 @@ exports.createDom = function(callback) {
                 }
             };
 
-            callback({
-                setHTML(html) {
-                    window.document.body.innerHTML = html;
-                },
-
-                destroy() {
-                    window.close();
-                },
-
-                $: window.jQuery,
-            });
+            callback();
         }
     });
 };

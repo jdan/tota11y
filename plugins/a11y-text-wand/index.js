@@ -25,7 +25,7 @@ class A11yTextWand extends Plugin {
         $(document).on("mousemove.wand", function(e) {
             let element = document.elementFromPoint(e.clientX, e.clientY);
 
-            let textAlternative = $.axs.properties.findTextAlternatives(
+            let textAlternative = axs.properties.findTextAlternatives(
                 element, {});
 
             $(".tota11y-outlined").removeClass("tota11y-outlined");

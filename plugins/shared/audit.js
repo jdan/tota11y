@@ -2,16 +2,14 @@
  * Abstractions for how we use Accessibility Developer Tools
  */
 
-let $ = require("jquery");
-
 function allRuleNames() {
-    return $.axs.AuditRules.getRules().map(rule => rule.name);
+    return axs.AuditRules.getRules().map(rule => rule.name);
 }
 
 // Creates an audit configuration that whitelists a single rule and limits the
 // amount of tests to run
 function createWhitelist(ruleName) {
-    var config = new $.axs.AuditConfiguration();
+    var config = new axs.AuditConfiguration();
     config.showUnsupportedRulesWarning = false;
 
     // Ignore elements that are part of the toolbar
@@ -41,10 +39,9 @@ function patchCollectMatchingElements() {
      * @param {Array.<Element>} collection
      * @param {ShadowRoot=} opt_shadowRoot The nearest ShadowRoot ancestor, if any.
      */
-    $.axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
+    axs.AuditRule.collectMatchingElements = function(node, matcher, collection,
                                                        opt_shadowRoot) {
-        // Only assign if node is an element (i.e. <p> vs <!-- comment -->)
-        if (node.nodeType === 1)
+        if (node.nodeType === Node.ELEMENT_NODE)
             var element = /** @type {Element} */ (node);
 
         if (element && matcher.call(null, element))
@@ -59,7 +56,7 @@ function patchCollectMatchingElements() {
             // code, be sure to run the tests in the browser before committing.
             var shadowRoot = element.shadowRoot || element.webkitShadowRoot;
             if (shadowRoot) {
-                $.axs.AuditRule.collectMatchingElements(shadowRoot,
+                axs.AuditRule.collectMatchingElements(shadowRoot,
                                                         matcher,
                                                         collection,
                                                         shadowRoot);
@@ -74,7 +71,7 @@ function patchCollectMatchingElements() {
             var content = /** @type {HTMLContentElement} */ (element);
             var distributedNodes = content.getDistributedNodes();
             for (var i = 0; i < distributedNodes.length; i++) {
-                $.axs.AuditRule.collectMatchingElements(distributedNodes[i],
+                axs.AuditRule.collectMatchingElements(distributedNodes[i],
                                                         matcher,
                                                         collection,
                                                         opt_shadowRoot);
@@ -91,7 +88,7 @@ function patchCollectMatchingElements() {
             } else {
                 var distributedNodes = shadow.getDistributedNodes();
                 for (var i = 0; i < distributedNodes.length; i++) {
-                    $.axs.AuditRule.collectMatchingElements(distributedNodes[i],
+                    axs.AuditRule.collectMatchingElements(distributedNodes[i],
                                                             matcher,
                                                             collection,
                                                             opt_shadowRoot);
@@ -103,7 +100,7 @@ function patchCollectMatchingElements() {
         // a <shadow> element recurse normally.
         var child = node.firstChild;
         while (child != null) {
-            $.axs.AuditRule.collectMatchingElements(child,
+            axs.AuditRule.collectMatchingElements(child,
                                                     matcher,
                                                     collection,
                                                     opt_shadowRoot);
@@ -120,7 +117,7 @@ function audit(ruleName) {
 
     patchCollectMatchingElements();
 
-    return $.axs.Audit.run(whitelist)
+    return axs.Audit.run(whitelist)
         .filter(result => result.rule.name === ruleName)[0];
 }
 

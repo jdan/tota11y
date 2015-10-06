@@ -9,6 +9,7 @@
     "rules": {
         "comma-dangle": 0,
         "no-underscore-dangle": 0,
+        "no-proto": 0,
         "quotes": [2, "double"],
         "space-after-keywords": [2, "always"],
         "space-infix-ops": 0,
@@ -18,6 +19,7 @@
         "jsx": true,
     },
     "globals": {
-        "axs": true
+        "axs": true,
+        "$": true,
     }
 }
