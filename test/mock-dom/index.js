@@ -33,14 +33,12 @@ exports.createDom = function(callback) {
         done: function(errors, window) {
             // Expose some fields from `window` onto the global namespace
             //
-            // TODO: Currently we add fields here (see "Node") as we need
-            // them, but this may prove tricky to maintain.
-            global.__proto__ = {
-                document: window.document,
-                $: window.jQuery,
-                axs: window.axs,
-                Node: window.Node,
-            };
+            // TODO: Currently we add fields here as we need them, but this
+            // may prove tricky to maintain.
+            global.document = window.document;
+            global.$ = window.jQuery;
+            global.axs = window.axs;
+            global.Node = window.Node;
 
             // Overwrite the default module loader.
             //
