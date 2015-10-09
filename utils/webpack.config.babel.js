@@ -4,6 +4,8 @@ let path = require("path");
 let postcss = require("postcss");
 let webpack = require("webpack");
 
+let options = require("./options");
+
 // PostCSS plugin to append !important to every CSS rule
 let veryimportant = postcss.plugin("veryimportant", function() {
     return function(css) {
@@ -12,10 +14,6 @@ let veryimportant = postcss.plugin("veryimportant", function() {
         });
     };
 });
-
-// Tell babel to transform all JSX code into calls to this function. It can be
-// anything!
-const JSX_PRAGMA_FN = "buildElement";
 
 let bannerTemplate = handlebars.compile(
     fs.readFileSync("./templates/banner.handlebars", "utf-8"));
@@ -35,7 +33,7 @@ module.exports = {
                 exclude: /node_modules/,
                 loader: "babel",
                 query: {
-                    jsxPragma: JSX_PRAGMA_FN,
+                    jsxPragma: options.jsxPragma,
                 },
             },
             { test: /\.handlebars$/, loader: "handlebars", },
@@ -50,7 +48,7 @@ module.exports = {
         // license info
         new webpack.BannerPlugin(
             bannerTemplate({
-                version: require("./package.json").version,
+                version: require("../package.json").version,
                 date: new Date().toISOString().slice(0, 10),
             }),
             {entryOnly: true}),
@@ -58,7 +56,7 @@ module.exports = {
         // Make the JSX pragma function available everywhere without the need
         // to use "require"
         new webpack.ProvidePlugin({
-            [JSX_PRAGMA_FN]: path.join(__dirname, "element"),
+            [options.jsxPragma]: path.join(__dirname, "element"),
         }),
     ],
     postcss: [veryimportant],
