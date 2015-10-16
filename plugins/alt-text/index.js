@@ -58,7 +58,7 @@ class AltTextPlugin extends Plugin {
         let {result, elements} = audit("imagesWithoutAltText");
 
         if (result === "FAIL") {
-            elements.forEach(::this.reportError);
+            elements.forEach(this.reportError.bind(this));
         }
 
         // Additionally, label presentational images

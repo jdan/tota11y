@@ -49,8 +49,7 @@ class Toolbar {
         let $toolbar;
 
         let $defaultPlugins = plugins.default.map((Plugin) => { // eslint-disable-line no-unused-vars
-            // Render each plugin with the bound click handler
-            return <Plugin onClick={::this.handlePluginClick} />;
+            return <Plugin onClick={this.handlePluginClick.bind(this)} />;
         });
 
         let $experimentalPlugins = null;
@@ -63,7 +62,7 @@ class Toolbar {
                     {
                         plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
                             return (
-                                <Plugin onClick={::this.handlePluginClick} />
+                                <Plugin onClick={this.handlePluginClick.bind(this)} />
                             );
                         })
                     }

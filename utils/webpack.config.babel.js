@@ -1,11 +1,13 @@
-var fs = require("fs");
-var handlebars = require("handlebars");
-var path = require("path");
-var postcss = require("postcss");
-var webpack = require("webpack");
+let fs = require("fs");
+let handlebars = require("handlebars");
+let path = require("path");
+let postcss = require("postcss");
+let webpack = require("webpack");
+
+let options = require("./options");
 
 // PostCSS plugin to append !important to every CSS rule
-var veryimportant = postcss.plugin("veryimportant", function() {
+let veryimportant = postcss.plugin("veryimportant", function() {
     return function(css) {
         css.eachDecl(function(decl) {
             decl.important = true;
@@ -13,7 +15,7 @@ var veryimportant = postcss.plugin("veryimportant", function() {
     };
 });
 
-var bannerTemplate = handlebars.compile(
+let bannerTemplate = handlebars.compile(
     fs.readFileSync("./templates/banner.handlebars", "utf-8"));
 
 module.exports = {
@@ -30,6 +32,9 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: "babel",
+                query: {
+                    jsxPragma: options.jsxPragma,
+                },
             },
             { test: /\.handlebars$/, loader: "handlebars", },
             {
@@ -43,15 +48,15 @@ module.exports = {
         // license info
         new webpack.BannerPlugin(
             bannerTemplate({
-                version: require("./package.json").version,
+                version: require("../package.json").version,
                 date: new Date().toISOString().slice(0, 10),
             }),
             {entryOnly: true}),
 
-        // Make the JSX pragma function "E" available everywhere without the
-        // need to use "require"
+        // Make the JSX pragma function available everywhere without the need
+        // to use "require"
         new webpack.ProvidePlugin({
-            "E": path.join(__dirname, "element"),
+            [options.jsxPragma]: path.join(__dirname, "element"),
         }),
     ],
     postcss: [veryimportant],
