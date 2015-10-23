@@ -1,5 +1,6 @@
 {
   "name": "tota11y",
+  "version": "0.1.2",
   "description": "An accessibility visualization toolkit",
   "main": "build/tota11y.js",
   "authors": [
@@ -11,7 +12,7 @@
     "accessibility",
     "khan"
   ],
-  "homepage": "https://github.com/Khan/tota11y",
+  "homepage": "http://khan.github.io/tota11y/",
   "moduleType": [],
   "ignore": [
     "**/.*",
