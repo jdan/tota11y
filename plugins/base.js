@@ -9,13 +9,10 @@
  *     cleanup: code to run when the plugin is deactivated from the toolbar
  */
 
-let InfoPanel = require("./shared/info-panel");
-
 require("./style.less");
 
 class Plugin {
     constructor() {
-        this.panel = new InfoPanel(this);
         this.$checkbox = null;
     }
 
@@ -25,26 +22,6 @@ class Plugin {
 
     getDescription() {
         return "";
-    }
-
-    /**
-     * Methods that communicate directly with the info panel
-     * TODO: Consider names like `setSummary` and `addError`
-     */
-
-    // Populates the info panel's "Summary" tab
-    summary($html) {
-        return this.panel.setSummary($html);
-    }
-
-    // Populates the info panel's "About" tab
-    about($html) {
-        return this.panel.setAbout($html);
-    }
-
-    // Adds an entry to the info panel's "Errors" tab
-    error(title, $description, $el) {
-        return this.panel.addError(title, $description, $el);
     }
 
     /**
@@ -90,7 +67,6 @@ class Plugin {
      */
     activate() {
         this.run();
-        this.panel.render();
     }
 
     /**
@@ -98,8 +74,6 @@ class Plugin {
      */
     deactivate() {
         this.cleanup();
-        this.panel.destroy();
-
         this.$checkbox.prop("checked", false);
     }
 }

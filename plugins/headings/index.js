@@ -116,16 +116,12 @@ class HeadingsPlugin extends Plugin {
             annotate.toggleHighlight($el, $item);
 
             if (error) {
-                // Register an error to the info panel
-                let infoPanelError = this.error(
-                    error.title, $(error.description), $el);
-
                 // Place an error label on the heading tag
-                annotate.errorLabel(
+                annotate.error(
                     $el,
                     $el.prop("tagName").toLowerCase(),
                     error.title,
-                    infoPanelError);
+                    $(error.description));
 
                 // Mark the summary item as red
                 // Pretty hacky, since we're borrowing label styles for this
@@ -159,7 +155,7 @@ class HeadingsPlugin extends Plugin {
                 </div>
             );
 
-            this.summary($outline);
+            annotate.summary($outline);
         }
     }
 

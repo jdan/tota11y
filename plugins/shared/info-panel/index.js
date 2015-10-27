@@ -15,7 +15,6 @@
  */
 
 let $ = require("jquery");
-let annotate = require("../annotate")("info-panel");
 
 let errorTemplate = require("./error.handlebars");
 require("./style.less");
@@ -25,8 +24,8 @@ const COLLAPSED_CLASS_NAME = "tota11y-collapsed";
 const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 
 class InfoPanel {
-    constructor(plugin) {
-        this.plugin = plugin;
+    constructor(annotate) {
+        this.annotate = annotate;
 
         this.about = null;
         this.summary = null;
@@ -40,6 +39,7 @@ class InfoPanel {
      */
     setAbout(about) {
         this.about = about;
+        this.render();
     }
 
     /**
@@ -47,6 +47,7 @@ class InfoPanel {
      */
     setSummary(summary) {
         this.summary = summary;
+        this.render();
     }
 
     /**
@@ -56,6 +57,7 @@ class InfoPanel {
     addError(title, $description, $el) {
         let error = {title, $description, $el};
         this.errors.push(error);
+        this.render();
         return error;
     }
 
@@ -116,7 +118,8 @@ class InfoPanel {
             this.$el.addClass(HIDDEN_CLASS_NAME);
 
             // (a11y) Bring the focus back to the plugin's checkbox
-            this.plugin.$checkbox.focus();
+            // FIX
+            //this.plugin.$checkbox.focus();
         });
 
         // Append the info panel to the body. In reality we'll likely want
@@ -190,7 +193,8 @@ class InfoPanel {
         this.$el = (
             <div className="tota11y tota11y-info" tabindex="-1">
                 <header className="tota11y-info-title">
-                    {this.plugin.getTitle()}
+                    {/* TODO: plugin title */}
+                    {"Plugin"}
                     <span className="tota11y-info-controls">
                         <label className="tota11y-info-annotation-toggle">
                             Annotate:
@@ -228,9 +232,9 @@ class InfoPanel {
         // Wire annotation toggling
         this.$el.find(".toggle-annotation").click((e) => {
             if ($(e.target).prop("checked")) {
-                annotate.show();
+                this.annotate.show();
             } else {
-                annotate.hide();
+                this.annotate.hide();
             }
         });
 
@@ -308,8 +312,8 @@ class InfoPanel {
                 // Highlight the violating element on hover/focus. We do it
                 // for both $trigger and $scroll to allow users to see the
                 // highlight when scrolling to the element with the button.
-                annotate.toggleHighlight(error.$el, $trigger);
-                annotate.toggleHighlight(error.$el, $scroll);
+                this.annotate.toggleHighlight(error.$el, $trigger);
+                this.annotate.toggleHighlight(error.$el, $scroll);
 
                 // Add code from error.$el to the information panel
                 let errorHTML = error.$el[0].outerHTML;
@@ -363,9 +367,6 @@ class InfoPanel {
             this.$el.remove();
             this.$el = null;
         }
-
-        // Remove the annotations
-        annotate.removeAll();
     }
 }
 

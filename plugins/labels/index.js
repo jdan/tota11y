@@ -33,11 +33,7 @@ class LabelsPlugin extends Plugin {
             elements.forEach((element) => {
                 let $el = $(element);
                 let title = "Input is missing a label";
-
-                // Place an error label on the element and register it as an
-                // error in the info panel
-                let entry = this.error(title, $(this.errorMessage($el)), $el);
-                annotate.errorLabel($el, "", title, entry);
+                annotate.error($el, "", title, $(this.errorMessage($el)));
             });
         }
     }

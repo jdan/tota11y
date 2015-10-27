@@ -11,6 +11,7 @@
  */
 
 let $ = require("jquery");
+let InfoPanel = require("../info-panel");
 
 let errorLabelTemplate = require("./error-label.handlebars");
 require("./style.less");
@@ -94,12 +95,17 @@ module.exports = (namespace) => {
         });
     });
 
-    return {
+    let panel;
+    let module = {
         // Places a small label in the top left corner of a given jQuery
         // element. By default, this label contains the element's tagName.
         label($el, text=$el.prop("tagName").toLowerCase()) {
             let $label = createAnnotation($el, "tota11y-label");
             return $label.html(text);
+        },
+
+        summary($html) {
+            panel.setSummary($html);
         },
 
         // Places a special label on an element that, when hovered, displays
@@ -110,14 +116,16 @@ module.exports = (namespace) => {
         // object will contain a "show()" method when the info panel is
         // rendered, allowing us to externally open the entry in the info
         // panel corresponding to this error.
-        errorLabel($el, text, expanded, errorEntry) {
+        error($el, text, expanded, $error) {
             let $innerHtml = $(errorLabelTemplate({
                 text: text,
                 detail: expanded,
-                hasErrorEntry: !!errorEntry
+                hasError: !!$error,
             }));
 
-            if (errorEntry) {
+            if ($error) {
+                let errorEntry = panel.addError(expanded, $error, $el);
+
                 $innerHtml.find(".tota11y-label-link").click((e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -179,6 +187,13 @@ module.exports = (namespace) => {
         removeAll() {
             // Remove all annotations
             $("." + ANNOTATION_CLASS).remove();
+
+            panel.destroy();
         }
     };
+
+    // The info panel makes calls to `annotate`, so we'll do some dependency
+    // injection to prevent a circular dependency
+    panel = new InfoPanel(module);
+    return module;
 };
