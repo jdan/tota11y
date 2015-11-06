@@ -50,9 +50,7 @@ class ContrastPlugin extends Plugin {
         let originalFgColor = style.color;
         let originalBgColor = style.backgroundColor;
 
-        console.log('added')
         $description.find(".preview-contrast-fix").click((e) => {
-            console.log('click!')
             if ($(e.target).prop("checked")) {
                 // Set suggested colors
                 $(el).css("color", suggestedColors.fg);

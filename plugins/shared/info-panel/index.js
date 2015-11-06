@@ -117,9 +117,10 @@ class InfoPanel {
             e.stopPropagation();
             this.$el.addClass(HIDDEN_CLASS_NAME);
 
+            // TODO(jordan): We no longer have access to `this.plugin`, so
+            // is an a11y regression.
             // (a11y) Bring the focus back to the plugin's checkbox
-            // FIX
-            //this.plugin.$checkbox.focus();
+            // this.plugin.$checkbox.focus();
         });
 
         // Append the info panel to the body. In reality we'll likely want
