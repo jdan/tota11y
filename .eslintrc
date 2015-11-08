@@ -7,8 +7,10 @@
     },
     "rules": {
         "comma-dangle": 0,
+        "react/jsx-uses-react": 2,
         "no-underscore-dangle": 0,
         "no-proto": 0,
+        "no-use-before-define": 0,
         "quotes": [2, "double"],
         "space-after-keywords": [2, "always"],
         "space-infix-ops": 0,
@@ -16,9 +18,13 @@
     },
     "ecmaFeatures": {
         "jsx": true,
+        "modules": true
     },
+    "plugins": [
+        "react"
+    ],
     "globals": {
         "axs": true,
-        "$": true,
+        "React": true
     }
 }

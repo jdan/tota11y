@@ -4,8 +4,6 @@ let path = require("path");
 let postcss = require("postcss");
 let webpack = require("webpack");
 
-let options = require("./options");
-
 // PostCSS plugin to append !important to every CSS rule
 let veryimportant = postcss.plugin("veryimportant", function() {
     return function(css) {
@@ -20,7 +18,7 @@ let bannerTemplate = handlebars.compile(
 
 module.exports = {
     entry: {
-        app: "./index.js",
+        app: "./index-react.js",
     },
     output: {
         path: path.join(__dirname, "build"),
@@ -32,9 +30,6 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: "babel",
-                query: {
-                    jsxPragma: options.jsxPragma,
-                },
             },
             { test: /\.handlebars$/, loader: "handlebars", },
             {
@@ -52,12 +47,6 @@ module.exports = {
                 date: new Date().toISOString().slice(0, 10),
             }),
             {entryOnly: true}),
-
-        // Make the JSX pragma function available everywhere without the need
-        // to use "require"
-        new webpack.ProvidePlugin({
-            [options.jsxPragma]: path.join(__dirname, "element"),
-        }),
     ],
     postcss: [veryimportant],
 };
