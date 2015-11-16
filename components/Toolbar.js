@@ -1,10 +1,30 @@
 import React, { Component } from "react";
 import { StyleSheet, css } from "../vendor/aphrodite";
 
+import Plugin from "./plugin";
+import LandmarksPlugin from "../plugins/landmarks";
+
 class Toolbar extends Component {
+    constructor() {
+        super();
+        this.state = {
+            active: false,
+        };
+    }
+
+    handleToggle() {
+        this.setState({
+            active: !this.state.active,
+        });
+    }
+
     render() {
         return <div className={css(styles.toolbar)}>
-            Hello, world!
+            <Plugin
+                plugin={new LandmarksPlugin()}
+                active={this.state.active}
+                handleToggle={() => this.handleToggle()}
+            />
         </div>;
     }
 }
@@ -16,12 +36,12 @@ const styles = StyleSheet.create({
     toolbar: {
         backgroundColor: "#333",
         color: "#fff",
+        height: 400,
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
         position: "fixed",
         bottom: 0,
-        left: 20,
-
-        width: 200,
-        height: 400,
+        left: 10,
     },
 });
 
