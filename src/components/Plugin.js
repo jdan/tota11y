@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import { StyleSheet, css } from "../vendor/aphrodite";
+import { StyleSheet, css } from "../../vendor/aphrodite";
 
-import legacyAnnotateFactory from "../plugins/shared/annotate";
+import legacyAnnotateFactory from "../../plugins/shared/annotate";
 
-const Plugin = (props) => {
+const Plugin = ({ plugin, active, onToggle }) => {
     const indicator = <div
-        className={css(styles.indicator, props.active && styles.active)}
+        className={css(styles.indicator, active && styles.active)}
         aria-hidden="true"
     >
         &#x2713;
@@ -17,24 +17,24 @@ const Plugin = (props) => {
                 <input
                     className={css(styles.checkbox)}
                     type="checkbox"
-                    checked={props.active}
-                    onChange={props.handleToggle}
+                    checked={active}
+                    onChange={onToggle}
                 />
                 {indicator}
             </div>
 
             <div className={css(styles.info)}>
                 <div className={css(styles.title)}>
-                    {props.plugin.title}
+                    {plugin.title}
                 </div>
                 <div className={css(styles.description)}>
-                    {props.plugin.description}
+                    {plugin.description}
                 </div>
             </div>
         </label>
 
-        {props.active &&
-            <PluginRunner plugin={props.plugin} />
+        {active &&
+            <PluginRunner plugin={plugin} />
         }
     </div>;
 };
@@ -48,7 +48,7 @@ Plugin.propTypes = {
     }).isRequired,
 
     active: React.PropTypes.bool.isRequired,
-    handleToggle: React.PropTypes.func.isRequired,
+    onToggle: React.PropTypes.func.isRequired,
 };
 
 class PluginRunner extends Component {
