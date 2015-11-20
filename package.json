@@ -38,7 +38,7 @@
     "dev": "webpack --config utils/webpack.config.babel.js -d --devtool hidden --output-file=tota11y.js",
     "lint": "eslint index.js plugins test utils",
     "test": "mocha --require test/babel-hook test/*.js",
-    "start": "webpack-dev-server --port 1337 --config utils/webpack.config.babel.js --hot --inline"
+    "start": "webpack-dev-server --port 8080 --config utils/webpack.config.babel.js --hot --inline"
   },
   "license": "MIT"
 }

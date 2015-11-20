@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { StyleSheet, css } from "../vendor/aphrodite";
 
+import legacyAnnotateFactory from "../plugins/shared/annotate";
+
 const Plugin = (props) => {
     const indicator = <div
         className={css(styles.indicator, props.active && styles.active)}
@@ -23,10 +25,10 @@ const Plugin = (props) => {
 
             <div className={css(styles.info)}>
                 <div className={css(styles.title)}>
-                    {props.plugin.getTitle()}
+                    {props.plugin.title}
                 </div>
                 <div className={css(styles.description)}>
-                    {props.plugin.getDescription()}
+                    {props.plugin.description}
                 </div>
             </div>
         </label>
@@ -39,12 +41,10 @@ const Plugin = (props) => {
 
 Plugin.propTypes = {
     plugin: React.PropTypes.shape({
+        title: React.PropTypes.string.isRequired,
+        description: React.PropTypes.string.isRequired,
         run: React.PropTypes.func.isRequired,
-        cleanup: React.PropTypes.func.isRequired,
-
-        // meh!
-        getTitle: React.PropTypes.func.isRequired,
-        getDescription: React.PropTypes.func.isRequired,
+        cleanup: React.PropTypes.func,
     }).isRequired,
 
     active: React.PropTypes.bool.isRequired,
@@ -52,12 +52,20 @@ Plugin.propTypes = {
 };
 
 class PluginRunner extends Component {
+    constructor(props) {
+        super(props);
+        this.annotate = legacyAnnotateFactory(props.plugin.title);
+    }
+
     componentDidMount() {
-        this.props.plugin.run();
+        this.props.plugin.run(this.annotate);
     }
 
     componentWillUnmount() {
-        this.props.plugin.cleanup();
+        if (this.props.plugin.cleanup) {
+            this.props.plugin.cleanup();
+        }
+        this.annotate.removeAll();
     }
 
     render() {

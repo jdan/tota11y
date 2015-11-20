@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { StyleSheet, css } from "../vendor/aphrodite";
 
-import Plugin from "./plugin";
-import LandmarksPlugin from "../plugins/landmarks";
+import Plugin from "./Plugin.js";
+import LandmarksPlugin from "../plugins/landmarks.js";
 
 class Toolbar extends Component {
     constructor() {
@@ -21,7 +21,7 @@ class Toolbar extends Component {
     render() {
         return <div className={css(styles.toolbar)}>
             <Plugin
-                plugin={new LandmarksPlugin()}
+                plugin={LandmarksPlugin}
                 active={this.state.active}
                 handleToggle={() => this.handleToggle()}
             />
