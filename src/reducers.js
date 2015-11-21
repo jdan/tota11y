@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import { TOGGLE_EXPANDED, TOGGLE_PLUGIN } from "./actions";
 
+import AltTextPlugin from "../plugins/alt-text.js";
 import LandmarksPlugin from "../plugins/landmarks.js";
 
 function expanded(state = false, action) {
@@ -9,23 +10,28 @@ function expanded(state = false, action) {
 
 const initialPluginsState = [
     {
+        plugin: AltTextPlugin,
+        active: false,
+    },
+    {
         plugin: LandmarksPlugin,
         active: false,
     },
 ];
-function plugins(state = initialPluginsState, action) {
+
+// TODO: We can unit test this!
+export function plugins(state = initialPluginsState, action) {
     switch (action.type) {
         case TOGGLE_PLUGIN:
-            return [
-                ...state.slice(0, action.index),
-                {
-                    ...state[action.index],
-
-                    // Toggle the active state
-                    active: !state[action.index].active,
-                },
-                ...state.slice(action.index + 1),
-            ];
+            return state.map((plugin, i) => {
+                return {
+                    ...plugin,
+                    // Toggle the plugin if it matches our action's index,
+                    // otherwise set active to false as we can only have one
+                    // active plugin at a time.
+                    active: (action.index === i) ? !plugin.active : false,
+                };
+            });
         default:
             return state;
     }

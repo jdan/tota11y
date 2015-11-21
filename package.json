@@ -29,6 +29,7 @@
     "react-dom": "^0.14.2",
     "react-redux": "^4.0.0",
     "redux": "^3.0.4",
+    "redux-devtools": "^2.1.5",
     "script-loader": "^0.6.1",
     "style-loader": "^0.10.1",
     "webpack": "^1.8.4",
@@ -39,7 +40,7 @@
     "prod": "webpack -p",
     "dev": "webpack --config utils/webpack.config.babel.js -d --devtool hidden --output-file=tota11y.js",
     "lint": "eslint index.js plugins test utils",
-    "test": "mocha --require test/babel-hook test/*.js",
+    "test": "mocha --require test/babel-hook test/reducers-test.js",
     "start": "webpack-dev-server --port 8080 --config utils/webpack.config.babel.js --hot --inline"
   },
   "license": "MIT"

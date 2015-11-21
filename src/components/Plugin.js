@@ -54,7 +54,10 @@ Plugin.propTypes = {
 class PluginRunner extends Component {
     constructor(props) {
         super(props);
-        this.annotate = legacyAnnotateFactory(props.plugin.title);
+        // The annotation module excepts a "namespace" in order to support
+        // removing particular annotations at once. We don't need this
+        // functionality right now.
+        this.annotate = legacyAnnotateFactory("dummyNamespace");
     }
 
     componentDidMount() {
