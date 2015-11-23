@@ -4,7 +4,7 @@ let path = require("path");
 let postcss = require("postcss");
 let webpack = require("webpack");
 
-let options = require("./options");
+let options = require("./utils/options");
 
 // PostCSS plugin to append !important to every CSS rule
 let veryimportant = postcss.plugin("veryimportant", function() {
@@ -48,7 +48,7 @@ module.exports = {
         // license info
         new webpack.BannerPlugin(
             bannerTemplate({
-                version: require("../package.json").version,
+                version: require("./package.json").version,
                 date: new Date().toISOString().slice(0, 10),
             }),
             {entryOnly: true}),
@@ -56,7 +56,7 @@ module.exports = {
         // Make the JSX pragma function available everywhere without the need
         // to use "require"
         new webpack.ProvidePlugin({
-            [options.jsxPragma]: path.join(__dirname, "element"),
+            [options.jsxPragma]: path.join(__dirname, "utils", "element"),
         }),
     ],
     postcss: [veryimportant],

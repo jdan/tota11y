@@ -31,8 +31,8 @@
   },
   "scripts": {
     "build": "npm run prod && npm run dev",
-    "prod": "webpack -p",
-    "dev": "webpack --config utils/webpack.config.babel.js -d --devtool hidden --output-file=tota11y.js",
+    "prod": "webpack --config webpack.config.babel.js -p",
+    "dev": "webpack --config webpack.config.babel.js -d --devtool hidden --output-file=tota11y.js",
     "lint": "eslint index.js plugins test utils",
     "test": "mocha --require test/babel-hook test/*.js",
     "live-test": "webpack-dev-server --config utils/webpack.config.babel.js --hot --inline"
