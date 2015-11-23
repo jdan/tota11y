@@ -20,6 +20,12 @@ require("./style.less");
 // and across.
 const MIN_HIGHLIGHT_SIZE = 25;
 
+// Polyfill fallback for IE < 10
+window.requestAnimationFrame = window.requestAnimationFrame ||
+    function(callback) {
+        window.setTimeout(callback, 16);
+    };
+
 module.exports = (namespace) => {
     // The class that will be applied to any annotation generated in this
     // namespace
@@ -65,15 +71,14 @@ module.exports = (namespace) => {
     // Mount all annotations to the DOM in sequence. This is done by
     // picking items off the queue, where each item consists of the
     // annotation and the node to which we'll append it.
-    function render() {
+    (function loop() {
         for (let i = 0; queue.length > 0 && i < RENDER_CHUNK_SIZE; i++) {
             let item = queue.shift();
             item.$parent.append(item.$annotation);
         }
 
-        window.requestAnimationFrame(render);
-    }
-    window.requestAnimationFrame(render);
+        window.requestAnimationFrame(loop);
+    })();
 
     // Handle resizes by repositioning all annotations in bulk
     $(window).resize(() => {
