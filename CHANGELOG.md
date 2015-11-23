@@ -1,3 +1,23 @@
+## 0.1.3
+
+* Fixed npm build commands ([20cf3c4](https://github.com/Khan/tota11y/commit/20cf3c4))
+* Provide fallback for window.requestAnimationFrame on IE 9 and * under ([8d0aa4f](https://github.com/Khan/tota11y/commit/8d0aa4f))
+* Add bower.json file ([43fb990](https://github.com/Khan/tota11y/commit/43fb990))
+* Remove experimental ES7 code, and use babel for webpack config ([03a0021](https://github.com/Khan/tota11y/commit/03a0021))
+* Remove various hacks for unit testing ([048c873](https://github.com/Khan/tota11y/commit/048c873))
+* Fixed unit tests now that `window` is global ([492be3f](https://github.com/Khan/tota11y/commit/492be3f))
+* Fixed tests, ignoring ADT code from linter ([dd28057](https://github.com/Khan/tota11y/commit/dd28057))
+
+## 0.1.2
+
+* Patch axs.AuditRule.collectMatchingElements to prevent JS errors with cross-origin iframes ([be1dc92](https://github.com/Khan/tota11y/commit/be1dc92))
+
+## 0.1.1
+
+* Added keyboard accessibility to toolbar toggle ([861574e](https://github.com/Khan/tota11y/commit/861574e))
+* Change position code to work off left/top ([19cf161](https://github.com/Khan/tota11y/commit/19cf161))
+* Added architecture overview to README, and some dev installation instructions ([20115fd](https://github.com/Khan/tota11y/commit/20115fd))
+
 ## 0.1.0
 
 * Added an experimental "Magic wand" plugin to display screen-reader text on hover ([1215c6e](https://github.com/Khan/tota11y/commit/1215c6e), [fbcd665](https://github.com/Khan/tota11y/commit/fbcd665))

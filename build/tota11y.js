@@ -1,5 +1,5 @@
 /*!
- * tota11y v0.1.2
+ * tota11y v0.1.3
  * http://khan.github.io/tota11y
  * 
  * Includes Accessibility Developer Tools
@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2015-09-27
+ * Date: 2015-11-23
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -61,7 +61,7 @@
   \******************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(E) {/**
+	/* WEBPACK VAR INJECTION */(function(buildElement) {/**
 	 * The entry point for tota11y.
 	 *
 	 * Builds and mounts the toolbar.
@@ -128,28 +128,27 @@
 
 	            var $defaultPlugins = plugins["default"].map(function (Plugin) {
 	                // eslint-disable-line no-unused-vars
-	                // Render each plugin with the bound click handler
-	                return E(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
+	                return buildElement(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
 	            });
 
 	            var $experimentalPlugins = null;
 	            if (plugins.experimental.length) {
-	                $experimentalPlugins = E(
+	                $experimentalPlugins = buildElement(
 	                    "div",
 	                    null,
-	                    E(
+	                    buildElement(
 	                        "div",
 	                        { className: "tota11y-plugins-separator" },
 	                        "Experimental"
 	                    ),
 	                    plugins.experimental.map(function (Plugin) {
 	                        // eslint-disable-line no-unused-vars
-	                        return E(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
+	                        return buildElement(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
 	                    })
 	                );
 	            }
 
-	            var $plugins = E(
+	            var $plugins = buildElement(
 	                "div",
 	                { className: "tota11y-plugins" },
 	                $defaultPlugins,
@@ -163,25 +162,25 @@
 	                $toolbar.attr("aria-expanded", $toolbar.is(".tota11y-expanded"));
 	            };
 
-	            var $toggle = E(
+	            var $toggle = buildElement(
 	                "button",
 	                { "aria-controls": "tota11y-toolbar",
 	                    className: "tota11y-toolbar-toggle",
 	                    onClick: handleToggleClick,
 	                    "aria-label": "[tota11y] Toggle menu" },
-	                E(
+	                buildElement(
 	                    "div",
 	                    { "aria-hidden": "true", className: "tota11y-toolbar-logo" },
 	                    $logo
 	                )
 	            );
 
-	            $toolbar = E(
+	            $toolbar = buildElement(
 	                "div",
 	                { id: "tota11y-toolbar", className: "tota11y tota11y-toolbar",
 	                    role: "region",
 	                    "aria-expanded": "false" },
-	                E(
+	                buildElement(
 	                    "div",
 	                    { className: "tota11y-toolbar-body" },
 	                    $plugins
@@ -197,23 +196,20 @@
 	})();
 
 	$(function () {
-	    // Attach the global `axs` object from Accessibility Developer Tools to $
-	    $.axs = axs;
-
 	    var bar = new Toolbar();
 
 	    // TODO: Make this customizable
 	    bar.appendTo($("body"));
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
 /* 1 */,
 /* 2 */,
 /* 3 */
-/*!********************!*\
-  !*** ./element.js ***!
-  \********************/
+/*!**************************!*\
+  !*** ./utils/element.js ***!
+  \**************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9871,7 +9867,7 @@
   \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(E) {/**
+	/* WEBPACK VAR INJECTION */(function(buildElement) {/**
 	 * A plugin to check for valid alternative representations for images
 	 */
 
@@ -9915,36 +9911,36 @@
 	            var $el = $(el);
 	            var src = $el.attr("src") || "..";
 	            var title = "Image is missing alt text";
-	            var $error = E(
+	            var $error = buildElement(
 	                "div",
 	                null,
-	                E(
+	                buildElement(
 	                    "p",
 	                    null,
 	                    "This image does not have an associated \"alt\" attribute. Please specify the alt text for this image like so:"
 	                ),
-	                E(
+	                buildElement(
 	                    "pre",
 	                    null,
-	                    E(
+	                    buildElement(
 	                        "code",
 	                        null,
 	                        "&lt;img src=\"" + src + "\" alt=\"Image description\"&gt"
 	                    )
 	                ),
-	                E(
+	                buildElement(
 	                    "p",
 	                    null,
 	                    "If the image is decorative and does not convey any information to the surrounding content, however, you may leave this \"alt\" attribute empty, or specify a \"role\" attribute with a value of \"presentation.\""
 	                ),
-	                E(
+	                buildElement(
 	                    "pre",
 	                    null,
-	                    E(
+	                    buildElement(
 	                        "code",
 	                        null,
 	                        "&lt;img src=\"" + src + "\" alt=\"\"&gt;",
-	                        E("br", null),
+	                        buildElement("br", null),
 	                        "&lt;img src=\"" + src + "\" role=\"presentation\"&gt;"
 	                    )
 	                )
@@ -9988,7 +9984,7 @@
 	})(Plugin);
 
 	module.exports = AltTextPlugin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
 /* 11 */
@@ -9997,7 +9993,7 @@
   \*************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(E) {/**
+	/* WEBPACK VAR INJECTION */(function(buildElement) {/**
 	 * Base class for plugins.
 	 *
 	 * This module defines methods to render and mount plugins to the toolbar.
@@ -10071,32 +10067,32 @@
 	        value: function render(clickHandler) {
 	            var _this = this;
 
-	            this.$checkbox = E("input", {
+	            this.$checkbox = buildElement("input", {
 	                className: "tota11y-plugin-checkbox tota11y-sr-only",
 	                type: "checkbox",
 	                onClick: function () {
 	                    return clickHandler(_this);
 	                } });
 
-	            var $switch = E(
+	            var $switch = buildElement(
 	                "label",
 	                { className: "tota11y-plugin-switch" },
 	                this.$checkbox,
-	                E(
+	                buildElement(
 	                    "div",
 	                    { "aria-hidden": "true",
 	                        className: "tota11y-plugin-indicator" },
 	                    "✓"
 	                ),
-	                E(
+	                buildElement(
 	                    "div",
 	                    { className: "tota11y-plugin-info" },
-	                    E(
+	                    buildElement(
 	                        "div",
 	                        { className: "tota11y-plugin-title" },
 	                        this.getTitle()
 	                    ),
-	                    E(
+	                    buildElement(
 	                        "div",
 	                        { className: "tota11y-plugin-description" },
 	                        this.getDescription()
@@ -10104,7 +10100,7 @@
 	                )
 	            );
 
-	            var $el = E(
+	            var $el = buildElement(
 	                "li",
 	                { role: "menu-item", className: "tota11y-plugin" },
 	                $switch
@@ -10140,7 +10136,7 @@
 	})();
 
 	module.exports = Plugin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
 /* 12 */
@@ -10149,7 +10145,7 @@
   \********************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(E) {/**
+	/* WEBPACK VAR INJECTION */(function(buildElement) {/**
 	 * The following code defines an information panel that can be invoked from
 	 * any plugin to display summaries, errors, or more information about what
 	 * the plugin is doing.
@@ -10230,13 +10226,13 @@
 	            var _this = this;
 
 	            // Create and append a tab marker
-	            var $tab = E(
+	            var $tab = buildElement(
 	                "li",
 	                { className: "tota11y-info-tab" },
-	                E(
+	                buildElement(
 	                    "a",
 	                    { className: "tota11y-info-tab-anchor", href: "#" },
-	                    E(
+	                    buildElement(
 	                        "span",
 	                        { className: "tota11y-info-tab-anchor-text" },
 	                        title
@@ -10363,27 +10359,27 @@
 
 	            var hasContent = false;
 
-	            this.$el = E(
+	            this.$el = buildElement(
 	                "div",
 	                { className: "tota11y tota11y-info", tabindex: "-1" },
-	                E(
+	                buildElement(
 	                    "header",
 	                    { className: "tota11y-info-title" },
 	                    this.plugin.getTitle(),
-	                    E(
+	                    buildElement(
 	                        "span",
 	                        { className: "tota11y-info-controls" },
-	                        E(
+	                        buildElement(
 	                            "label",
 	                            { className: "tota11y-info-annotation-toggle" },
 	                            "Annotate:",
 	                            " ",
-	                            E("input", {
+	                            buildElement("input", {
 	                                className: "toggle-annotation",
 	                                type: "checkbox",
 	                                checked: "checked" })
 	                        ),
-	                        E(
+	                        buildElement(
 	                            "a",
 	                            { "aria-label": "Close info panel",
 	                                href: "#",
@@ -10392,11 +10388,11 @@
 	                        )
 	                    )
 	                ),
-	                E(
+	                buildElement(
 	                    "div",
 	                    { className: "tota11y-info-body" },
-	                    E("div", { className: "tota11y-info-sections" }),
-	                    E("ul", { role: "tablist", className: "tota11y-info-tabs" })
+	                    buildElement("div", { className: "tota11y-info-sections" }),
+	                    buildElement("ul", { role: "tablist", className: "tota11y-info-tabs" })
 	                )
 	            );
 
@@ -10556,7 +10552,7 @@
 	})();
 
 	module.exports = InfoPanel;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
 /* 13 */
@@ -10588,6 +10584,11 @@
 	// This constant declares highlights to be at least `MIN_HIGHLIGHT_SIZE` tall
 	// and across.
 	var MIN_HIGHLIGHT_SIZE = 25;
+
+	// Polyfill fallback for IE < 10
+	window.requestAnimationFrame = window.requestAnimationFrame || function (callback) {
+	    window.setTimeout(callback, 16);
+	};
 
 	module.exports = function (namespace) {
 	    // The class that will be applied to any annotation generated in this
@@ -10630,15 +10631,14 @@
 	    // Mount all annotations to the DOM in sequence. This is done by
 	    // picking items off the queue, where each item consists of the
 	    // annotation and the node to which we'll append it.
-	    function render() {
+	    (function loop() {
 	        for (var i = 0; queue.length > 0 && i < RENDER_CHUNK_SIZE; i++) {
 	            var item = queue.shift();
 	            item.$parent.append(item.$annotation);
 	        }
 
-	        window.requestAnimationFrame(render);
-	    }
-	    window.requestAnimationFrame(render);
+	        window.requestAnimationFrame(loop);
+	    })();
 
 	    // Handle resizes by repositioning all annotations in bulk
 	    $(window).resize(function () {
@@ -11720,7 +11720,7 @@
 /*!*********************************!*\
   !*** ./plugins/shared/audit.js ***!
   \*********************************/
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Abstractions for how we use Accessibility Developer Tools
@@ -11728,10 +11728,8 @@
 
 	"use strict";
 
-	var $ = __webpack_require__(/*! jquery */ 4);
-
 	function allRuleNames() {
-	    return $.axs.AuditRules.getRules().map(function (rule) {
+	    return axs.AuditRules.getRules().map(function (rule) {
 	        return rule.name;
 	    });
 	}
@@ -11739,7 +11737,7 @@
 	// Creates an audit configuration that whitelists a single rule and limits the
 	// amount of tests to run
 	function createWhitelist(ruleName) {
-	    var config = new $.axs.AuditConfiguration();
+	    var config = new axs.AuditConfiguration();
 	    config.showUnsupportedRulesWarning = false;
 
 	    // Ignore elements that are part of the toolbar
@@ -11754,6 +11752,7 @@
 	    return config;
 	}
 
+	/*eslint-disable*/
 	// Patch collectMatchingElements to match
 	// https://github.com/GoogleChrome/accessibility-developer-tools/blob/0062f77258eb4eb8508dad3c92fd2df63c2381fc/src/js/AuditRule.js
 	//
@@ -11768,8 +11767,8 @@
 	     * @param {Array.<Element>} collection
 	     * @param {ShadowRoot=} opt_shadowRoot The nearest ShadowRoot ancestor, if any.
 	     */
-	    $.axs.AuditRule.collectMatchingElements = function (node, matcher, collection, opt_shadowRoot) {
-	        if (node.nodeType == Node.ELEMENT_NODE) var element = /** @type {Element} */node;
+	    axs.AuditRule.collectMatchingElements = function (node, matcher, collection, opt_shadowRoot) {
+	        if (node.nodeType === Node.ELEMENT_NODE) var element = /** @type {Element} */node;
 
 	        if (element && matcher.call(null, element)) collection.push(element);
 
@@ -11822,6 +11821,7 @@
 	        }
 	    };
 	}
+	/*eslint-enable*/
 
 	// Audits for a single rule (by name) and returns the results for only that
 	// rule
@@ -11830,7 +11830,7 @@
 
 	    patchCollectMatchingElements();
 
-	    return $.axs.Audit.run(whitelist).filter(function (result) {
+	    return axs.Audit.run(whitelist).filter(function (result) {
 	        return result.rule.name === ruleName;
 	    })[0];
 	}
@@ -12127,7 +12127,7 @@
   \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(E) {/**
+	/* WEBPACK VAR INJECTION */(function(buildElement) {/**
 	 * A plugin to identify and validate heading tags (<h1>, <h2>, etc.)
 	 */
 
@@ -12282,7 +12282,7 @@
 	            var $items = this.outline($headings);
 
 	            if ($items.length) {
-	                var $outline = E(
+	                var $outline = buildElement(
 	                    "div",
 	                    { className: "tota11y-heading-outline" },
 	                    $items
@@ -12302,7 +12302,7 @@
 	})(Plugin);
 
 	module.exports = HeadingsPlugin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
 /* 37 */
@@ -12550,7 +12550,7 @@
   \************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(E) {/**
+	/* WEBPACK VAR INJECTION */(function(buildElement) {/**
 	 * A plugin to identify unclear link text such as "more" and "click here,"
 	 * which can make for a bad experience when using a screen reader
 	 */
@@ -12648,15 +12648,15 @@
 	                // TODO: Read from `alts` to determine where the text is coming
 	                // from (for tailored error messages)
 	                var alts = {};
-	                var extractedText = $.axs.properties.findTextAlternatives(el, alts);
+	                var extractedText = axs.properties.findTextAlternatives(el, alts);
 
 	                if (!_this.isDescriptiveText(extractedText)) {
-	                    var $description = E(
+	                    var $description = buildElement(
 	                        "div",
 	                        null,
 	                        "The text",
 	                        " ",
-	                        E(
+	                        buildElement(
 	                            "i",
 	                            null,
 	                            "\"",
@@ -12666,7 +12666,7 @@
 	                        " ",
 	                        "is unclear without context and may be confusing to screen readers. Consider rearranging the",
 	                        " ",
-	                        E(
+	                        buildElement(
 	                            "code",
 	                            null,
 	                            "&lt;a&gt;&lt;/a&gt;"
@@ -12690,7 +12690,7 @@
 	})(Plugin);
 
 	module.exports = LinkTextPlugin;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
 /* 44 */
@@ -12699,7 +12699,7 @@
   \*****************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(E) {/**
+	/* WEBPACK VAR INJECTION */(function(buildElement) {/**
 	 * Allows users to see what screen readers would see.
 	 */
 
@@ -12748,13 +12748,13 @@
 	            $(document).on("mousemove.wand", function (e) {
 	                var element = document.elementFromPoint(e.clientX, e.clientY);
 
-	                var textAlternative = $.axs.properties.findTextAlternatives(element, {});
+	                var textAlternative = axs.properties.findTextAlternatives(element, {});
 
 	                $(".tota11y-outlined").removeClass("tota11y-outlined");
 	                $(element).addClass("tota11y-outlined");
 
 	                if (!textAlternative) {
-	                    $(".tota11y-info-section.active").html(E(
+	                    $(".tota11y-info-section.active").html(buildElement(
 	                        "i",
 	                        { className: "tota11y-nothingness" },
 	                        "No text visible to a screen reader"
@@ -12776,7 +12776,7 @@
 	})(Plugin);
 
 	module.exports = A11yTextWand;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./element */ 3)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
 /* 45 */
