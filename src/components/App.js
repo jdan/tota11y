@@ -3,15 +3,20 @@ import { connect } from "react-redux";
 
 import Toolbar from "./Toolbar";
 
-import { togglePlugin } from "../actions";
+import { toggleExpanded, togglePlugin } from "../actions";
 
 const App = ({ dispatch, toolbar }) => {
     const handlePluginToggle = (i) => {
         dispatch(togglePlugin(i));
     };
 
+    const handleExpandToggle = () => {
+        dispatch(toggleExpanded());
+    };
+
     return <Toolbar
         {...toolbar}
+        onExpandToggle={handleExpandToggle}
         onPluginToggle={handlePluginToggle}
     />;
 };

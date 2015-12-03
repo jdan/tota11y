@@ -1,11 +1,10 @@
 import { combineReducers } from "redux";
-import { TOGGLE_PLUGIN } from "./actions";
+import { TOGGLE_EXPANDED, TOGGLE_PLUGIN } from "./actions";
 
 import LandmarksPlugin from "../plugins/landmarks.js";
 
-function expanded(state = false) {
-    // TODO: Respond to actions here to change the state
-    return state;
+function expanded(state = false, action) {
+    return action.type === TOGGLE_EXPANDED ? !state : state;
 }
 
 const initialPluginsState = [

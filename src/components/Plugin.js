@@ -92,7 +92,11 @@ const styles = StyleSheet.create({
         cursor: "pointer",
         display: "flex",
         fontWeight: 400,
-        padding: "12px 12px 12px 0",
+        margin: 0,
+        paddingTop: 12,
+        paddingRight: 12,
+        paddingBottom: 12,
+        paddingLeft: 0,
 
         // TODO: user-select mixin
         userSelect: "none",
