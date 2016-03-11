@@ -16,7 +16,7 @@ class LandmarksPlugin extends Plugin {
     }
 
     run() {
-        $("[role]").each(function() {
+        $("[role]:not(.tota11y-toolbar,.tota11y-plugin)").each(function() {
             annotate.label($(this), $(this).attr("role"));
         });
     }
