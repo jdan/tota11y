@@ -55,26 +55,28 @@ class Toolbar {
         let $experimentalPlugins = null;
         if (plugins.experimental.length) {
             $experimentalPlugins = (
-                <div>
+                <li>
                     <div className="tota11y-plugins-separator">
                         Experimental
                     </div>
-                    {
-                        plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
-                            return (
-                                <Plugin onClick={this.handlePluginClick.bind(this)} />
-                            );
-                        })
-                    }
-                </div>
+                    <ul>
+                      {
+                          plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
+                              return (
+                                  <Plugin onClick={this.handlePluginClick.bind(this)} />
+                              );
+                          })
+                      }
+                    </ul>
+                </li>
             );
         }
 
         let $plugins = (
-            <div className="tota11y-plugins">
+            <ul className="tota11y-plugins">
                 {$defaultPlugins}
                 {$experimentalPlugins}
-            </div>
+            </ul>
         );
 
         let handleToggleClick = (e) => {
