@@ -1,3 +1,9 @@
+## 0.1.4
+
+* Add explicit background to all elements ([54a3f5a](https://github.com/Khan/tota11y/commit/54a3f5a))
+* Skip the tota11y UI under the Landmarks plugin ([a3059e9](https://github.com/Khan/tota11y/commit/a3059e9))
+* Update jsdom and fix live-test script ([e5a418e](https://github.com/Khan/tota11y/commit/e5a418e))
+
 ## 0.1.3
 
 * Fixed npm build commands ([20cf3c4](https://github.com/Khan/tota11y/commit/20cf3c4))
