@@ -1,3 +1,9 @@
+## 0.1.5
+
+* Update travis.yml to use node v4 ([c3c47be](https://github.com/Khan/tota11y/commit/c3c47be))
+* Use semantic tags when listing plugins ([dc5425b](https://github.com/Khan/tota11y/commit/dc5425b))
+* Fix contrast plugin swatches not displaying correctly ([8a34c9b](https://github.com/Khan/tota11y/commit/8a34c9b))
+
 ## 0.1.4
 
 * Add explicit background to all elements ([54a3f5a](https://github.com/Khan/tota11y/commit/54a3f5a))

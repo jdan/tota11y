@@ -1,5 +1,5 @@
 /*!
- * tota11y v0.1.4
+ * tota11y v0.1.5
  * http://khan.github.io/tota11y
  * 
  * Includes Accessibility Developer Tools
@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2016-03-11
+ * Date: 2016-05-20
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -134,22 +134,26 @@
 	            var $experimentalPlugins = null;
 	            if (plugins.experimental.length) {
 	                $experimentalPlugins = buildElement(
-	                    "div",
+	                    "li",
 	                    null,
 	                    buildElement(
 	                        "div",
 	                        { className: "tota11y-plugins-separator" },
 	                        "Experimental"
 	                    ),
-	                    plugins.experimental.map(function (Plugin) {
-	                        // eslint-disable-line no-unused-vars
-	                        return buildElement(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
-	                    })
+	                    buildElement(
+	                        "ul",
+	                        null,
+	                        plugins.experimental.map(function (Plugin) {
+	                            // eslint-disable-line no-unused-vars
+	                            return buildElement(Plugin, { onClick: _this.handlePluginClick.bind(_this) });
+	                        })
+	                    )
 	                );
 	            }
 
 	            var $plugins = buildElement(
-	                "div",
+	                "ul",
 	                { className: "tota11y-plugins" },
 	                $defaultPlugins,
 	                $experimentalPlugins
@@ -11677,7 +11681,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(/*! ./../../../~/css-loader/lib/css-base.js */ 7)();
-	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: -webkit-box !important;\n  display: -webkit-flex !important;\n  display: -ms-flexbox !important;\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  -webkit-transform: rotateZ(90deg) !important;\n          transform: rotateZ(90deg) !important;\n  -webkit-transform-origin: 3px 8px !important;\n      -ms-transform-origin: 3px 8px !important;\n          transform-origin: 3px 8px !important;\n  -webkit-transition: -webkit-transform ease-in-out 50ms !important;\n          transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  -webkit-transform: rotateZ(0deg) !important;\n          transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  -webkit-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n      -ms-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n          transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description-code-container {\n  margin-top: 10px !important;\n}\n.tota11y-info-error-description-code-container code {\n  display: block !important;\n  margin-top: 10px !important;\n  padding: 5px 10px !important;\n  word-wrap: break-word !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n", ""]);
+	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: -webkit-box !important;\n  display: -webkit-flex !important;\n  display: -ms-flexbox !important;\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n  -webkit-box-flex: 1 !important;\n  -webkit-flex-grow: 1 !important;\n      -ms-flex-positive: 1 !important;\n          flex-grow: 1 !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  -webkit-transform: rotateZ(90deg) !important;\n          transform: rotateZ(90deg) !important;\n  -webkit-transform-origin: 3px 8px !important;\n      -ms-transform-origin: 3px 8px !important;\n          transform-origin: 3px 8px !important;\n  -webkit-transition: -webkit-transform ease-in-out 50ms !important;\n          transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  -webkit-transform: rotateZ(0deg) !important;\n          transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  -webkit-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n      -ms-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n          transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description-code-container {\n  margin-top: 10px !important;\n}\n.tota11y-info-error-description-code-container code {\n  display: block !important;\n  margin-top: 10px !important;\n  padding: 5px 10px !important;\n  word-wrap: break-word !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n", ""]);
 
 /***/ },
 /* 28 */
@@ -12047,9 +12051,9 @@
 	    + alias3(((helper = (helper = helpers.requiredRatio || (depth0 != null ? depth0.requiredRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"requiredRatio","hash":{},"data":data}) : helper)))
 	    + ")\n\n<span class=\"tota11y-swatches\">\n    <span class=\"tota11y-swatch\" style=\"background-color: "
 	    + alias3(((helper = (helper = helpers.fgColorHex || (depth0 != null ? depth0.fgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"fgColorHex","hash":{},"data":data}) : helper)))
-	    + "\"></span>\n    /\n    <span class=\"tota11y-swatch\" style=\"background-color: "
+	    + " !important\"></span>\n    /\n    <span class=\"tota11y-swatch\" style=\"background-color: "
 	    + alias3(((helper = (helper = helpers.bgColorHex || (depth0 != null ? depth0.bgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"bgColorHex","hash":{},"data":data}) : helper)))
-	    + "\"></span>\n</span>\n";
+	    + " !important\"></span>\n</span>\n";
 	},"useData":true});
 
 /***/ },
@@ -12077,9 +12081,9 @@
 	    + alias3(((helper = (helper = helpers.suggestedBgColorHex || (depth0 != null ? depth0.suggestedBgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedBgColorHex","hash":{},"data":data}) : helper)))
 	    + "\n        </span>\n\n        <span class=\"tota11y-swatches\">\n            <span\n                class=\"tota11y-swatch\"\n                style=\"background-color: "
 	    + alias3(((helper = (helper = helpers.suggestedFgColorHex || (depth0 != null ? depth0.suggestedFgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedFgColorHex","hash":{},"data":data}) : helper)))
-	    + "\">\n            </span>\n            /\n            <span\n                class=\"tota11y-swatch\"\n                style=\"background-color: "
+	    + " !important\">\n            </span>\n            /\n            <span\n                class=\"tota11y-swatch\"\n                style=\"background-color: "
 	    + alias3(((helper = (helper = helpers.suggestedBgColorHex || (depth0 != null ? depth0.suggestedBgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedBgColorHex","hash":{},"data":data}) : helper)))
-	    + "\">\n            </span>\n        </span>\n\n        has a ratio of <strong>"
+	    + " !important\">\n            </span>\n        </span>\n\n        has a ratio of <strong>"
 	    + alias3(((helper = (helper = helpers.suggestedColorsRatio || (depth0 != null ? depth0.suggestedColorsRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedColorsRatio","hash":{},"data":data}) : helper)))
 	    + "</strong>\n        <br />\n\n        <label>\n            Preview:\n            <input class=\"preview-contrast-fix\" type=\"checkbox\">\n        </label>\n    </div>\n</div>\n";
 	},"useData":true});
