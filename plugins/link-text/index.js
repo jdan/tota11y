@@ -68,6 +68,11 @@ class LinkTextPlugin extends Plugin {
                 return;
             }
 
+            // Ignore hidden links
+            if (axs.utils.isElementOrAncestorHidden(el)) {
+                return;
+            }
+
             // Extract the text alternatives for this element: including
             // its text content, aria-label/labelledby, and alt text for
             // images.

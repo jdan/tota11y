@@ -118,4 +118,17 @@ describe("Link text plugin", function() {
         assert($("#empty-link-with-unclear-label").hasLabel());
         assert($("#empty-link-with-unclear-labelledby").hasLabel());
     });
+
+    it("should not fail on hidden links", function() {
+        document.body.innerHTML = `
+            <ul style="display:none;">
+                <li>
+                    <a id="hidden-link" href="#">About</a>
+                </li>
+            </ul>
+        `;
+
+        plugin.run();
+        assert(!$("#hidden-link").hasLabel());
+    });
 });
