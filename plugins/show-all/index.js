@@ -7,16 +7,13 @@ let Plugin = require("../base");
 let annotate = require("../shared/annotate")("alt-text");
 let audit = require("../shared/audit");
 
-class AltTextPlugin extends Plugin {
-    getShowAll() {
-        return "Show all";
-    }
+class ShowAllPlugin extends Plugin {
     getTitle() {
-        return "Image alt-text";
+        return "Show all";
     }
 
     getDescription() {
-        return "Annotates images without alt text";
+        return "Activate all options at once.";
     }
 
     reportError(el) {
@@ -79,4 +76,4 @@ class AltTextPlugin extends Plugin {
     }
 }
 
-module.exports = AltTextPlugin;
+module.exports = ShowAllPlugin;
