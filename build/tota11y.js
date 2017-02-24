@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2016-10-03
+ * Date: 2017-02-24
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -79,10 +79,10 @@
 	var $ = __webpack_require__(/*! jquery */ 4);
 
 	var plugins = __webpack_require__(/*! ./plugins */ 9);
-	var logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ 47);
+	var logoTemplate = __webpack_require__(/*! ./templates/logo.handlebars */ 48);
 
 	// Chrome Accessibility Developer Tools - required once as a global
-	__webpack_require__(/*! script!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 48);
+	__webpack_require__(/*! script!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 49);
 
 	var Toolbar = (function () {
 	    function Toolbar() {
@@ -10126,15 +10126,15 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../~/css-loader!./../~/postcss-loader!./../~/autoprefixer-loader?{browsers:['> 1%']}!./../~/less-loader!./tota11y.less */ 6);
+	var content = __webpack_require__(/*! !../~/css-loader!../~/postcss-loader!../~/autoprefixer-loader?{browsers:['> 1%']}!../~/less-loader!./tota11y.less */ 6);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../~/style-loader/addStyles.js */ 8)(content, {});
+	var update = __webpack_require__(/*! ../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/postcss-loader/index.js!./../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../node_modules/less-loader/index.js!./tota11y.less", function() {
-			var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/postcss-loader/index.js!./../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../node_modules/less-loader/index.js!./tota11y.less");
+		module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/postcss-loader/index.js!../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../node_modules/less-loader/index.js!./tota11y.less", function() {
+			var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/postcss-loader/index.js!../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../node_modules/less-loader/index.js!./tota11y.less");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -10149,7 +10149,7 @@
   \*************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../~/css-loader/lib/css-base.js */ 7)();
+	exports = module.exports = __webpack_require__(/*! ../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n/**\n * Base styles for tota11y to make sure things look consistent under\n * reasonable circumstances.\n */\n.tota11y,\n.tota11y * {\n  border: none !important;\n  background-color: inherit !important;\n  box-sizing: border-box !important;\n  color: #f2f2f2 !important;\n  font-family: Arial !important;\n  font-size: 14px !important;\n  font-style: normal !important;\n  font-weight: 400 !important;\n  line-height: 1.35 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  text-align: left !important;\n  text-shadow: none !important;\n}\n.tota11y * {\n  height: auto !important;\n  width: auto !important;\n}\n.tota11y strong {\n  font-weight: bold !important;\n}\n.tota11y pre,\n.tota11y code {\n  background-color: #ddd !important;\n  border: none !important;\n  border-radius: 0 !important;\n  color: inherit !important;\n  font-family: monospace !important;\n  font-size: inherit !important;\n  line-height: inherit !important;\n}\n.tota11y pre {\n  padding: 5px 10px !important;\n  margin: 0 0 10px !important;\n  overflow-x: scroll !important;\n}\n.tota11y code {\n  border-radius: 2px !important;\n  display: inline !important;\n  padding: 1px !important;\n}\n.tota11y i,\n.tota11y em {\n  font-style: italic !important;\n}\n.tota11y p {\n  margin: 0 0 10px !important;\n}\n.tota11y a,\n.tota11y a:hover,\n.tota11y a:focus {\n  background-color: inherit !important;\n  color: inherit !important;\n  text-decoration: none !important;\n}\n.tota11y-toolbar {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  position: fixed !important;\n  top: auto !important;\n  right: auto !important;\n  bottom: 0 !important;\n  left: 10px !important;\n  border-top-left-radius: 5px !important;\n  border-top-right-radius: 5px !important;\n  overflow: hidden !important;\n  z-index: 9998 !important;\n}\n.tota11y-toolbar-toggle {\n  background-color: #333 !important;\n  display: block !important;\n  padding: 7px !important;\n  width: 100% !important;\n}\n.tota11y-toolbar-logo {\n  height: 25px !important;\n  margin: 0 auto !important;\n  text-align: center !important;\n  width: 35px !important;\n}\n.tota11y-toolbar-logo svg {\n  height: 25px !important;\n}\n.tota11y-toolbar-body {\n  display: none !important;\n}\n.tota11y-toolbar.tota11y-expanded .tota11y-toolbar-body {\n  display: block !important;\n}\n.tota11y-sr-only {\n  border: 0 !important;\n  clip: rect(0, 0, 0, 0) !important;\n  height: 1px !important;\n  margin: -1px !important;\n  overflow: hidden !important;\n  padding: 0 !important;\n  position: absolute !important;\n  width: 1px !important;\n}\n", ""]);
 
 /***/ },
@@ -10454,16 +10454,17 @@
 
 	"use strict";
 
-	var AltTextPlugin = __webpack_require__(/*! ./alt-text */ 10);
-	var ContrastPlugin = __webpack_require__(/*! ./contrast */ 31);
-	var HeadingsPlugin = __webpack_require__(/*! ./headings */ 36);
-	var LabelsPlugin = __webpack_require__(/*! ./labels */ 40);
-	var LandmarksPlugin = __webpack_require__(/*! ./landmarks */ 42);
-	var LinkTextPlugin = __webpack_require__(/*! ./link-text */ 43);
-	var A11yTextWand = __webpack_require__(/*! ./a11y-text-wand */ 44);
+	var ShowAllPlugin = __webpack_require__(/*! ./show-all */ 10);
+	var AltTextPlugin = __webpack_require__(/*! ./alt-text */ 31);
+	var ContrastPlugin = __webpack_require__(/*! ./contrast */ 32);
+	var HeadingsPlugin = __webpack_require__(/*! ./headings */ 37);
+	var LabelsPlugin = __webpack_require__(/*! ./labels */ 41);
+	var LandmarksPlugin = __webpack_require__(/*! ./landmarks */ 43);
+	var LinkTextPlugin = __webpack_require__(/*! ./link-text */ 44);
+	var A11yTextWand = __webpack_require__(/*! ./a11y-text-wand */ 45);
 
 	module.exports = {
-	    "default": [new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin()],
+	    "default": [new ShowAllPlugin(), new HeadingsPlugin(), new ContrastPlugin(), new LinkTextPlugin(), new LabelsPlugin(), new AltTextPlugin(), new LandmarksPlugin()],
 
 	    experimental: [new A11yTextWand()]
 	};
@@ -10471,7 +10472,7 @@
 /***/ },
 /* 10 */
 /*!***********************************!*\
-  !*** ./plugins/alt-text/index.js ***!
+  !*** ./plugins/show-all/index.js ***!
   \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
@@ -10504,6 +10505,11 @@
 	    }
 
 	    _createClass(AltTextPlugin, [{
+	        key: "getShowAll",
+	        value: function getShowAll() {
+	            return "Show all";
+	        }
+	    }, {
 	        key: "getTitle",
 	        value: function getTitle() {
 	            return "Image alt-text";
@@ -11369,17 +11375,17 @@
 	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
 	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(depth0,helpers,partials,data) {
-	    return "        <div class=\"tota11y-label-help\">\n            (<a class=\"tota11y-label-link\" href=\"#\">?</a>)\n        </div>\n";
+	    return "        <div class=\"tota11y-label-help\">\r\n            (<a class=\"tota11y-label-link\" href=\"#\">?</a>)\r\n        </div>\r\n";
 	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	    var stack1, helper, alias1=helpers.helperMissing, alias2="function";
 
-	  return "<span class=\"tota11y-label-error-icon\">\n    <!--\n        \"Warning\" icon by Lorena Salagre\n        https://thenounproject.com/lorens/\n\n        Licensed under Creative Commons by 3.0 US\n        http://creativecommons.org/licenses/by/3.0/us/legalcode\n    -->\n    <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Capa_1\" x=\"0px\" y=\"0px\" width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n        <path d=\"M80.515,90.781H19.485c-6.145,0-10.779-2.168-13.052-6.103c-2.273-3.938-1.832-9.036,1.24-14.356l30.515-52.851  c3.07-5.321,7.266-8.251,11.811-8.251s8.741,2.93,11.811,8.251l30.515,52.851c3.072,5.32,3.513,10.418,1.24,14.356  C91.293,88.613,86.659,90.781,80.515,90.781z M50,12.384c-3.367,0-6.59,2.369-9.071,6.669L10.415,71.904  c-2.483,4.3-2.924,8.275-1.24,11.191c1.683,2.916,5.345,4.521,10.311,4.521h61.029c4.966,0,8.628-1.605,10.311-4.521  c1.683-2.916,1.243-6.89-1.24-11.191L59.071,19.053C56.59,14.753,53.367,12.384,50,12.384z M56.227,72.18  c0-3.172-2.572-5.744-5.744-5.744s-5.744,2.572-5.744,5.744c0,3.172,2.572,5.744,5.744,5.744S56.227,75.352,56.227,72.18z   M56.382,37.613c0-3.257-2.641-5.898-5.898-5.898c-3.257,0-5.898,2.641-5.898,5.898l1.393,20.932h0.019  c0.202,2.312,2.121,4.132,4.486,4.132c2.187,0,4.012-1.551,4.434-3.613c0.034-0.167,0.037-0.345,0.052-0.518h0.04L56.382,37.613z\"/>\n    </svg>\n</span>\n\n<span class=\"tota11y-label-content\">\n    <div class=\"tota11y-label-text\">"
+	  return "<span class=\"tota11y-label-error-icon\">\r\n    <!--\r\n        \"Warning\" icon by Lorena Salagre\r\n        https://thenounproject.com/lorens/\r\n\r\n        Licensed under Creative Commons by 3.0 US\r\n        http://creativecommons.org/licenses/by/3.0/us/legalcode\r\n    -->\r\n    <svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Capa_1\" x=\"0px\" y=\"0px\" width=\"100%\" height=\"100%\" viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\r\n        <path d=\"M80.515,90.781H19.485c-6.145,0-10.779-2.168-13.052-6.103c-2.273-3.938-1.832-9.036,1.24-14.356l30.515-52.851  c3.07-5.321,7.266-8.251,11.811-8.251s8.741,2.93,11.811,8.251l30.515,52.851c3.072,5.32,3.513,10.418,1.24,14.356  C91.293,88.613,86.659,90.781,80.515,90.781z M50,12.384c-3.367,0-6.59,2.369-9.071,6.669L10.415,71.904  c-2.483,4.3-2.924,8.275-1.24,11.191c1.683,2.916,5.345,4.521,10.311,4.521h61.029c4.966,0,8.628-1.605,10.311-4.521  c1.683-2.916,1.243-6.89-1.24-11.191L59.071,19.053C56.59,14.753,53.367,12.384,50,12.384z M56.227,72.18  c0-3.172-2.572-5.744-5.744-5.744s-5.744,2.572-5.744,5.744c0,3.172,2.572,5.744,5.744,5.744S56.227,75.352,56.227,72.18z   M56.382,37.613c0-3.257-2.641-5.898-5.898-5.898c-3.257,0-5.898,2.641-5.898,5.898l1.393,20.932h0.019  c0.202,2.312,2.121,4.132,4.486,4.132c2.187,0,4.012-1.551,4.434-3.613c0.034-0.167,0.037-0.345,0.052-0.518h0.04L56.382,37.613z\"/>\r\n    </svg>\r\n</span>\r\n\r\n<span class=\"tota11y-label-content\">\r\n    <div class=\"tota11y-label-text\">"
 	    + ((stack1 = ((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"text","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-	    + "</div>\n"
+	    + "</div>\r\n"
 	    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.hasErrorEntry : depth0),{"name":"if","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
 	    + "    <div class=\"tota11y-label-detail\">"
 	    + ((stack1 = ((helper = (helper = helpers.detail || (depth0 != null ? depth0.detail : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"detail","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-	    + "</div>\n</span>\n";
+	    + "</div>\r\n</span>\r\n";
 	},"useData":true});
 
 /***/ },
@@ -12210,15 +12216,15 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../../../~/css-loader!./../../../~/postcss-loader!./../../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../../~/less-loader!./style.less */ 24);
+	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/postcss-loader!../../../~/autoprefixer-loader?{browsers:['> 1%']}!../../../~/less-loader!./style.less */ 24);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../../~/style-loader/addStyles.js */ 8)(content, {});
+	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js!./../../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../../node_modules/less-loader/index.js!./style.less", function() {
-			var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js!./../../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../../node_modules/less-loader/index.js!./style.less");
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/postcss-loader/index.js!../../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../../node_modules/less-loader/index.js!./style.less", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/postcss-loader/index.js!../../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../../node_modules/less-loader/index.js!./style.less");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -12233,7 +12239,7 @@
   \******************************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../../~/css-loader/lib/css-base.js */ 7)();
+	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-label {\n  background-color: #ffe800 !important;\n  border: 1px solid rgba(0, 0, 0, 0.1) !important;\n  cursor: default !important;\n  padding: 3px !important;\n  position: absolute !important;\n  z-index: 9997 !important;\n}\n.tota11y-label-error {\n  background-color: #ffaeae !important;\n}\n.tota11y-label-error-icon {\n  display: block !important;\n  float: left !important;\n  margin-right: 3px !important;\n  width: 12px !important;\n}\n.tota11y-label-success {\n  background-color: #b9eda9 !important;\n}\n.tota11y-label-warning {\n  background-color: #ffe800 !important;\n}\n.tota11y-label,\n.tota11y-label-text,\n.tota11y-label-detail,\n.tota11y-label-link,\n.tota11y-label-help {\n  color: #333 !important;\n  font-size: 12px !important;\n}\n.tota11y-label-text {\n  float: left !important;\n}\n.tota11y-label-detail {\n  clear: both !important;\n  display: none !important;\n  max-width: 300px !important;\n}\n.tota11y-label:hover .tota11y-label-detail {\n  display: block !important;\n}\n.tota11y-label-help {\n  float: left !important;\n  margin-left: 5px !important;\n}\n.tota11y-label-link:hover,\n.tota11y-label-link:focus {\n  opacity: 0.6 !important;\n  text-decoration: underline !important;\n}\n.tota11y-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n  pointer-events: none !important;\n  position: absolute !important;\n  z-index: 9999 !important;\n}\n", ""]);
 
 /***/ },
@@ -12248,9 +12254,9 @@
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	    var stack1, helper;
 
-	  return "<li class=\"tota11y-info-error\">\n    <a aria-label=\"Scroll to error\" href=\"#\" class=\"tota11y-info-error-scroll\">\n        <div class=\"tota11y-info-error-scroll-glyph tota11y-info-error-scroll-lens\"></div>\n        <div class=\"tota11y-info-error-scroll-glyph tota11y-info-error-scroll-handle\"></div>\n    </a>\n    <a href=\"#\" class=\"tota11y-info-error-trigger tota11y-collapsed\">\n        <div class=\"tota11y-info-error-title\">\n            <span class=\"tota11y-info-error-chevron\">\n                &#8250;\n            </span>\n            "
+	  return "<li class=\"tota11y-info-error\">\r\n    <a aria-label=\"Scroll to error\" href=\"#\" class=\"tota11y-info-error-scroll\">\r\n        <div class=\"tota11y-info-error-scroll-glyph tota11y-info-error-scroll-lens\"></div>\r\n        <div class=\"tota11y-info-error-scroll-glyph tota11y-info-error-scroll-handle\"></div>\r\n    </a>\r\n    <a href=\"#\" class=\"tota11y-info-error-trigger tota11y-collapsed\">\r\n        <div class=\"tota11y-info-error-title\">\r\n            <span class=\"tota11y-info-error-chevron\">\r\n                &#8250;\r\n            </span>\r\n            "
 	    + ((stack1 = ((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-	    + "\n        </div>\n    </a>\n    <div class=\"tota11y-info-error-description tota11y-collapsed\">\n        <div class=\"tota11y-info-error-description-code-container\">\n            <em>Relevant code:</em>\n            <code></code>\n        </div>\n    </div>\n</li>\n";
+	    + "\r\n        </div>\r\n    </a>\r\n    <div class=\"tota11y-info-error-description tota11y-collapsed\">\r\n        <div class=\"tota11y-info-error-description-code-container\">\r\n            <em>Relevant code:</em>\r\n            <code></code>\r\n        </div>\r\n    </div>\r\n</li>\r\n";
 	},"useData":true});
 
 /***/ },
@@ -12263,15 +12269,15 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../../../~/css-loader!./../../../~/postcss-loader!./../../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../../~/less-loader!./style.less */ 27);
+	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/postcss-loader!../../../~/autoprefixer-loader?{browsers:['> 1%']}!../../../~/less-loader!./style.less */ 27);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../../~/style-loader/addStyles.js */ 8)(content, {});
+	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js!./../../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../../node_modules/less-loader/index.js!./style.less", function() {
-			var newContent = require("!!./../../../node_modules/css-loader/index.js!./../../../node_modules/postcss-loader/index.js!./../../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../../node_modules/less-loader/index.js!./style.less");
+		module.hot.accept("!!../../../node_modules/css-loader/index.js!../../../node_modules/postcss-loader/index.js!../../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../../node_modules/less-loader/index.js!./style.less", function() {
+			var newContent = require("!!../../../node_modules/css-loader/index.js!../../../node_modules/postcss-loader/index.js!../../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../../node_modules/less-loader/index.js!./style.less");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -12286,7 +12292,7 @@
   \********************************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../../~/css-loader/lib/css-base.js */ 7)();
+	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-info {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-radius: 5px !important;\n  position: fixed !important;\n  z-index: 9998 !important;\n}\n.tota11y-info-controls {\n  float: right !important;\n}\n.tota11y-info-annotation-toggle {\n  float: left !important;\n  margin-right: 10px !important;\n}\n.tota11y-info-hidden {\n  display: none !important;\n}\n.tota11y-info-dismiss-trigger {\n  font-size: 25px !important;\n  line-height: 25px !important;\n  position: relative !important;\n  top: -2px !important;\n}\n.tota11y-info-title,\n.tota11y-info-body {\n  padding: 10px 10px 0 !important;\n}\n.tota11y-info-title:hover {\n  cursor: move !important;\n}\n.tota11y-info-tabs {\n  display: -webkit-box !important;\n  display: flex !important;\n  margin: 0 !important;\n  padding: 0 0 10px !important;\n}\n.tota11y-info-tab {\n  height: 30px !important;\n  list-style: none !important;\n  position: relative !important;\n  text-align: center !important;\n  width: 100% !important;\n  -webkit-box-flex: 1 !important;\n          flex-grow: 1 !important;\n}\n.tota11y-info-tab-anchor {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  text-align: center !important;\n}\n.tota11y-info-tab-anchor-text {\n  line-height: 30px !important;\n}\n.tota11y-info-tab:hover {\n  background-color: #555 !important;\n}\n.tota11y-info-tab.active,\n.tota11y-info-tab.active:hover {\n  background-color: #f2f2f2 !important;\n}\n.tota11y-info-tab.active .tota11y-info-tab-anchor-text {\n  color: #333 !important;\n}\n.tota11y-info-sections {\n  position: relative !important;\n  height: 270px !important;\n  width: 400px !important;\n}\n.tota11y-info-section {\n  position: absolute !important;\n  top: 0 !important;\n  right: 0 !important;\n  bottom: 0 !important;\n  left: 0 !important;\n  background-color: #f2f2f2 !important;\n  display: none !important;\n  overflow-y: scroll !important;\n  padding: 10px !important;\n}\n.tota11y-info-section,\n.tota11y-info-section * {\n  color: #333 !important;\n}\n.tota11y-info-section.active {\n  display: block !important;\n}\n.tota11y-info-errors {\n  margin: 0 !important;\n  padding: 0 !important;\n}\n.tota11y-info-error {\n  list-style: none !important;\n  margin-bottom: 10px !important;\n}\n.tota11y-info-error-trigger {\n  display: block !important;\n}\n.tota11y-info-error-trigger.trigger-highlight {\n  background-color: rgba(120, 130, 200, 0.4) !important;\n}\n.tota11y-info-error-chevron {\n  display: inline-block !important;\n  font-size: 20px !important;\n  height: 14px !important;\n  line-height: 14px !important;\n  margin-right: 3px !important;\n  -webkit-transform: rotateZ(90deg) !important;\n          transform: rotateZ(90deg) !important;\n  -webkit-transform-origin: 3px 8px !important;\n          transform-origin: 3px 8px !important;\n  -webkit-transition: -webkit-transform ease-in-out 50ms !important;\n          transition: transform ease-in-out 50ms !important;\n}\n.tota11y-info-error-trigger.tota11y-collapsed .tota11y-info-error-chevron {\n  -webkit-transform: rotateZ(0deg) !important;\n          transform: rotateZ(0deg) !important;\n}\n.tota11y-info-error-title {\n  font-weight: bold !important;\n}\n.tota11y-info-error-scroll {\n  float: right !important;\n  margin-top: 3px !important;\n  padding-left: 5px !important;\n}\n.tota11y-info-error-scroll-glyph {\n  border-color: #333 !important;\n}\n.tota11y-info-error-scroll:hover .tota11y-info-error-scroll-glyph {\n  border-color: #999 !important;\n}\n.tota11y-info-error-scroll-lens {\n  border: 1px solid !important;\n  border-radius: 50% !important;\n  height: 8px !important;\n  width: 8px !important;\n}\n.tota11y-info-error-scroll-handle {\n  border-left: 1px solid !important;\n  height: 7px !important;\n  -webkit-transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n          transform: translateX(-2px) translateY(-2px) rotate(45deg) !important;\n  width: 1px !important;\n}\n.tota11y-info-error-description {\n  font-size: 13px !important;\n  padding: 10px 0 0 !important;\n  -webkit-user-select: text !important;\n     -moz-user-select: text !important;\n      -ms-user-select: text !important;\n          user-select: text !important;\n}\n.tota11y-info-error-description-code-container {\n  margin-top: 10px !important;\n}\n.tota11y-info-error-description-code-container code {\n  display: block !important;\n  margin-top: 10px !important;\n  padding: 5px 10px !important;\n  word-wrap: break-word !important;\n}\n.tota11y-info-error-description.tota11y-collapsed {\n  display: none !important;\n}\n.tota11y-info-error-count {\n  background-color: red !important;\n  border-radius: 20px !important;\n  color: white !important;\n  display: inline !important;\n  margin-left: 5px !important;\n  padding: 1px 8px !important;\n}\n", ""]);
 
 /***/ },
@@ -12299,15 +12305,15 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../~/css-loader!./../~/postcss-loader!./../~/autoprefixer-loader?{browsers:['> 1%']}!./../~/less-loader!./style.less */ 29);
+	var content = __webpack_require__(/*! !../~/css-loader!../~/postcss-loader!../~/autoprefixer-loader?{browsers:['> 1%']}!../~/less-loader!./style.less */ 29);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../~/style-loader/addStyles.js */ 8)(content, {});
+	var update = __webpack_require__(/*! ../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/postcss-loader/index.js!./../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../node_modules/less-loader/index.js!./style.less", function() {
-			var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/postcss-loader/index.js!./../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../node_modules/less-loader/index.js!./style.less");
+		module.hot.accept("!!../node_modules/css-loader/index.js!../node_modules/postcss-loader/index.js!../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../node_modules/less-loader/index.js!./style.less", function() {
+			var newContent = require("!!../node_modules/css-loader/index.js!../node_modules/postcss-loader/index.js!../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../node_modules/less-loader/index.js!./style.less");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -12322,7 +12328,7 @@
   \**************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../~/css-loader/lib/css-base.js */ 7)();
+	exports = module.exports = __webpack_require__(/*! ../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-plugin {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n  border-bottom: 1px solid #555 !important;\n  list-style: none !important;\n}\n.tota11y-plugin-switch {\n  -webkit-box-align: center !important;\n          align-items: center !important;\n  cursor: pointer !important;\n  display: -webkit-box !important;\n  display: flex !important;\n  padding: 12px 12px 12px 0 !important;\n  margin: 0 !important;\n}\n.tota11y-plugin-indicator {\n  margin: 0 15px !important;\n}\n.tota11y-plugin-indicator {\n  border-radius: 16px !important;\n  border: 1px solid #999 !important;\n  color: transparent !important;\n  font-size: 13px !important;\n  height: 16px !important;\n  line-height: 16px !important;\n  padding: 0 0 0 1px !important;\n  width: 16px !important;\n}\n.tota11y-plugin-checkbox:focus + .tota11y-plugin-indicator {\n  border-color: #639b24 !important;\n  background-color: #49721a !important;\n  color: #49721a !important;\n}\n.tota11y-plugin-checkbox:checked + .tota11y-plugin-indicator {\n  background-color: #639b24 !important;\n  border-color: #639b24 !important;\n  color: white !important;\n}\n.tota11y-plugin-title {\n  font-weight: bold !important;\n}\n.tota11y-plugin-description {\n  font-size: 11px !important;\n  font-style: italic !important;\n  width: 200px !important;\n  margin-right: 3px !important;\n}\n.tota11y-plugins-separator {\n  font-size: 12px !important;\n  margin: 7px 15px 0 !important;\n  text-transform: uppercase !important;\n}\n", ""]);
 
 /***/ },
@@ -12450,6 +12456,137 @@
 /***/ },
 /* 31 */
 /*!***********************************!*\
+  !*** ./plugins/alt-text/index.js ***!
+  \***********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(buildElement) {/**
+	 * A plugin to check for valid alternative representations for images
+	 */
+
+	"use strict";
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var $ = __webpack_require__(/*! jquery */ 4);
+	var Plugin = __webpack_require__(/*! ../base */ 11);
+	var annotate = __webpack_require__(/*! ../shared/annotate */ 13)("alt-text");
+	var audit = __webpack_require__(/*! ../shared/audit */ 30);
+
+	var AltTextPlugin = (function (_Plugin) {
+	    _inherits(AltTextPlugin, _Plugin);
+
+	    function AltTextPlugin() {
+	        _classCallCheck(this, AltTextPlugin);
+
+	        _get(Object.getPrototypeOf(AltTextPlugin.prototype), "constructor", this).apply(this, arguments);
+	    }
+
+	    _createClass(AltTextPlugin, [{
+	        key: "getShowAll",
+	        value: function getShowAll() {
+	            return "Show all";
+	        }
+	    }, {
+	        key: "getTitle",
+	        value: function getTitle() {
+	            return "Image alt-text";
+	        }
+	    }, {
+	        key: "getDescription",
+	        value: function getDescription() {
+	            return "Annotates images without alt text";
+	        }
+	    }, {
+	        key: "reportError",
+	        value: function reportError(el) {
+	            var $el = $(el);
+	            var src = $el.attr("src") || "..";
+	            var title = "Image is missing alt text";
+	            var $error = buildElement(
+	                "div",
+	                null,
+	                buildElement(
+	                    "p",
+	                    null,
+	                    "This image does not have an associated \"alt\" attribute. Please specify the alt text for this image like so:"
+	                ),
+	                buildElement(
+	                    "pre",
+	                    null,
+	                    buildElement(
+	                        "code",
+	                        null,
+	                        "&lt;img src=\"" + src + "\" alt=\"Image description\"&gt"
+	                    )
+	                ),
+	                buildElement(
+	                    "p",
+	                    null,
+	                    "If the image is decorative and does not convey any information to the surrounding content, however, you may leave this \"alt\" attribute empty, or specify a \"role\" attribute with a value of \"presentation.\""
+	                ),
+	                buildElement(
+	                    "pre",
+	                    null,
+	                    buildElement(
+	                        "code",
+	                        null,
+	                        "&lt;img src=\"" + src + "\" alt=\"\"&gt;",
+	                        buildElement("br", null),
+	                        "&lt;img src=\"" + src + "\" role=\"presentation\"&gt;"
+	                    )
+	                )
+	            );
+
+	            // Place an error label on the element and register it as an
+	            // error in the info panel
+	            var entry = this.error(title, $error, $el);
+	            annotate.errorLabel($el, "", title, entry);
+	        }
+	    }, {
+	        key: "run",
+	        value: function run() {
+	            // Generate errors for any images that fail the Accessibility
+	            // Developer Tools audit
+
+	            var _audit = audit("imagesWithoutAltText");
+
+	            var result = _audit.result;
+	            var elements = _audit.elements;
+
+	            if (result === "FAIL") {
+	                elements.forEach(this.reportError.bind(this));
+	            }
+
+	            // Additionally, label presentational images
+	            $("img[role=\"presentation\"], img[alt=\"\"]").each(function (i, el) {
+	                // "Error" labels have a warning icon and expanded text on hover,
+	                // but we add a special `warning` class to color it differently.
+	                annotate.errorLabel($(el), "", "This image is decorative").addClass("tota11y-label-warning");
+	            });
+	        }
+	    }, {
+	        key: "cleanup",
+	        value: function cleanup() {
+	            annotate.removeAll();
+	        }
+	    }]);
+
+	    return AltTextPlugin;
+	})(Plugin);
+
+	module.exports = AltTextPlugin;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
+
+/***/ },
+/* 32 */
+/*!***********************************!*\
   !*** ./plugins/contrast/index.js ***!
   \***********************************/
 /***/ function(module, exports, __webpack_require__) {
@@ -12473,10 +12610,10 @@
 	var Plugin = __webpack_require__(/*! ../base */ 11);
 	var annotate = __webpack_require__(/*! ../shared/annotate */ 13)("contrast");
 
-	var titleTemplate = __webpack_require__(/*! ./error-title.handlebars */ 32);
-	var descriptionTemplate = __webpack_require__(/*! ./error-description.handlebars */ 33);
+	var titleTemplate = __webpack_require__(/*! ./error-title.handlebars */ 33);
+	var descriptionTemplate = __webpack_require__(/*! ./error-description.handlebars */ 34);
 
-	__webpack_require__(/*! ./style.less */ 34);
+	__webpack_require__(/*! ./style.less */ 35);
 
 	var ContrastPlugin = (function (_Plugin) {
 	    _inherits(ContrastPlugin, _Plugin);
@@ -12641,7 +12778,7 @@
 	module.exports = ContrastPlugin;
 
 /***/ },
-/* 32 */
+/* 33 */
 /*!*************************************************!*\
   !*** ./plugins/contrast/error-title.handlebars ***!
   \*************************************************/
@@ -12656,15 +12793,15 @@
 	    + alias3(((helper = (helper = helpers.contrastRatio || (depth0 != null ? depth0.contrastRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"contrastRatio","hash":{},"data":data}) : helper)))
 	    + " &lt; "
 	    + alias3(((helper = (helper = helpers.requiredRatio || (depth0 != null ? depth0.requiredRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"requiredRatio","hash":{},"data":data}) : helper)))
-	    + ")\n\n<span class=\"tota11y-swatches\">\n    <span class=\"tota11y-swatch\" style=\"background-color: "
+	    + ")\r\n\r\n<span class=\"tota11y-swatches\">\r\n    <span class=\"tota11y-swatch\" style=\"background-color: "
 	    + alias3(((helper = (helper = helpers.fgColorHex || (depth0 != null ? depth0.fgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"fgColorHex","hash":{},"data":data}) : helper)))
-	    + " !important\"></span>\n    /\n    <span class=\"tota11y-swatch\" style=\"background-color: "
+	    + " !important\"></span>\r\n    /\r\n    <span class=\"tota11y-swatch\" style=\"background-color: "
 	    + alias3(((helper = (helper = helpers.bgColorHex || (depth0 != null ? depth0.bgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"bgColorHex","hash":{},"data":data}) : helper)))
-	    + " !important\"></span>\n</span>\n";
+	    + " !important\"></span>\r\n</span>\r\n";
 	},"useData":true});
 
 /***/ },
-/* 33 */
+/* 34 */
 /*!*******************************************************!*\
   !*** ./plugins/contrast/error-description.handlebars ***!
   \*******************************************************/
@@ -12675,29 +12812,29 @@
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	    var helper, alias1=helpers.helperMissing, alias2="function", alias3=this.escapeExpression;
 
-	  return "<div>\n    <p>\n        The color combination\n        <span class=\"tota11y-color-hexes\">"
+	  return "<div>\r\n    <p>\r\n        The color combination\r\n        <span class=\"tota11y-color-hexes\">"
 	    + alias3(((helper = (helper = helpers.fgColorHex || (depth0 != null ? depth0.fgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"fgColorHex","hash":{},"data":data}) : helper)))
 	    + "/"
 	    + alias3(((helper = (helper = helpers.bgColorHex || (depth0 != null ? depth0.bgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"bgColorHex","hash":{},"data":data}) : helper)))
-	    + "</span>\n        has a contrast ratio of <strong>"
+	    + "</span>\r\n        has a contrast ratio of <strong>"
 	    + alias3(((helper = (helper = helpers.contrastRatio || (depth0 != null ? depth0.contrastRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"contrastRatio","hash":{},"data":data}) : helper)))
-	    + "</strong>, which is not\n        sufficient. At this size, you will need a ratio of at least\n        <strong>"
+	    + "</strong>, which is not\r\n        sufficient. At this size, you will need a ratio of at least\r\n        <strong>"
 	    + alias3(((helper = (helper = helpers.requiredRatio || (depth0 != null ? depth0.requiredRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"requiredRatio","hash":{},"data":data}) : helper)))
-	    + "</strong>.\n    </p>\n\n    <p>\n        Consider using the following foreground/background combination:\n    </p>\n\n    <div class=\"tota11y-contrast-suggestion\">\n        <span class=\"tota11y-color-hexes\">\n            "
+	    + "</strong>.\r\n    </p>\r\n\r\n    <p>\r\n        Consider using the following foreground/background combination:\r\n    </p>\r\n\r\n    <div class=\"tota11y-contrast-suggestion\">\r\n        <span class=\"tota11y-color-hexes\">\r\n            "
 	    + alias3(((helper = (helper = helpers.suggestedFgColorHex || (depth0 != null ? depth0.suggestedFgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedFgColorHex","hash":{},"data":data}) : helper)))
 	    + "/"
 	    + alias3(((helper = (helper = helpers.suggestedBgColorHex || (depth0 != null ? depth0.suggestedBgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedBgColorHex","hash":{},"data":data}) : helper)))
-	    + "\n        </span>\n\n        <span class=\"tota11y-swatches\">\n            <span\n                class=\"tota11y-swatch\"\n                style=\"background-color: "
+	    + "\r\n        </span>\r\n\r\n        <span class=\"tota11y-swatches\">\r\n            <span\r\n                class=\"tota11y-swatch\"\r\n                style=\"background-color: "
 	    + alias3(((helper = (helper = helpers.suggestedFgColorHex || (depth0 != null ? depth0.suggestedFgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedFgColorHex","hash":{},"data":data}) : helper)))
-	    + " !important\">\n            </span>\n            /\n            <span\n                class=\"tota11y-swatch\"\n                style=\"background-color: "
+	    + " !important\">\r\n            </span>\r\n            /\r\n            <span\r\n                class=\"tota11y-swatch\"\r\n                style=\"background-color: "
 	    + alias3(((helper = (helper = helpers.suggestedBgColorHex || (depth0 != null ? depth0.suggestedBgColorHex : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedBgColorHex","hash":{},"data":data}) : helper)))
-	    + " !important\">\n            </span>\n        </span>\n\n        has a ratio of <strong>"
+	    + " !important\">\r\n            </span>\r\n        </span>\r\n\r\n        has a ratio of <strong>"
 	    + alias3(((helper = (helper = helpers.suggestedColorsRatio || (depth0 != null ? depth0.suggestedColorsRatio : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"suggestedColorsRatio","hash":{},"data":data}) : helper)))
-	    + "</strong>\n        <br />\n\n        <label>\n            Preview:\n            <input class=\"preview-contrast-fix\" type=\"checkbox\">\n        </label>\n    </div>\n</div>\n";
+	    + "</strong>\r\n        <br />\r\n\r\n        <label>\r\n            Preview:\r\n            <input class=\"preview-contrast-fix\" type=\"checkbox\">\r\n        </label>\r\n    </div>\r\n</div>\r\n";
 	},"useData":true});
 
 /***/ },
-/* 34 */
+/* 35 */
 /*!*************************************!*\
   !*** ./plugins/contrast/style.less ***!
   \*************************************/
@@ -12706,15 +12843,15 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 35);
+	var content = __webpack_require__(/*! !../../~/css-loader!../../~/postcss-loader!../../~/autoprefixer-loader?{browsers:['> 1%']}!../../~/less-loader!./style.less */ 36);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 8)(content, {});
+	var update = __webpack_require__(/*! ../../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less", function() {
-			var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less");
+		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/index.js!../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../node_modules/less-loader/index.js!./style.less", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/index.js!../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../node_modules/less-loader/index.js!./style.less");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -12723,17 +12860,17 @@
 	}
 
 /***/ },
-/* 35 */
+/* 36 */
 /*!***********************************************************************************************************************************!*\
   !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/contrast/style.less ***!
   \***********************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 7)();
+	exports = module.exports = __webpack_require__(/*! ../../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-swatches {\n  margin-left: 5px !important;\n  margin-right: 5px !important;\n  position: relative !important;\n  top: 1px !important;\n}\n.tota11y-swatch {\n  border: 1px solid #000 !important;\n  display: inline-block !important;\n  height: 12px !important;\n  width: 12px !important;\n}\n.tota11y-contrast-suggestion {\n  margin: 0 0 15px 15px !important;\n}\n.tota11y-color-hexes {\n  font-family: monospace !important;\n}\n", ""]);
 
 /***/ },
-/* 36 */
+/* 37 */
 /*!***********************************!*\
   !*** ./plugins/headings/index.js ***!
   \***********************************/
@@ -12757,8 +12894,8 @@
 	var Plugin = __webpack_require__(/*! ../base */ 11);
 	var annotate = __webpack_require__(/*! ../shared/annotate */ 13)("headings");
 
-	var outlineItemTemplate = __webpack_require__(/*! ./outline-item.handlebars */ 37);
-	__webpack_require__(/*! ./style.less */ 38);
+	var outlineItemTemplate = __webpack_require__(/*! ./outline-item.handlebars */ 38);
+	__webpack_require__(/*! ./style.less */ 39);
 
 	var ERRORS = {
 	    FIRST_NOT_H1: function FIRST_NOT_H1(level) {
@@ -12917,7 +13054,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
-/* 37 */
+/* 38 */
 /*!**************************************************!*\
   !*** ./plugins/headings/outline-item.handlebars ***!
   \**************************************************/
@@ -12930,15 +13067,15 @@
 
 	  return "<div class=\"tota11y-heading-outline-entry heading-level-"
 	    + alias3(((helper = (helper = helpers.level || (depth0 != null ? depth0.level : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"level","hash":{},"data":data}) : helper)))
-	    + "\">\n    <span class=\"tota11y-heading-outline-level tota11y-label\">"
+	    + "\">\r\n    <span class=\"tota11y-heading-outline-level tota11y-label\">"
 	    + alias3(((helper = (helper = helpers.level || (depth0 != null ? depth0.level : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"level","hash":{},"data":data}) : helper)))
-	    + "</span>\n    <span class=\"tota11y-heading-outline-heading-text\">"
+	    + "</span>\r\n    <span class=\"tota11y-heading-outline-heading-text\">"
 	    + alias3(((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : alias1),(typeof helper === alias2 ? helper.call(depth0,{"name":"text","hash":{},"data":data}) : helper)))
-	    + "</span>\n</div>\n";
+	    + "</span>\r\n</div>\r\n";
 	},"useData":true});
 
 /***/ },
-/* 38 */
+/* 39 */
 /*!*************************************!*\
   !*** ./plugins/headings/style.less ***!
   \*************************************/
@@ -12947,15 +13084,15 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 39);
+	var content = __webpack_require__(/*! !../../~/css-loader!../../~/postcss-loader!../../~/autoprefixer-loader?{browsers:['> 1%']}!../../~/less-loader!./style.less */ 40);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 8)(content, {});
+	var update = __webpack_require__(/*! ../../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less", function() {
-			var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less");
+		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/index.js!../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../node_modules/less-loader/index.js!./style.less", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/index.js!../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../node_modules/less-loader/index.js!./style.less");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -12964,17 +13101,17 @@
 	}
 
 /***/ },
-/* 39 */
+/* 40 */
 /*!***********************************************************************************************************************************!*\
   !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/headings/style.less ***!
   \***********************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 7)();
+	exports = module.exports = __webpack_require__(/*! ../../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-heading-outline {\n  color: #333 !important;\n}\n.tota11y-heading-outline-entry {\n  margin-bottom: 8px !important;\n}\n.tota11y-heading-outline-entry.heading-level-1 {\n  margin-left: 0 !important;\n}\n.tota11y-heading-outline-entry.heading-level-2 {\n  margin-left: 20px !important;\n}\n.tota11y-heading-outline-entry.heading-level-3 {\n  margin-left: 40px !important;\n}\n.tota11y-heading-outline-entry.heading-level-4 {\n  margin-left: 60px !important;\n}\n.tota11y-heading-outline-entry.heading-level-5 {\n  margin-left: 80px !important;\n}\n.tota11y-heading-outline-entry.heading-level-6 {\n  margin-left: 100px !important;\n}\n.tota11y-heading-outline-level {\n  position: relative !important;\n  top: -2px !important;\n  right: auto !important;\n  bottom: auto !important;\n  left: auto !important;\n  margin-right: 5px !important;\n  padding: 2px 3px !important;\n  pointer-events: none !important;\n}\n", ""]);
 
 /***/ },
-/* 40 */
+/* 41 */
 /*!*********************************!*\
   !*** ./plugins/labels/index.js ***!
   \*********************************/
@@ -12999,7 +13136,7 @@
 	var annotate = __webpack_require__(/*! ../shared/annotate */ 13)("labels");
 	var audit = __webpack_require__(/*! ../shared/audit */ 30);
 
-	var errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ 41);
+	var errorTemplate = __webpack_require__(/*! ./error-template.handlebars */ 42);
 
 	var LabelsPlugin = (function (_Plugin) {
 	    _inherits(LabelsPlugin, _Plugin);
@@ -13064,7 +13201,7 @@
 	module.exports = LabelsPlugin;
 
 /***/ },
-/* 41 */
+/* 42 */
 /*!**************************************************!*\
   !*** ./plugins/labels/error-template.handlebars ***!
   \**************************************************/
@@ -13073,29 +13210,29 @@
 	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
 	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(depth0,helpers,partials,data) {
-	    return "    <p>\n        The <code>placeholder</code> attribute is not guaranteed to be read by\n        assistive technologies. It is better to include a proper label.\n    </p>\n";
+	    return "    <p>\r\n        The <code>placeholder</code> attribute is not guaranteed to be read by\r\n        assistive technologies. It is better to include a proper label.\r\n    </p>\r\n";
 	},"3":function(depth0,helpers,partials,data) {
 	    var helper;
 
-	  return "    <p>\n        The simplest way to do so is by creating a <code>&lt;label&gt;</code>\n        tag with a <code>for</code> attribute like so:\n    </p>\n\n    <pre><code>&lt;label for=\""
+	  return "    <p>\r\n        The simplest way to do so is by creating a <code>&lt;label&gt;</code>\r\n        tag with a <code>for</code> attribute like so:\r\n    </p>\r\n\r\n    <pre><code>&lt;label for=\""
 	    + this.escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
-	    + "\"&gt;\n    Label text here...\n&lt;/label&gt;</code></pre>\n";
+	    + "\"&gt;\r\n    Label text here...\r\n&lt;/label&gt;</code></pre>\r\n";
 	},"5":function(depth0,helpers,partials,data) {
 	    var helper;
 
-	  return "    <p>\n        You can give this element an <code>id</code> attribute and build a\n        <code>&lt;label&gt;</code> with a corresponding <code>for</code>\n        attribute like so:\n\n        <pre><code>&lt;label for=\"my-input\"&gt;\n    Label text here...\n&lt;/label&gt;\n&lt;"
+	  return "    <p>\r\n        You can give this element an <code>id</code> attribute and build a\r\n        <code>&lt;label&gt;</code> with a corresponding <code>for</code>\r\n        attribute like so:\r\n\r\n        <pre><code>&lt;label for=\"my-input\"&gt;\r\n    Label text here...\r\n&lt;/label&gt;\r\n&lt;"
 	    + this.escapeExpression(((helper = (helper = helpers.tagName || (depth0 != null ? depth0.tagName : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"tagName","hash":{},"data":data}) : helper)))
-	    + " id=\"my-input\"&gt;</code></pre>\n    </p>\n";
+	    + " id=\"my-input\"&gt;</code></pre>\r\n    </p>\r\n";
 	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	    var stack1;
 
 	  return ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.placeholder : depth0),{"name":"if","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-	    + "\n"
+	    + "\r\n"
 	    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.id : depth0),{"name":"if","hash":{},"fn":this.program(3, data, 0),"inverse":this.program(5, data, 0),"data":data})) != null ? stack1 : "");
 	},"useData":true});
 
 /***/ },
-/* 42 */
+/* 43 */
 /*!************************************!*\
   !*** ./plugins/landmarks/index.js ***!
   \************************************/
@@ -13158,7 +13295,7 @@
 	module.exports = LandmarksPlugin;
 
 /***/ },
-/* 43 */
+/* 44 */
 /*!************************************!*\
   !*** ./plugins/link-text/index.js ***!
   \************************************/
@@ -13312,7 +13449,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
-/* 44 */
+/* 45 */
 /*!*****************************************!*\
   !*** ./plugins/a11y-text-wand/index.js ***!
   \*****************************************/
@@ -13335,7 +13472,7 @@
 	var $ = __webpack_require__(/*! jquery */ 4);
 	var Plugin = __webpack_require__(/*! ../base */ 11);
 
-	__webpack_require__(/*! ./style.less */ 45);
+	__webpack_require__(/*! ./style.less */ 46);
 
 	var A11yTextWand = (function (_Plugin) {
 	    _inherits(A11yTextWand, _Plugin);
@@ -13398,7 +13535,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./utils/element */ 3)))
 
 /***/ },
-/* 45 */
+/* 46 */
 /*!*******************************************!*\
   !*** ./plugins/a11y-text-wand/style.less ***!
   \*******************************************/
@@ -13407,15 +13544,15 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(/*! !./../../~/css-loader!./../../~/postcss-loader!./../../~/autoprefixer-loader?{browsers:['> 1%']}!./../../~/less-loader!./style.less */ 46);
+	var content = __webpack_require__(/*! !../../~/css-loader!../../~/postcss-loader!../../~/autoprefixer-loader?{browsers:['> 1%']}!../../~/less-loader!./style.less */ 47);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ./../../~/style-loader/addStyles.js */ 8)(content, {});
+	var update = __webpack_require__(/*! ../../~/style-loader/addStyles.js */ 8)(content, {});
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
-		module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less", function() {
-			var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/postcss-loader/index.js!./../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!./../../node_modules/less-loader/index.js!./style.less");
+		module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/index.js!../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../node_modules/less-loader/index.js!./style.less", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/postcss-loader/index.js!../../node_modules/autoprefixer-loader/index.js?{browsers:['> 1%']}!../../node_modules/less-loader/index.js!./style.less");
 			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 			update(newContent);
 		});
@@ -13424,17 +13561,17 @@
 	}
 
 /***/ },
-/* 46 */
+/* 47 */
 /*!*****************************************************************************************************************************************!*\
   !*** ./~/css-loader!./~/postcss-loader!./~/autoprefixer-loader?{browsers:['> 1%']}!./~/less-loader!./plugins/a11y-text-wand/style.less ***!
   \*****************************************************************************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ./../../~/css-loader/lib/css-base.js */ 7)();
+	exports = module.exports = __webpack_require__(/*! ../../~/css-loader/lib/css-base.js */ 7)();
 	exports.push([module.id, ".tota11y-dark-color-scheme {\n  background-color: #333 !important;\n  color: #f2f2f2 !important;\n}\n.tota11y-no-select {\n  -webkit-user-select: none !important;\n     -moz-user-select: none !important;\n      -ms-user-select: none !important;\n          user-select: none !important;\n}\n.tota11y-outlined {\n  outline: 2px solid #7882c8 !important;\n}\n.tota11y-nothingness {\n  color: #888 !important;\n}\n", ""]);
 
 /***/ },
-/* 47 */
+/* 48 */
 /*!***********************************!*\
   !*** ./templates/logo.handlebars ***!
   \***********************************/
@@ -13443,20 +13580,20 @@
 	var Handlebars = __webpack_require__(/*! ./~/handlebars/runtime.js */ 15);
 	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	    return "<!--\n    \"Glasses\" icon by Kyle Scott\n    https://thenounproject.com/Kyle/\n\n    Licensed under Creative Commons by 3.0 US\n    http://creativecommons.org/licenses/by/3.0/us/legalcode\n-->\n<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Layer_1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\n    <path fill=\"#ffffff\" d=\"M74.466,35.24c-1.069-0.19-2.208-0.267-3.228-0.562c-0.639-0.184-1.348-0.622-1.965-1.075  c-1.246-0.919-2.479-1.557-3.928-2.152c-0.671-0.276-1.617-0.698-2.432-0.608c-0.582,0.064-1.196,0.664-1.73,1.029  c-1.196,0.818-2.186,1.442-3.32,2.198c-0.524,0.35-1.308,0.798-1.543,1.263c-0.142,0.279-0.13,0.736-0.281,1.029  c-0.35,0.679-1.069,1.434-1.777,1.403c-0.835-0.038-1.773-1.518-1.449-2.619c0.177-0.602,1.126-0.902,1.776-1.262  c2.041-1.134,3.803-2.3,5.52-3.602c1.106-0.841,2.579-1.471,4.536-1.542c1.889-0.071,4.45-0.083,6.22,0  c1.465,0.066,2.698,0.164,3.976,0.42c7.308,1.469,14.698,2.788,21.607,4.77c0.739,0.213,2.896,0.613,3.086,1.311  c0.121,0.439-0.236,1.435-0.375,2.151c-0.165,0.865-0.292,1.626-0.42,2.246c-0.12,0.574-0.65,1.174-0.936,1.776  c-0.842,1.778-1.379,3.821-2.104,5.753c-0.954,2.545-2.02,4.859-3.554,6.968c-1.46,2.005-3.442,3.33-5.987,4.536  c-1.128,0.534-2.43,1.083-3.835,1.403c-1.355,0.311-3.263,0.63-4.817,0.28c-2.233-0.501-3.081-2.543-3.882-4.536  c-0.848-2.115-1.351-4.049-1.636-6.827c-2.692,0.176-3.259,2.014-4.163,3.928c-0.384,0.812-0.792,1.623-1.168,2.385  c-1.542,3.115-3.197,6.47-5.473,8.746c-1.215,1.213-2.581,2.03-4.35,2.758c-3.331,1.373-6.847,2.569-10.757,3.462  c-3.598,0.821-8.923,1.642-12.252-0.093c-2.136-1.113-3.105-3.939-4.023-6.268c-0.458-1.159-0.835-2.459-1.262-3.882  c-0.378-1.259-0.708-2.778-1.543-3.602c-1.053-1.037-2.78-1.414-3.227-2.993c-0.815-0.307-1.563-0.821-2.292-1.308  c-4.349-2.915-8.693-5.774-13.141-8.606c-0.727-0.462-1.667-0.958-2.151-1.497c-0.712-0.792-1.108-2.117-1.684-3.133  c-0.265-0.469-0.588-0.92-0.888-1.357c-0.275-0.4-0.536-0.997-1.076-1.076C2.223,36.823,2.365,37.469,2.349,38  c-0.017,0.549-0.077,1.172-0.047,1.823c0.028,0.606,0.297,1.049,0.28,1.544c-0.018,0.515-0.291,1.036-0.841,1.029  c-0.727-0.009-0.8-0.98-0.983-1.686c-0.209-0.807-0.483-1.551-0.421-2.245c0.049-0.531,0.341-1.223,0.468-2.057  c0.246-1.599,0.126-3.078,1.451-3.415C3.004,32.804,4,33.38,4.781,33.649c0.789,0.272,1.597,0.428,2.339,0.702  c0.854,0.316,1.706,0.875,2.524,1.355c2.526,1.484,4.626,3.112,7.062,4.63c3.273,2.041,6.545,3.955,9.307,6.267  c7.434-2.179,16.722-3.566,25.863-4.302c4.176-0.337,8.326-0.174,12.253,0.374c5.624,0.787,10.073-1.58,13.844-3.18  c2.035-0.864,4.078-1.653,6.173-2.573C80.804,36.331,77.705,35.814,74.466,35.24z M93.968,39.729  c-1.838-0.388-3.732-0.737-5.471-1.075c-0.059-0.012-0.127-0.067-0.188-0.046c-1.143,0.392-2.279,0.613-3.367,1.029  c-2.033,0.773-4.015,1.775-5.752,3.039C78.33,43.3,77.372,44,76.897,44.733c-1.609,2.489-1.206,7.214-0.467,10.149  c0.27,1.071,0.411,1.79,0.889,2.666c3.022,1.287,6.88-0.183,8.885-1.684c1.526-1.142,2.676-2.75,3.602-4.35  C91.815,48.042,93.102,43.946,93.968,39.729z M64.878,46.089c-6.121-1.937-14.865-0.822-21.232,0.467  c-4.477,0.907-9.474,1.92-10.944,5.753c-0.801,2.086-1.009,5.098-0.701,7.903c0.284,2.599,1.076,4.892,2.011,6.594  c2.943,2.698,10.038,1.581,14.124,0.375c2.523-0.745,4.112-1.389,5.845-2.197c1.973-0.921,4.636-1.939,5.285-4.116  c0.179-0.597,0.115-1.244,0.188-1.824c0.492-3.909,1.942-7.447,4.303-9.634c0.477-0.441,1.146-0.679,1.357-1.262  C65.37,47.428,65.13,46.709,64.878,46.089z\"/>\n</svg>\n";
+	    return "<!--\r\n    \"Glasses\" icon by Kyle Scott\r\n    https://thenounproject.com/Kyle/\r\n\r\n    Licensed under Creative Commons by 3.0 US\r\n    http://creativecommons.org/licenses/by/3.0/us/legalcode\r\n-->\r\n<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Layer_1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 100 100\" enable-background=\"new 0 0 100 100\" xml:space=\"preserve\">\r\n    <path fill=\"#ffffff\" d=\"M74.466,35.24c-1.069-0.19-2.208-0.267-3.228-0.562c-0.639-0.184-1.348-0.622-1.965-1.075  c-1.246-0.919-2.479-1.557-3.928-2.152c-0.671-0.276-1.617-0.698-2.432-0.608c-0.582,0.064-1.196,0.664-1.73,1.029  c-1.196,0.818-2.186,1.442-3.32,2.198c-0.524,0.35-1.308,0.798-1.543,1.263c-0.142,0.279-0.13,0.736-0.281,1.029  c-0.35,0.679-1.069,1.434-1.777,1.403c-0.835-0.038-1.773-1.518-1.449-2.619c0.177-0.602,1.126-0.902,1.776-1.262  c2.041-1.134,3.803-2.3,5.52-3.602c1.106-0.841,2.579-1.471,4.536-1.542c1.889-0.071,4.45-0.083,6.22,0  c1.465,0.066,2.698,0.164,3.976,0.42c7.308,1.469,14.698,2.788,21.607,4.77c0.739,0.213,2.896,0.613,3.086,1.311  c0.121,0.439-0.236,1.435-0.375,2.151c-0.165,0.865-0.292,1.626-0.42,2.246c-0.12,0.574-0.65,1.174-0.936,1.776  c-0.842,1.778-1.379,3.821-2.104,5.753c-0.954,2.545-2.02,4.859-3.554,6.968c-1.46,2.005-3.442,3.33-5.987,4.536  c-1.128,0.534-2.43,1.083-3.835,1.403c-1.355,0.311-3.263,0.63-4.817,0.28c-2.233-0.501-3.081-2.543-3.882-4.536  c-0.848-2.115-1.351-4.049-1.636-6.827c-2.692,0.176-3.259,2.014-4.163,3.928c-0.384,0.812-0.792,1.623-1.168,2.385  c-1.542,3.115-3.197,6.47-5.473,8.746c-1.215,1.213-2.581,2.03-4.35,2.758c-3.331,1.373-6.847,2.569-10.757,3.462  c-3.598,0.821-8.923,1.642-12.252-0.093c-2.136-1.113-3.105-3.939-4.023-6.268c-0.458-1.159-0.835-2.459-1.262-3.882  c-0.378-1.259-0.708-2.778-1.543-3.602c-1.053-1.037-2.78-1.414-3.227-2.993c-0.815-0.307-1.563-0.821-2.292-1.308  c-4.349-2.915-8.693-5.774-13.141-8.606c-0.727-0.462-1.667-0.958-2.151-1.497c-0.712-0.792-1.108-2.117-1.684-3.133  c-0.265-0.469-0.588-0.92-0.888-1.357c-0.275-0.4-0.536-0.997-1.076-1.076C2.223,36.823,2.365,37.469,2.349,38  c-0.017,0.549-0.077,1.172-0.047,1.823c0.028,0.606,0.297,1.049,0.28,1.544c-0.018,0.515-0.291,1.036-0.841,1.029  c-0.727-0.009-0.8-0.98-0.983-1.686c-0.209-0.807-0.483-1.551-0.421-2.245c0.049-0.531,0.341-1.223,0.468-2.057  c0.246-1.599,0.126-3.078,1.451-3.415C3.004,32.804,4,33.38,4.781,33.649c0.789,0.272,1.597,0.428,2.339,0.702  c0.854,0.316,1.706,0.875,2.524,1.355c2.526,1.484,4.626,3.112,7.062,4.63c3.273,2.041,6.545,3.955,9.307,6.267  c7.434-2.179,16.722-3.566,25.863-4.302c4.176-0.337,8.326-0.174,12.253,0.374c5.624,0.787,10.073-1.58,13.844-3.18  c2.035-0.864,4.078-1.653,6.173-2.573C80.804,36.331,77.705,35.814,74.466,35.24z M93.968,39.729  c-1.838-0.388-3.732-0.737-5.471-1.075c-0.059-0.012-0.127-0.067-0.188-0.046c-1.143,0.392-2.279,0.613-3.367,1.029  c-2.033,0.773-4.015,1.775-5.752,3.039C78.33,43.3,77.372,44,76.897,44.733c-1.609,2.489-1.206,7.214-0.467,10.149  c0.27,1.071,0.411,1.79,0.889,2.666c3.022,1.287,6.88-0.183,8.885-1.684c1.526-1.142,2.676-2.75,3.602-4.35  C91.815,48.042,93.102,43.946,93.968,39.729z M64.878,46.089c-6.121-1.937-14.865-0.822-21.232,0.467  c-4.477,0.907-9.474,1.92-10.944,5.753c-0.801,2.086-1.009,5.098-0.701,7.903c0.284,2.599,1.076,4.892,2.011,6.594  c2.943,2.698,10.038,1.581,14.124,0.375c2.523-0.745,4.112-1.389,5.845-2.197c1.973-0.921,4.636-1.939,5.285-4.116  c0.179-0.597,0.115-1.244,0.188-1.824c0.492-3.909,1.942-7.447,4.303-9.634c0.477-0.441,1.146-0.679,1.357-1.262  C65.37,47.428,65.13,46.709,64.878,46.089z\"/>\r\n</svg>\r\n";
 	},"useData":true});
 
 /***/ },
-/* 48 */
+/* 49 */
 /*!**********************************************************************************!*\
   !*** ./~/script-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js ***!
   \**********************************************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(/*! !./~/script-loader/addScript.js */ 49)(__webpack_require__(/*! !./~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 50)+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///Users/jordanscales/khan/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
+	__webpack_require__(/*! !./~/script-loader/addScript.js */ 50)(__webpack_require__(/*! !./~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 51)+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///C:/FunDev/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
 
 /***/ },
-/* 49 */
+/* 50 */
 /*!**************************************!*\
   !*** ./~/script-loader/addScript.js ***!
   \**************************************/
@@ -13474,7 +13611,7 @@
 	}
 
 /***/ },
-/* 50 */
+/* 51 */
 /*!*******************************************************************************!*\
   !*** ./~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js ***!
   \*******************************************************************************/
