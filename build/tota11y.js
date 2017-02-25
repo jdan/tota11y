@@ -10504,8 +10504,6 @@
 	var annotateLabels = __webpack_require__(/*! ../shared/annotate */ 14)("labels");
 	var annotateLandmarks = __webpack_require__(/*! ../shared/annotate */ 14)("landmarks");
 
-	var audit = __webpack_require__(/*! ../shared/audit */ 31);
-
 	var ShowAllPlugin = (function (_Plugin) {
 	    _inherits(ShowAllPlugin, _Plugin);
 
@@ -10527,11 +10525,11 @@
 	        }
 	    }, {
 	        key: "reportError",
-	        value: function reportError(el) {}
+	        value: function reportError() {}
 	    }, {
 	        key: "run",
 	        value: function run() {
-	            $('html').addClass('tota11y-show-all-active');
+	            $("html").addClass("tota11y-show-all-active");
 
 	            new HeadingsPlugin().run();
 	            new ContrastPlugin().run();
@@ -10543,7 +10541,7 @@
 	    }, {
 	        key: "cleanup",
 	        value: function cleanup() {
-	            $('html').removeClass('tota11y-show-all-active');
+	            $("html").removeClass("tota11y-show-all-active");
 
 	            annotateAltText.removeAll();
 	            annotateContrast.removeAll();

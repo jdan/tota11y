@@ -17,8 +17,6 @@ let annotateHeadings = require("../shared/annotate")("headings");
 let annotateLabels = require("../shared/annotate")("labels");
 let annotateLandmarks = require("../shared/annotate")("landmarks");
 
-let audit = require("../shared/audit");
-
 class ShowAllPlugin extends Plugin {
     getTitle() {
         return "Show all";
@@ -28,10 +26,10 @@ class ShowAllPlugin extends Plugin {
         return "Activate all options at once.";
     }
 
-    reportError(el) { }
+    reportError() { }
 
     run() {
-        $('html').addClass('tota11y-show-all-active');
+        $("html").addClass("tota11y-show-all-active");
 
         new HeadingsPlugin().run();
         new ContrastPlugin().run();
@@ -42,7 +40,7 @@ class ShowAllPlugin extends Plugin {
     }
 
     cleanup() {
-        $('html').removeClass('tota11y-show-all-active');
+        $("html").removeClass("tota11y-show-all-active");
 
         annotateAltText.removeAll();
         annotateContrast.removeAll();
