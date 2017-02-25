@@ -88,7 +88,8 @@
 	    function Toolbar() {
 	        _classCallCheck(this, Toolbar);
 
-	        this.activePlugin = null;
+	        this.activePlugin = plugins["default"][0];
+	        this.activePlugin.run();
 	    }
 
 	    /**
