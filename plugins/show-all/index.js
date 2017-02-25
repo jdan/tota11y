@@ -31,6 +31,8 @@ class ShowAllPlugin extends Plugin {
     reportError(el) { }
 
     run() {
+        $('html').addClass('show-all');
+
         new HeadingsPlugin().run();
         new ContrastPlugin().run();
         new LinkTextPlugin().run();
@@ -40,6 +42,8 @@ class ShowAllPlugin extends Plugin {
     }
 
     cleanup() {
+        $('html').removeClass('show-all');
+
         annotateAltText.removeAll();
         annotateContrast.removeAll();
         annotateHeadings.removeAll();
