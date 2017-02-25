@@ -8,6 +8,9 @@ let annotate = require("../shared/annotate")("alt-text");
 let audit = require("../shared/audit");
 
 class AltTextPlugin extends Plugin {
+    getShowAll() {
+        return "Show all";
+    }
     getTitle() {
         return "Image alt-text";
     }

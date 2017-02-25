@@ -4,6 +4,7 @@
  * Exposes an array of plugin instances.
  */
 
+let ShowAllPlugin = require("./show-all");
 let AltTextPlugin = require("./alt-text");
 let ContrastPlugin = require("./contrast");
 let HeadingsPlugin = require("./headings");
@@ -14,6 +15,7 @@ let A11yTextWand = require("./a11y-text-wand");
 
 module.exports = {
     default: [
+        new ShowAllPlugin(),
         new HeadingsPlugin(),
         new ContrastPlugin(),
         new LinkTextPlugin(),
