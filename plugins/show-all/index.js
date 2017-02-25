@@ -31,7 +31,7 @@ class ShowAllPlugin extends Plugin {
     reportError(el) { }
 
     run() {
-        $('html').addClass('show-all');
+        $('html').addClass('tota11y-show-all-active');
 
         new HeadingsPlugin().run();
         new ContrastPlugin().run();
@@ -42,7 +42,7 @@ class ShowAllPlugin extends Plugin {
     }
 
     cleanup() {
-        $('html').removeClass('show-all');
+        $('html').removeClass('tota11y-show-all-active');
 
         annotateAltText.removeAll();
         annotateContrast.removeAll();
