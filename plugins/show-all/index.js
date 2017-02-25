@@ -9,7 +9,14 @@ let LinkTextPlugin = require("../link-text");
 
 let $ = require("jquery");
 let Plugin = require("../base");
-let annotate = require("../shared/annotate")("alt-text");
+
+let annotateAltText = require("../shared/annotate")("alt-text");
+let annotateLinkText = require("../shared/annotate")("link-text");
+let annotateContrast = require("../shared/annotate")("contrast");
+let annotateHeadings = require("../shared/annotate")("headings");
+let annotateLabels = require("../shared/annotate")("labels");
+let annotateLandmarks = require("../shared/annotate")("landmarks");
+
 let audit = require("../shared/audit");
 
 class ShowAllPlugin extends Plugin {
@@ -33,7 +40,12 @@ class ShowAllPlugin extends Plugin {
     }
 
     cleanup() {
-        annotate.removeAll();
+        annotateAltText.removeAll();
+        annotateContrast.removeAll();
+        annotateHeadings.removeAll();
+        annotateLabels.removeAll();
+        annotateLandmarks.removeAll();
+        annotateLinkText.removeAll();
     }
 }
 

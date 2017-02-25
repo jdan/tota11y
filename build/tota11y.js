@@ -10495,7 +10495,14 @@
 
 	var $ = __webpack_require__(/*! jquery */ 4);
 	var Plugin = __webpack_require__(/*! ../base */ 12);
-	var annotate = __webpack_require__(/*! ../shared/annotate */ 14)("alt-text");
+
+	var annotateAltText = __webpack_require__(/*! ../shared/annotate */ 14)("alt-text");
+	var annotateLinkText = __webpack_require__(/*! ../shared/annotate */ 14)("link-text");
+	var annotateContrast = __webpack_require__(/*! ../shared/annotate */ 14)("contrast");
+	var annotateHeadings = __webpack_require__(/*! ../shared/annotate */ 14)("headings");
+	var annotateLabels = __webpack_require__(/*! ../shared/annotate */ 14)("labels");
+	var annotateLandmarks = __webpack_require__(/*! ../shared/annotate */ 14)("landmarks");
+
 	var audit = __webpack_require__(/*! ../shared/audit */ 31);
 
 	var ShowAllPlugin = (function (_Plugin) {
@@ -10533,7 +10540,12 @@
 	    }, {
 	        key: "cleanup",
 	        value: function cleanup() {
-	            annotate.removeAll();
+	            annotateAltText.removeAll();
+	            annotateContrast.removeAll();
+	            annotateHeadings.removeAll();
+	            annotateLabels.removeAll();
+	            annotateLandmarks.removeAll();
+	            annotateLinkText.removeAll();
 	        }
 	    }]);
 
