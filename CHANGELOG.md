@@ -1,3 +1,7 @@
+## 0.1.6
+
+* Ignore hidden links for LinkText plugin ([30dc0fd](https://github.com/Khan/tota11y/commit/30dc0fd))
+
 ## 0.1.5
 
 * Update travis.yml to use node v4 ([c3c47be](https://github.com/Khan/tota11y/commit/c3c47be))

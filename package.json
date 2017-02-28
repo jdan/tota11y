@@ -9,7 +9,7 @@
   "author": "Jordan Scales <scalesjordan@gmail.com>",
   "devDependencies": {
     "accessibility-developer-tools": "2.11.0",
-    "autoprefixer-loader": "^2.0.0",
+    "autoprefixer": "^6.5.3",
     "babel": "^5.6.7",
     "babel-core": "^5.0.12",
     "babel-loader": "^5.0.0",
@@ -22,8 +22,8 @@
     "less": "^2.5.0",
     "less-loader": "^2.2.0",
     "mocha": "^2.2.5",
-    "postcss": "^4.1.11",
-    "postcss-loader": "^0.4.3",
+    "postcss": "^5.2.6",
+    "postcss-loader": "^1.1.1",
     "script-loader": "^0.6.1",
     "style-loader": "^0.10.1",
     "webpack": "^1.8.4",
@@ -31,8 +31,8 @@
   },
   "scripts": {
     "build": "npm run prod && npm run dev",
-    "prod": "webpack --config webpack.config.babel.js -p",
-    "dev": "webpack --config webpack.config.babel.js -d --devtool hidden --output-file=tota11y.js",
+    "prod": "NODE_ENV=production webpack --config webpack.config.babel.js",
+    "dev": "webpack --config webpack.config.babel.js -d --devtool hidden --output-filename=tota11y.js",
     "lint": "eslint index.js plugins test utils",
     "test": "mocha --require test/babel-hook test/*.js",
     "live-test": "webpack-dev-server --config webpack.config.babel.js --hot --inline"
