@@ -62,10 +62,11 @@ class ContrastPlugin extends Plugin {
             }
         });
 
-        return this.error(
+        annotate.error(
+            $(el),
+            contrastRatio,
             titleTemplate(templateData),
-            $description,
-            $(el));
+            $description);
     }
 
     run() {
@@ -121,38 +122,20 @@ class ContrastPlugin extends Plugin {
                     combinations[key] = true;
                 }
             } else {
-                if (!combinations[key]) {
-                    // We do not show duplicates in the errors panel, however,
-                    // to keep the output from being overwhelming
-                    let error = this.addError({
-                        style,
-                        fgColor,
-                        bgColor,
-                        contrastRatio,
-                        requiredRatio,
-                    }, el);
-
-                    // Save original color so it can be restored on cleanup.
-                    this.preservedColors.push({
-                        $el: $(el),
-                        fg: style.color,
-                        bg: style.backgroundColor,
-                    });
-
-                    combinations[key] = error;
-                }
-
-                // We display errors multiple times for emphasis. Each error
-                // will point back to the entry in the info panel for that
-                // particular color combination.
-                //
-                // TODO: The error entry in the info panel will only highlight
-                // the first element with that color combination
-                annotate.errorLabel(
-                    $(el),
+                this.addError({
+                    style,
+                    fgColor,
+                    bgColor,
                     contrastRatio,
-                    "This contrast is insufficient at this size.",
-                    combinations[key]);
+                    requiredRatio,
+                }, el);
+
+                // Save original color so it can be restored on cleanup.
+                this.preservedColors.push({
+                    $el: $(el),
+                    fg: style.color,
+                    bg: style.backgroundColor,
+                });
             }
         });
     }

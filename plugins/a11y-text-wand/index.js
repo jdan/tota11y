@@ -3,6 +3,7 @@
  */
 
 let $ = require("jquery");
+let annotate = require("../shared/annotate")("a11y-wand");
 let Plugin = require("../base");
 
 require("./style.less");
@@ -17,11 +18,6 @@ class A11yTextWand extends Plugin {
     }
 
     run() {
-        // HACK(jordan): We provide a fake summary to force the info panel to
-        //     render.
-        this.summary(" ");
-        this.panel.render();
-
         $(document).on("mousemove.wand", function(e) {
             let element = document.elementFromPoint(e.clientX, e.clientY);
 
@@ -32,13 +28,13 @@ class A11yTextWand extends Plugin {
             $(element).addClass("tota11y-outlined");
 
             if (!textAlternative) {
-                $(".tota11y-info-section.active").html(
+                annotate.summary(
                     <i className="tota11y-nothingness">
                         No text visible to a screen reader
                     </i>
                 );
             } else {
-                $(".tota11y-info-section.active").text(textAlternative);
+                annotate.summary(textAlternative);
             }
         });
     }
@@ -46,6 +42,7 @@ class A11yTextWand extends Plugin {
     cleanup() {
         $(".tota11y-outlined").removeClass("tota11y-outlined");
         $(document).off("mousemove.wand");
+        annotate.removeAll();
     }
 }
 

@@ -18,7 +18,7 @@ module.exports = () => {
             return $el;
         },
 
-        errorLabel($el, text, expanded) {
+        error($el, text, expanded) {
             $el.data({
                 "has-label": true,
                 "has-error-label": true,

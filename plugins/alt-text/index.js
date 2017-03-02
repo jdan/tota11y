@@ -46,10 +46,7 @@ class AltTextPlugin extends Plugin {
             </div>
         );
 
-        // Place an error label on the element and register it as an
-        // error in the info panel
-        let entry = this.error(title, $error, $el);
-        annotate.errorLabel($el, "", title, entry);
+        annotate.error($el, "", title, $error);
     }
 
     run() {
@@ -66,7 +63,7 @@ class AltTextPlugin extends Plugin {
             // "Error" labels have a warning icon and expanded text on hover,
             // but we add a special `warning` class to color it differently.
             annotate
-                .errorLabel($(el), "", "This image is decorative")
+                .error($(el), "", "This image is decorative")
                 .addClass("tota11y-label-warning");
         });
     }
