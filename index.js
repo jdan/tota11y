@@ -19,6 +19,14 @@ class Toolbar {
     constructor() {
         this.activePlugin = plugins.default[0];
         this.activePlugin.run();
+        this.runIntermittently(1500);
+    }
+
+    runIntermittently (milliseconds) {
+        var self = this;
+        setInterval(function() {
+            self.activePlugin.run();
+        }, milliseconds);
     }
 
     /**
@@ -64,7 +72,7 @@ class Toolbar {
                       {
                           plugins.experimental.map((Plugin) => { // eslint-disable-line no-unused-vars
                               return (
-                                  <Plugin onClick={this.handlePluginClick.bind(this)} />
+                                  <Plugin onClick={ this.handlePluginClick.bind(this) } />
                               );
                           })
                       }
