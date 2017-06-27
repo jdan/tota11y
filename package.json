@@ -4,7 +4,7 @@
   "description": "An accessibility visualization toolkit",
   "repository": {
     "type": "git",
-    "url": "http://github.com/Khan/tota11y.git"
+    "url": "https://github.com/Khan/tota11y.git"
   },
   "author": "Jordan Scales <scalesjordan@gmail.com>",
   "devDependencies": {
