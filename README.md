@@ -79,4 +79,4 @@ The awesome glasses in our logo were created by [Kyle Scott](https://thenounproj
 
 ## License
 
-MIT
+[MIT License](LICENSE.txt)
