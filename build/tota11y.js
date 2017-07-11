@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://github.com/Khan/tota11y/blob/master/LICENSE.txt
  * 
- * Date: 2017-05-17
+ * Date: 2017-07-11
  * 
  */
 /******/ (function(modules) { // webpackBootstrap
@@ -13556,7 +13556,7 @@
   \**********************************************************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	__webpack_require__(/*! !./~/script-loader/addScript.js */ 50)(__webpack_require__(/*! !./~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 51)+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///C:/Dev/projects/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
+	__webpack_require__(/*! !./~/script-loader/addScript.js */ 50)(__webpack_require__(/*! !./~/raw-loader!./~/accessibility-developer-tools/dist/js/axs_testing.js */ 51)+"\n\n// SCRIPT-LOADER FOOTER\n//# sourceURL=script:///C:/Dev/tota11y/node_modules/accessibility-developer-tools/dist/js/axs_testing.js")
 
 /***/ }),
 /* 50 */
