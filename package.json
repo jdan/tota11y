@@ -31,7 +31,7 @@
   },
   "scripts": {
     "build": "npm run prod && npm run dev",
-    "prod": "set NODE_ENV=production webpack --config webpack.config.babel.js",
+    "prod": "set NODE_ENV=production && webpack --config webpack.config.babel.js",
     "dev": "webpack --config webpack.config.babel.js -d --devtool hidden --output-filename=tota11y.js",
     "lint": "eslint index.js plugins test utils",
     "test": "mocha --require test/babel-hook test/*.js",
