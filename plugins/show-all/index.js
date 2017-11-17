@@ -36,7 +36,6 @@ class ShowAllPlugin extends Plugin {
         new LinkTextPlugin().run();
         new LabelsPlugin().run();
         new AltTextPlugin().run();
-        new LandmarksPlugin().run();
     }
 
     cleanup() {
