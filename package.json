@@ -2,6 +2,7 @@
   "name": "tota11y",
   "version": "0.1.6",
   "description": "An accessibility visualization toolkit",
+  "main": "build/tota11y.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Khan/tota11y.git"
