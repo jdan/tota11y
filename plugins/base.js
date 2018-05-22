@@ -77,7 +77,7 @@ class Plugin {
         );
 
         let $el = (
-            <li role="menu-item" className="tota11y-plugin">
+            <li role="menuitem" className="tota11y-plugin">
                 {$switch}
             </li>
         );
