@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "tota11y",
+  "description": "An accessibility visualization toolkit",
+  "version": "1.0",
+  "icons": {
+    "16": "assets/icon-16.png",
+    "24": "assets/icon-48.png",
+    "32": "assets/icon-128.png"
+  },
+  "browser_action": {
+    "default_title": "tota11y"
+  },
+  "background": {
+    "page": "background.html",
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "contentScript.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": [
+    "tabs"
+  ]
+}
