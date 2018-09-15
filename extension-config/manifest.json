@@ -21,10 +21,11 @@
       "js": [
         "tota11y.js"
       ],
-      "run_at": "document_end"
+      "run_at": "document_idle"
     }
   ],
   "permissions": [
-    "tabs"
+    "tabs",
+    "activeTab"
   ]
 }
