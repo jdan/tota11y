@@ -10,6 +10,7 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 const options = require("./utils/options");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 // PostCSS plugin to append !important to every CSS rule
 const veryimportant = postcss.plugin("veryimportant", function () {
@@ -99,6 +100,14 @@ module.exports = {
         new webpack.ProvidePlugin({
             [options.jsxPragma]: path.join(__dirname, "utils", "element"),
         }),
+        // Copies the extension configuration and other extension assets to the build folder.
+        new CopyWebpackPlugin([
+        {
+            from: "./extension-config",
+            to: "./",
+            ignore: [ ".eslintrc" ]
+        }
+        ])
     ],
     optimization: {
         minimizer: [
