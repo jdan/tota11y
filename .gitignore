@@ -1,6 +1,5 @@
 node_modules/
 tota11y/
 dist/**
-build/
 
 npm-debug.log
