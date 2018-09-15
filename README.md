@@ -74,6 +74,16 @@ To create a production build, with minified and unminified output:
 npm run build:prod
 ```
 
+## Loading tota11y as an unpacked Chrome extension
+
+Build the project
+
+```
+npm run build
+```
+
+then in Chrome, enter `chrome://extensions` in the address bar to load the Chrome extensions  page. At the top left of the Chrome extensions page, click the *Load Unpacked* button. From the file browser, select the `./build` folder and press the *Select* button to load the tota11y Chrome extension unpacked.
+
 ## Special thanks
 
 Many of tota11y's features come straight from [Google Chrome's Accessibility Developer Tools](https://github.com/GoogleChrome/accessibility-developer-tools). We use this library heavily at [Khan Academy](http://khanacademy.org).
