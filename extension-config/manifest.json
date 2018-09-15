@@ -11,10 +11,6 @@
   "browser_action": {
     "default_title": "tota11y"
   },
-  "background": {
-    "page": "background.html",
-    "persistent": true
-  },
   "content_scripts": [
     {
       "matches": [
@@ -22,7 +18,7 @@
         "https://*/*"
       ],
       "js": [
-        "contentScript.js"
+        "tota11y.js"
       ],
       "run_at": "document_end"
     }
