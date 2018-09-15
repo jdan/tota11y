@@ -9,7 +9,8 @@
     "32": "assets/icon-128.png"
   },
   "browser_action": {
-    "default_title": "tota11y"
+    "default_title": "tota11y",
+    "default_popup": "popup.html"
   },
   "content_scripts": [
     {
