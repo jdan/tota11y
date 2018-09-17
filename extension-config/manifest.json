@@ -20,7 +20,6 @@
         "http://*/*"
       ],
       "js": [
-        "tota11y.js",
         "content-script-comms.js"
       ],
       "run_at": "document_idle"
