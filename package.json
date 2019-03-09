@@ -27,6 +27,7 @@
     "handlebars-loader": "^1.7.1",
     "jquery": "^3.4.0",
     "jsdom": "^8.1.0",
+    "jsdom-global": "^2.1.1",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "mocha": "^6.1.4",
@@ -46,7 +47,7 @@
     "build:prod": "NODE_ENV=production webpack --config webpack.config.babel.js",
     "build:dev": "webpack --config webpack.config.babel.js -d --devtool hidden",
     "lint": "eslint index.js plugins test utils",
-    "test": "mocha --require test/babel-hook test/*.js",
+    "test": "mocha --require test/babel-hook --require jsdom-global/register test/*.js",
     "start": "webpack-dev-server --config webpack.config.babel.js --hot --inline",
     "prepublishOnly": "node ./utils/pre-publish-checks.js && git diff --stat --exit-code HEAD && npm test && npm run build:prod"
   },
