@@ -1,14 +1,13 @@
-let fs = require("fs");
-let handlebars = require("handlebars");
-let path = require("path");
-let postcss = require("postcss");
-let webpack = require("webpack");
-let autoprefixer = require("autoprefixer");
-
-let options = require("./utils/options");
+const fs = require("fs");
+const handlebars = require("handlebars");
+const path = require("path");
+const postcss = require("postcss");
+const webpack = require("webpack");
+const autoprefixer = require("autoprefixer");
+const options = require("./utils/options");
 
 // PostCSS plugin to append !important to every CSS rule
-let veryimportant = postcss.plugin("veryimportant", function() {
+const veryimportant = postcss.plugin("veryimportant", function() {
     return function(css) {
         css.walkDecls(function(decl) {
             decl.important = true;
@@ -16,7 +15,7 @@ let veryimportant = postcss.plugin("veryimportant", function() {
     };
 });
 
-let bannerTemplate = handlebars.compile(
+const bannerTemplate = handlebars.compile(
     fs.readFileSync("./templates/banner.handlebars", "utf-8"));
 
 const plugins = [
@@ -40,7 +39,7 @@ if (process.env.NODE_ENV === "production") {
     plugins.push(
         // Suppress uglifyJS warnings from node_modules/
         new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}})
-    )
+    );
 }
 
 module.exports = {
@@ -56,9 +55,12 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                loader: "babel",
+                loader: "babel-loader",
                 query: {
-                    jsxPragma: options.jsxPragma,
+                    presets: ["env", "react"],
+                    plugins: [
+                        ["transform-react-jsx", {pragma: options.jsxPragma}]
+                    ],
                 },
             },
             { test: /\.handlebars$/, loader: "handlebars", },

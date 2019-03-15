@@ -7,10 +7,10 @@
 // Require the base tota11y styles right away so they can be overwritten
 require("./less/tota11y.less");
 
-let $ = require("jquery");
+const $ = require("jquery");
 
-let plugins = require("./plugins");
-let logoTemplate = require("./templates/logo.handlebars");
+const plugins = require("./plugins");
+const logoTemplate = require("./templates/logo.handlebars");
 
 // Chrome Accessibility Developer Tools - required once as a global
 require("script!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js");
