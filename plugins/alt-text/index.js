@@ -62,7 +62,7 @@ class AltTextPlugin extends Plugin {
         }
 
         // Additionally, label presentational images
-        $(`img[role="presentation"], img[alt=""]`).each((i, el) => {
+        $("img[role=\"presentation\"], img[alt=\"\"]").each((i, el) => {
             // "Error" labels have a warning icon and expanded text on hover,
             // but we add a special `warning` class to color it differently.
             annotate
