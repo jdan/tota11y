@@ -7,8 +7,13 @@
 var options = require("../utils/options");
 
 // Register all future "require"s with babel
-require("babel/register")({
-    jsxPragma: options.jsxPragma,
+require("babel-core/register")({
+    presets: ["env", "react"],
+    plugins: [
+        ["transform-react-jsx", {
+            "pragma": options.jsxPragma, // default pragma is React.createElement
+        }]
+    ],
 });
 
 // Store our custom JSX transpile target as a global

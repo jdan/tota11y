@@ -15,10 +15,10 @@
         "strict": 0
     },
     "ecmaFeatures": {
-        "jsx": true,
+        "jsx": true
     },
     "globals": {
         "axs": true,
-        "$": true,
+        "$": true
     }
 }
