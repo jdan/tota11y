@@ -10,12 +10,15 @@
         "no-underscore-dangle": 0,
         "no-proto": 0,
         "quotes": [2, "double"],
-        "space-after-keywords": [2, "always"],
+        "keyword-spacing": [2],
         "space-infix-ops": 0,
         "strict": 0
     },
-    "ecmaFeatures": {
-        "jsx": true
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true,
+            "modules": true
+        }
     },
     "globals": {
         "axs": true,

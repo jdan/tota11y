@@ -56,7 +56,7 @@ const ERRORS = {
             description += ` or ${_tag(prevLevel)}`;
         }
 
-        description += `.</div>`;
+        description += ".</div>";
 
         return {
             title: `
