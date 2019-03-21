@@ -181,6 +181,23 @@ class InfoPanel {
         });
     }
 
+    renderAnnotationCheckbox() {
+        if (!this.options.disableAnnotation) {
+            return (
+                <label className="tota11y-info-annotation-toggle">
+                    Annotate:
+                    {" "}
+                    <input
+                        className="toggle-annotation"
+                        type="checkbox"
+                        checked="checked" />
+                </label>
+            );
+        }
+
+        return null;
+    }
+
     render() {
         // Destroy the existing info panel to prevent double-renders
         if (this.$el) {
@@ -200,14 +217,7 @@ class InfoPanel {
                 <header className="tota11y-info-title">
                     {this.plugin.getTitle()}
                     <span className="tota11y-info-controls">
-                        <label className="tota11y-info-annotation-toggle">
-                            Annotate:
-                            {" "}
-                            <input
-                                className="toggle-annotation"
-                                type="checkbox"
-                                checked="checked" />
-                        </label>
+                        {this.renderAnnotationCheckbox()}
                         <a aria-label="Close info panel"
                            href="#"
                            className="tota11y-info-dismiss-trigger">
