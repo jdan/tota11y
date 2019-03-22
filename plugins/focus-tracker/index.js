@@ -23,7 +23,22 @@ const FOCUS_STATES = {
 
 // we'll use this to make sure we don't apply the was-focused
 // indicator to our tota11y panels
-const IGNORE_WAS_FOCUSED_CLASS = "tota11y";
+const IGNORE = "tota11y"
+
+// we're going to attempt to visualize the tab order of the page
+// based on the source order of the tabbable elements
+// this Array contains our tabbable element selectors
+const TABABLE_ELEMENTS = [
+    "a[href]",
+    "area[href]",
+    "iframe",
+    "input:not([disabled])",
+    "select:not([disabled])",
+    "textarea:not([disabled])",
+    "button:not([disabled])",
+    "[tabIndex]:not([tabIndex=\"-1\"])",
+    "[contenteditable]"
+];
 
 // convenient method to quickly remove any classes this
 // plugin applied
@@ -41,12 +56,6 @@ class FocusTracker extends Plugin {
       const options = Object.assign({}, args, { panel: PANEL_OPTIONS });
 
       super(options);
-
-      this.tabIndex = -1;
-      this.tabOrder = {};
-      this.generatedIds = [];
-
-      this.applyFocusClass = this.applyFocusClass.bind(this);
     }
 
     getTitle() {
@@ -67,28 +76,42 @@ class FocusTracker extends Plugin {
       // we want to ignore our tota11y toggle and panel because
       // the user probably only cares about focusable elements on
       // their page getting this visual treatment
-      if (type === FOCUS_EVENT && !target.closest(`.${IGNORE_WAS_FOCUSED_CLASS}`)) {
+      if (type === FOCUS_EVENT || !target.closest(`.${IGNORE}`)) {
           // choose the class we want to add to this element
           // based on whether this is the focusin or focusout event
-          const classToAdd = FOCUS_STATES[type];
-
-          const id = target.dataset.focusTrackerId || `focusable-element-${new Date().getTime()}`;
-
-          if (typeof this.tabOrder[id] === "undefined") {
-            target.dataset.focusTrackerId = id;
-
-            this.tabOrder[id] = this.tabIndex++;
-
-            annotate.label(target, `#${(target.tabIndex === -1) ? "-1" : this.tabIndex}`);
-          }
-
-          target.classList.add(classToAdd);
+          target.classList.add(FOCUS_STATES[type]);
       }
+    }
+
+    // this won't be perfect because you can reorder things visually,
+    // but's let's display the tab order based on source order of the page
+    annotateSourceTabOrder() {
+        const selector = TABABLE_ELEMENTS.join(", ");
+
+        [...document.querySelectorAll(selector)]
+            .filter((element) => {
+                return !element.closest(`.${IGNORE}`);
+            })
+            .forEach((element, index) => {
+              annotate.label(element, `tabIndex: ${index}`);
+            })
+        ;
+    }
+
+    annotateProgrammaticallyFocusableElements() {
+        [...document.querySelectorAll("[tabIndex=\"-1\"]")].forEach((element) => {
+            annotate.label(element, "tabIndex: -1");
+        });
+    }
+
+    addAnnotations() {
+      this.annotateSourceTabOrder();
+      this.annotateProgrammaticallyFocusableElements();
     }
 
     run() {
         // pop up our info panel to let the user know what we're doing
-        this.summary("Tracking Focus. TabIndex starts w/ current focus.");
+        this.summary("Tracking Focus.");
         this.panel.render();
 
         // dynamically apply our event listeners by looping through
@@ -96,6 +119,8 @@ class FocusTracker extends Plugin {
         Object.keys(FOCUS_STATES).forEach((key) => {
           document.addEventListener(key, this.applyFocusClass);
         });
+
+        this.addAnnotations();
     }
 
     cleanup() {
@@ -111,11 +136,6 @@ class FocusTracker extends Plugin {
           [...document.querySelectorAll(`.${FOCUS_STATES[key]}`)].forEach((element) => {
             removeFocusClasses(element);
           });
-        });
-
-        // clean up our focus order data-* ids
-        [...document.querySelectorAll("[data-focus-tracker-id]")].forEach((element) => {
-            delete element.dataset.focusTrackerId;
         });
     }
 }
