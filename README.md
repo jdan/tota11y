@@ -84,7 +84,7 @@ npm run build
 
 then in Chrome, enter `chrome://extensions` in the address bar to load the Chrome extensions  page. At the top left of the Chrome extensions page, click the *Load Unpacked* button. From the file browser, select the `./build` folder and press the *Select* button to load the tota11y Chrome extension unpacked.
 
-## Loading tota11y as an temporary add-on in Firefox
+## Loading tota11y as a temporary add-on in Firefox
 
 Build the project
 
