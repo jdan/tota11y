@@ -22,6 +22,17 @@ if (chrome && chrome.runtime) {
                 toggleTota11y(request.payload, sendResponse);
                 break;
 
+            case "check_for_tota11y_toolbar": {
+                const tota11yToolbar = document.getElementById("tota11y-toolbar");
+
+                // If the tota11y toolbar has been loaded at least once and it's visible
+                // let the popup window know so that the checkbox in the popup gets checked if it's not.
+                if (tota11yToolbar && tota11yToolbar.style.display !== "none") {
+                    sendResponse({ type: "ensure_checkbox_checked"});
+                }
+                break;
+            }
+
             default:
                 break;
         }
