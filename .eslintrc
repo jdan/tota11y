@@ -22,7 +22,6 @@
     },
     "globals": {
         "axs": true,
-        "$": true,
-        "chrome": false
+        "$": true
     }
 }

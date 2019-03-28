@@ -9,9 +9,9 @@ function getActiveTab() {
 }
 
 function activateTota11y() {
-    console.log('activating tota11y...');
+    console.log("activating tota11y...");
     chrome.tabs.executeScript(null, { file: "tota11y.js" });
-    console.log('tota11y has been activated.');
+    console.log("tota11y has been activated.");
 }
 
 const tota11yToggler = document.getElementById("tota11y-toggler")
@@ -23,11 +23,11 @@ tota11yToggler.addEventListener("click", async event => {
         return;
     }
 
-    const message = { type: 'toggle_tota11y', payload: { showTota11y: event.target.checked } };
+    const message = { type: "toggle_tota11y", payload: { showTota11y: event.target.checked } };
 
     chrome.tabs.sendMessage(activeTab.id, message, response => {
-        switch(response.type) {
-            case 'activate_tota11y':
+        switch (response.type) {
+            case "activate_tota11y":
                 activateTota11y();
                 break;
 
@@ -47,11 +47,11 @@ tota11yToggler.addEventListener("click", async event => {
         return;
     }
 
-    const message = { type: 'check_for_tota11y_toolbar' };
+    const message = { type: "check_for_tota11y_toolbar" };
 
     chrome.tabs.sendMessage(activeTab.id, message, response => {
         switch (response.type) {
-            case 'ensure_checkbox_checked':
+            case "ensure_checkbox_checked":
                 tota11yToggler.checked = true;
                 break;
 
