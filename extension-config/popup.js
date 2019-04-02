@@ -10,7 +10,7 @@ function getActiveTab() {
 
 function activateTota11y() {
     console.log("activating tota11y...");
-    chrome.tabs.executeScript(null, { file: "tota11y.js" });
+    chrome.tabs.executeScript(null, { file: "tota11y.min.js" });
     console.log("tota11y has been activated.");
 }
 
