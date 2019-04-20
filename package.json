@@ -8,7 +8,9 @@
     "url": "https://github.com/Khan/tota11y.git"
   },
   "author": "Jordan Scales <scalesjordan@gmail.com>",
-  "contributors": ["Jeff Yates <jeff.yates@alumni.manchester.ac.uk"],
+  "contributors": [
+    "Jeff Yates <jeff.yates@alumni.manchester.ac.uk"
+  ],
   "devDependencies": {
     "accessibility-developer-tools": "2.11.0",
     "autoprefixer": "^6.5.3",
@@ -19,18 +21,18 @@
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.10.1",
     "eslint": "^5.15.2",
-    "handlebars": "^4.1.0",
+    "handlebars": "^4.1.2",
     "handlebars-loader": "^1.0.0",
     "jquery": "^3.3.1",
     "jsdom": "^8.1.0",
     "less": "^2.5.0",
     "less-loader": "^2.2.0",
-    "mocha": "^6.0.2",
+    "mocha": "^6.1.4",
     "postcss": "^5.2.6",
     "postcss-loader": "^1.1.1",
     "script-loader": "^0.6.1",
     "style-loader": "^0.10.1",
-    "webpack": "^1.8.4",
+    "webpack": "^4.30.0",
     "webpack-dev-server": "^1.9.0"
   },
   "scripts": {
