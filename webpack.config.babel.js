@@ -108,4 +108,8 @@ module.exports = {
             }),
         ],
     },
+    devServer: {
+        open: true,
+        openPage: "test"
+    }
 };

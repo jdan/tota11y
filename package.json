@@ -44,7 +44,9 @@
     "build:dev": "webpack --config webpack.config.babel.js -d --devtool hidden",
     "lint": "eslint index.js plugins test utils",
     "test": "mocha --require test/babel-hook test/*.js",
-    "test:live": "webpack-dev-server --config webpack.config.babel.js --hot --inline"
+    "test:live": "webpack-dev-server --config webpack.config.babel.js --hot --inline",
+    "start": "npm run test:live",
+    "prepublishOnly": "npm run build:prod && npm test"
   },
   "license": "MIT",
   "dependencies": {}
