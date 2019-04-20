@@ -2,7 +2,7 @@
   "name": "tota11y",
   "version": "0.1.6",
   "description": "An accessibility visualization toolkit",
-  "main": "build/tota11y.min.js",
+  "main": "dist/tota11y.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Khan/tota11y.git"
@@ -20,6 +20,7 @@
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "clean-webpack-plugin": "^2.0.1",
     "css-loader": "^2.1.1",
     "eslint": "^5.15.2",
     "handlebars": "^4.1.2",
@@ -39,12 +40,11 @@
     "webpack-dev-server": "^3.3.1"
   },
   "scripts": {
-    "build": "npm run build:prod && npm run build:dev",
     "build:prod": "NODE_ENV=production webpack --config webpack.config.babel.js",
-    "build:dev": "webpack --config webpack.config.babel.js -d --devtool hidden --output-filename=tota11y.js",
+    "build:dev": "webpack --config webpack.config.babel.js -d --devtool hidden",
     "lint": "eslint index.js plugins test utils",
     "test": "mocha --require test/babel-hook test/*.js",
-    "live-test": "webpack-dev-server --config webpack.config.babel.js --hot --inline"
+    "test:live": "webpack-dev-server --config webpack.config.babel.js --hot --inline"
   },
   "license": "MIT",
   "dependencies": {}

@@ -1,10 +1,14 @@
 const fs = require("fs");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-const handlebars = require("handlebars");
 const path = require("path");
+
+const handlebars = require("handlebars");
 const postcss = require("postcss");
 const webpack = require("webpack");
 const autoprefixer = require("autoprefixer");
+
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+
 const options = require("./utils/options");
 
 // PostCSS plugin to append !important to every CSS rule
@@ -20,13 +24,16 @@ const bannerTemplate = handlebars.compile(
     fs.readFileSync("./templates/banner.handlebars", "utf-8"));
 
 module.exports = {
-    mode: process.env.NODE_ENV,
-    entry: {
-        app: "./index.js",
+    mode: process.env.NODE_ENV === "production" ? "production" : "development",
+    entry: process.env.NODE_ENV === "production" ? {
+        "tota11y": "./index.js",
+        "tota11y.min": "./index.js",
+    } : {
+        "tota11y": "./index.js",
     },
     output: {
-        path: path.join(__dirname, "build"),
-        filename: "tota11y.min.js",
+        path: path.join(__dirname, "dist"),
+        filename: "[name].js",
     },
     module: {
         rules: [
@@ -76,6 +83,7 @@ module.exports = {
         ],
     },
     plugins: [
+        new CleanWebpackPlugin(),
         // Add a banner to our bundles with a version number, date, and
         // license info
         new webpack.BannerPlugin({
@@ -95,6 +103,7 @@ module.exports = {
     optimization: {
         minimizer: [
             new UglifyJsPlugin({
+                include: /\.min\.js$/,
                 uglifyOptions: { compress: { warnings: false } }
             }),
         ],
