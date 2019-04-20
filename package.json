@@ -11,6 +11,7 @@
   "contributors": [
     "Jeff Yates <jeff.yates@alumni.manchester.ac.uk"
   ],
+  "homepage": "https://khan.github.io/tota11y/",
   "devDependencies": {
     "accessibility-developer-tools": "2.11.0",
     "autoprefixer": "^6.5.3",
