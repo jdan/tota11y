@@ -1,5 +1,5 @@
 {
-  "name": "tota11y",
+  "name": "@khanacademy/tota11y",
   "version": "0.1.6",
   "description": "An accessibility visualization toolkit",
   "main": "dist/tota11y.js",
