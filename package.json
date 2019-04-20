@@ -8,6 +8,7 @@
     "url": "https://github.com/Khan/tota11y.git"
   },
   "author": "Jordan Scales <scalesjordan@gmail.com>",
+  "contributors": ["Jeff Yates <jeff.yates@alumni.manchester.ac.uk"],
   "devDependencies": {
     "accessibility-developer-tools": "2.11.0",
     "autoprefixer": "^6.5.3",
