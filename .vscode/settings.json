@@ -1,0 +1,5 @@
+{
+    "todo-tree.excludeGlobs": [
+        "**/build/**"
+    ]
+}
