@@ -1,4 +1,5 @@
 node_modules/
 tota11y/
+build/
 
 npm-debug.log
