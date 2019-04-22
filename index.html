@@ -245,14 +245,14 @@
                     current page.
                 </p>
 
-                <a class="bookmarklet" href="javascript:(function(){var%20tota11y=document.createElement('SCRIPT');tota11y.type='text/javascript';tota11y.src='https://khan.github.io/tota11y/tota11y/build/tota11y.min.js';document.getElementsByTagName('head')[0].appendChild(tota11y);})();" onclick="javascript:return false;">tota11y</a>
+                <a class="bookmarklet" href="javascript:(function(){var%20tota11y=document.createElement('SCRIPT');tota11y.type='text/javascript';tota11y.src='https://khan.github.io/tota11y/node_modules/@khanacademy/tota11y/dist/tota11y.min.js';document.getElementsByTagName('head')[0].appendChild(tota11y);})();" onclick="javascript:return false;">tota11y</a>
             </div>
 
             <p>
                 To insert tota11y directly into your own website, first
-                <a href="https://github.com/Khan/tota11y/releases/latest">grab
-                a copy from GitHub</a>, then include the script  at the bottom
-                of your <code>&lt;body&gt;</code> tag like so:
+                install <code>@khanacademy/tota11y</code> using <code>npm</code>
+                or <code>yarn</code>, then include the script  at the bottom of
+                your <code>&lt;body&gt;</code> tag like so:
             </p>
 
             <pre><code>&lt;script src="tota11y.min.js"&gt;&lt;/script&gt;</code></pre>
@@ -307,7 +307,7 @@
         </section>
     </main>
 
-    <script src="./tota11y/build/tota11y.min.js"></script>
+    <script src="./node_modules/@khanacademy/tota11y/dist/tota11y.min.js"></script>
     <script src="./js/script.js"></script>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

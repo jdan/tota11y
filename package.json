@@ -2,7 +2,9 @@
   "name": "tota11y-pages",
   "version": "0.0.1",
   "description": "GitHub Pages for tota11y",
-  "dependencies": {},
+  "dependencies": {
+    "@khanacademy/tota11y": "^0.2.0"
+  },
   "devDependencies": {},
   "repository": {
     "type": "git",
