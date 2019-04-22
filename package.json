@@ -45,7 +45,7 @@
     "lint": "eslint index.js plugins test utils",
     "test": "mocha --require test/babel-hook test/*.js",
     "start": "webpack-dev-server --config webpack.config.babel.js --hot --inline",
-    "prepublishOnly": "npm run build:prod && npm test"
+    "publish": "git diff --stat --exit-code HEAD && npm test && npm run build:prod"
   },
   "license": "MIT",
   "dependencies": {}
