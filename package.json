@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/Khan/tota11y/issues"
   },
-  "homepage": "https://github.io/Khan/tota11y"
+  "homepage": "https://github.io/Khan/tota11y",
+  "scripts": {
+    "postinstall": "mkdir ./dist && cp ./node_modules/@khanacademy/tota11y/dist/tota11y.min.js ./dist/tota11y.min.js"
+  }
 }
