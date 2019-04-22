@@ -9,9 +9,9 @@ An accessibility visualization toolkit
 
 ## Installation
 
-First, [grab the latest release of tota11y](https://github.com/Khan/tota11y/releases/latest).
+`npm install @khanacademy/tota11y`
 
-Then, include it right before `</body>` like so:
+Include it right before `</body>` like so:
 
 ```html
 <script src="tota11y.min.js"></script>
@@ -57,18 +57,21 @@ To perform manual testing as you work, you can run a live dev-server with the
 following:
 
 ```
-npm run live-test
+npm start
 ```
-
-Then navigate to `http://localhost:8080/webpack-dev-server/test/`. This page
-will automatically reload with changes.
 
 ## Building
 
-You can build a bundled copy of tota11y with:
+To create a development build as the test server uses:
 
 ```
-npm run build
+npm run build:dev
+```
+
+To create a production build, with minified and unminified output:
+
+```
+npm run build:prod
 ```
 
 ## Special thanks
