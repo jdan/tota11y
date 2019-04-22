@@ -39,13 +39,16 @@
     "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.3.1"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build:prod": "NODE_ENV=production webpack --config webpack.config.babel.js",
     "build:dev": "webpack --config webpack.config.babel.js -d --devtool hidden",
     "lint": "eslint index.js plugins test utils",
     "test": "mocha --require test/babel-hook test/*.js",
     "start": "webpack-dev-server --config webpack.config.babel.js --hot --inline",
-    "publish": "git diff --stat --exit-code HEAD && npm test && npm run build:prod"
+    "publish": "node ./utils/pre-publish-checks.js && git diff --stat --exit-code HEAD && npm test && npm run build:prod"
   },
   "license": "MIT",
   "dependencies": {}
