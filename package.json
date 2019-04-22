@@ -1,0 +1,23 @@
+{
+  "name": "tota11y-pages",
+  "version": "0.0.1",
+  "description": "GitHub Pages for tota11y",
+  "dependencies": {
+    "@khanacademy/tota11y": "^0.2.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Khan/tota11y.git"
+  },
+  "keywords": [
+    "gh-pages",
+    "tota11y"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Khan/tota11y/issues"
+  },
+  "homepage": "https://github.io/Khan/tota11y"
+}
