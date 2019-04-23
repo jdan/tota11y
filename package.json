@@ -46,7 +46,7 @@
   "scripts": {
     "build:prod": "NODE_ENV=production webpack --config webpack.config.babel.js",
     "build:dev": "webpack --config webpack.config.babel.js -d --devtool hidden",
-    "lint": "eslint index.js plugins test utils",
+    "lint": "eslint index.js plugins test utils extension-config",
     "test": "mocha --require test/babel-hook test/*.js",
     "start": "webpack-dev-server --config webpack.config.babel.js --hot --inline",
     "prepublishOnly": "node ./utils/pre-publish-checks.js && git diff --stat --exit-code HEAD && npm test && npm run build:prod"
