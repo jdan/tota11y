@@ -21,7 +21,7 @@ Include it right before `</body>` like so:
 
 Want to contribute to tota11y? Awesome! Run the following in your terminal:
 
-```
+```bash
 git clone https://github.com/Khan/tota11y.git
 cd tota11y/
 npm install
@@ -43,20 +43,20 @@ tota11y uses a variety of technologies, including [jQuery](https://jquery.com/),
 
 You can run unit tests on tota11y with the following:
 
-```
+```bash
 npm test
 ```
 
 Or lint with:
 
-```
+```bash
 npm run lint
 ```
 
 To perform manual testing as you work, you can run a live dev-server with the
 following:
 
-```
+```bash
 npm start
 ```
 
@@ -64,15 +64,29 @@ npm start
 
 To create a development build as the test server uses:
 
-```
+```bash
 npm run build:dev
 ```
 
 To create a production build, with minified and unminified output:
 
-```
+```bash
 npm run build:prod
 ```
+
+## Releasing
+
+Currently, the following steps must be made to release a new version of tota11y:
+
+1. Update `package.json` with the version number to be released.
+1. Commit the release details to the CHANGELOG.md.
+   This should be list of the unique pull requests and commits that contributed to the release (see the CHANGLOG.md file for previous examples).
+1. Draft a new release for the version.
+   The tag name and name of the release should be of the form `v1.2.3` where `1.2.3` is the version from `package.json`.
+1. Login to `npm` with the Khan Academy credentials.
+   This requires someone with appropriate privileges.
+1. Run `npm publish`.
+   This step will run tests and pre-publish checks, then perform a production build and publish the new package to NPM.
 
 ## Special thanks
 
