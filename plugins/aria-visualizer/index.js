@@ -2,12 +2,12 @@
  * Allows users to see what screen readers would see.
  */
 
-let Plugin = require("../base");
+const Plugin = require("../base");
 
-let annotate = require("../shared/annotate")("roles");
+const annotate = require("../shared/annotate")("roles");
 
 // this will let us get a shorter info panel that just
-// lets the user know we are tracking their focus
+// lets the user know we are visualizing a Screen Reader View
 const PANEL_OPTIONS = {
   statusPanelView: true
 };
@@ -42,27 +42,26 @@ class AriaVisualizer extends Plugin {
     }
 
     getTitle() {
-        return "aria-* Visualizer";
+        return "Screen Reader View";
     }
 
     getDescription() {
-        return "See the effects of your aria-* and other a11y attributes";
+        return "View the page as if you were a Screen Reader. See the effects of aria-* and other a11y attributes.";
     }
 
     startAriaHidden(attribute) {
-        const ariaName = `aria-${attribute}`;
+        const className = `tota11y-${attribute}-visualized`;
 
-        [...document.querySelectorAll(`[${ariaName}="true"]:not(.tota11y)`)].forEach((element) => {
+        [...document.querySelectorAll(`[${attribute}="true"]:not(.tota11y)`)].forEach((element) => {
+            // make sure we aren't visualizing our tota11y DOM
             if (!element.closest(".tota11y")) {
-                element.classList.add(`tota11y-${ariaName}-visualized`);
+                element.classList.add(className);
             }
         });
     }
 
     stopAriaHidden(attribute) {
-        const ariaName = `aria-${attribute}`;
-
-        const className = `tota11y-${ariaName}-visualized`;
+        const className = `tota11y-${attribute}-visualized`;
 
         [...document.querySelectorAll(`.${className}`)].forEach((element) => {
             element.classList.remove(className);
@@ -71,6 +70,7 @@ class AriaVisualizer extends Plugin {
 
     startRole(attribute) {
         [...document.querySelectorAll(`[${attribute}]:not(.tota11y)`)].forEach((element) => {
+            // make sure we aren't annotating our tota11y DOM
             if (!element.closest(".tota11y")) {
                 annotate.label(
                     element,
