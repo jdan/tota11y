@@ -26,6 +26,13 @@ const HIDDEN_CLASS_NAME = "tota11y-info-hidden";
 const STATUS_PANEL_VIEW_CLASS_NAME = "tota11y-info-status-panel-view";
 
 class InfoPanel {
+    /**
+     * Create a new instance of InfoPanel
+     * @param {Plugin} plugin instance of Plugin class
+     * @param {Object} [options={}] Object defining options for the InfoPanel
+     *   @param {Boolean} options.disableAnnotation enable/disable the annotation checkbox
+     *   @param {Boolean} options.statusPanelView switch to the smaller Status Panel view
+     */
     constructor(plugin, options = {}) {
         this.plugin = plugin;
         this.options = options;

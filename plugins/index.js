@@ -4,14 +4,14 @@
  * Exposes an array of plugin instances.
  */
 
-let AltTextPlugin = require("./alt-text");
-let ContrastPlugin = require("./contrast");
-let HeadingsPlugin = require("./headings");
-let LabelsPlugin = require("./labels");
-let LandmarksPlugin = require("./landmarks");
-let LinkTextPlugin = require("./link-text");
-let A11yTextWand = require("./a11y-text-wand");
-let FocusTracker = require("./focus-tracker");
+const AltTextPlugin = require("./alt-text");
+const ContrastPlugin = require("./contrast");
+const HeadingsPlugin = require("./headings");
+const LabelsPlugin = require("./labels");
+const LandmarksPlugin = require("./landmarks");
+const LinkTextPlugin = require("./link-text");
+const A11yTextWand = require("./a11y-text-wand");
+const FocusTracker = require("./focus-tracker");
 
 module.exports = {
     default: [

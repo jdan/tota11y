@@ -14,6 +14,13 @@ let InfoPanel = require("./shared/info-panel");
 require("./style.less");
 
 class Plugin {
+    /**
+     * Create a new instance of Plugin
+     * @param {Object} [options={}] Object defining options for the Plugin
+     *   @param {Object} options.panel Object with Plugin-specific options for the InfoPanel class
+     *     @param {Boolean} options.panel.disableAnnotation enable/disable the annotation checkbox
+     *     @param {Boolean} options.panel.statusPanelView switch to the smaller Status Panel view
+     */
     constructor(options = {}) {
         this.panel = new InfoPanel(this, options.panel);
         this.$checkbox = null;
