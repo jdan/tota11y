@@ -1,3 +1,5 @@
+// This script manages the interactions in the browser extension's popup menu. For more info, see https://developer.chrome.com/extensions/user_interface#popup.
+
 /**
  * Gets the currently active tab in the browser.
  */
