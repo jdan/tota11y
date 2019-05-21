@@ -1,3 +1,6 @@
+/**
+ * Gets the currently active tab in the browser.
+ */
 function getActiveTab() {
     return new Promise((resolve, reject) => {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -8,12 +11,18 @@ function getActiveTab() {
     });
 }
 
+/**
+ * Activates total11y by loading the tota11y script into the page only once
+ * and only when requested by the user.
+ */
 function activateTota11y() {
     console.log("activating tota11y...");
+    // We only want to load the tota11y script once the user has decided to use tota11y.
     chrome.tabs.executeScript(null, { file: "tota11y.min.js" });
     console.log("tota11y has been activated.");
 }
 
+// The tota11y toggler is the checkbox in the browser extension's popup menu.
 const tota11yToggler = document.getElementById("tota11y-toggler")
 
 tota11yToggler.addEventListener("click", async event => {
