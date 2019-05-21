@@ -78,8 +78,8 @@ npm run build:prod
 
 Build the project
 
-```
-npm run build
+```bash
+npm run build:prod
 ```
 
 then in Chrome, enter `chrome://extensions` in the address bar to load the Chrome extensions  page. At the top left of the Chrome extensions page, click the *Load Unpacked* button. From the file browser, select the `./build` folder and press the *Select* button to load the tota11y Chrome extension unpacked.
@@ -88,8 +88,8 @@ then in Chrome, enter `chrome://extensions` in the address bar to load the Chrom
 
 Build the project
 
-```
-npm run build
+```bash
+npm run build:prod
 ```
 
 then in Firefox, enter `about:debugging` in the address bar to load the add-on debugging page. At the top right of the add-on debugging page, click the *Load Temporary Add-on...* button. From the file browser, select the `./build/manifest.json` file and press the *Open* button to load tota11y as a temporary add-on.
