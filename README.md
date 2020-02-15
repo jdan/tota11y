@@ -87,6 +87,9 @@ Currently, the following steps must be made to release a new version of tota11y:
    This requires someone with appropriate privileges.
 1. Run `npm publish`.
    This step will run tests and pre-publish checks, then perform a production build and publish the new package to NPM.
+   
+## Examples of Integration
+1. [webpack-react-typescript-project](https://github.com/azemetre/tota11y-webpack-react-typescript-example)
 
 ## Special thanks
 
