@@ -22,11 +22,13 @@ class A11yTextWand extends Plugin {
         this.summary(" ");
         this.panel.render();
 
-        $(document).on("mousemove.wand", function(e) {
-            let element = document.elementFromPoint(e.clientX, e.clientY);
+        // testElement is only used when running in the jsdom testing environment
+        // because document.elementFromPoint is not available
+        $(document).on("mousemove.wand", function(e, testElement) {
+            let element = (testElement) ? testElement : document.elementFromPoint(e.clientX, e.clientY);
 
             let textAlternative = axs.properties.findTextAlternatives(
-                element, {});
+                element, {}, true);
 
             $(".tota11y-outlined").removeClass("tota11y-outlined");
             $(element).addClass("tota11y-outlined");
