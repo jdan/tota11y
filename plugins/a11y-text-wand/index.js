@@ -9,11 +9,11 @@ require("./style.less");
 
 class A11yTextWand extends Plugin {
   getTitle() {
-    return "Screen Reader Zonk";
+    return "Accessible name+description viewer";
   }
 
   getDescription() {
-    return "Hover over Zonks to view them as a screen reader would";
+    return "Hover over elements (e.g. form fields) to see accessible names & descriptions passed to A.T.";
   }
 
   run() {
