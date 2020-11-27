@@ -7,23 +7,24 @@
 let AltTextPlugin = require("./alt-text");
 let ContrastPlugin = require("./contrast");
 let HeadingsPlugin = require("./headings");
-let LabelsPlugin = require("./labels");
+//let LabelsPlugin = require("./labels");
 let LandmarksPlugin = require("./landmarks");
 let LinkTextPlugin = require("./link-text");
 let A11yTextWand = require("./a11y-text-wand");
+let EmptyElementsPlugin = require("./empty");
 
 module.exports = {
     default: [
         new HeadingsPlugin(),
         new ContrastPlugin(),
         new LinkTextPlugin(),
-        new AltTextPlugin(),
+				new AltTextPlugin(),
+				new EmptyElementsPlugin()
     ],
 
     experimental: [
-		new LabelsPlugin(),
+	//	new LabelsPlugin(),
 		new LandmarksPlugin(),
-		new A11yTextWand(),
-
+		new A11yTextWand()
     ],
 };
