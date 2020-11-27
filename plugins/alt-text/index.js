@@ -34,8 +34,7 @@ class AltTextPlugin extends Plugin {
                 <p>
                     If the image is decorative and does not convey any
                     information to the surrounding content, however, you may
-                    leave this "alt" attribute empty, or specify a "role"
-                    attribute with a value of "presentation."
+                    leave this "alt" attribute empty. See <a href="https://dna.babylonhealth.com/accessibility/elements/text-descriptions" target="_blank" rel="noopener noreferrer">DNA guidance on text descriptions</a>.
                 </p>
 
                 <pre><code>
