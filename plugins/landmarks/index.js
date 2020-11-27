@@ -9,7 +9,7 @@ require("./style.less");
 
 class LandmarksPlugin extends Plugin {
   getTitle() {
-    return "Landmarks";
+    return "Landmarks, ARIA roles";
   }
 
   getDescription() {
