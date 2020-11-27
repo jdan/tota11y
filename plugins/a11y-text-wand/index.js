@@ -41,7 +41,6 @@ class A11yTextWand extends Plugin {
         }
       }
 
-
       if (!textAlternative) {
         $(".tota11y-info-section.active").html(
           <i className="tota11y-nothingness">
