@@ -28,7 +28,8 @@ class EmptyElementsPlugin extends Plugin {
     }
 	run() {
 		  $("p:empty, h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty, li:empty, ol:empty, ul:empty, br+br").each(function () {
-			$(this).append("EMPTY ELEMENT");
+			$(this).append("EMPTY ELEMENT !!");
+			$(this).addClass("tota11y-empty"); // so we can find them again
 			annotate.label($(this), $(this).prop("tagName"));
 		});
 
@@ -36,9 +37,10 @@ class EmptyElementsPlugin extends Plugin {
 
 	  cleanup() {
 		annotate.removeAll();
-
+		$(".tota11y-empty").each(function () {
+			$(this).empty();
+		});
 	  }
 	}
-
 
 module.exports = EmptyElementsPlugin;
