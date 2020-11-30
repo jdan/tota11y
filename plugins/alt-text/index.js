@@ -60,7 +60,19 @@ class AltTextPlugin extends Plugin {
             elements.forEach(this.reportError.bind(this));
         }
 
-        // Additionally, label presentational images
+        //  present alt text for checking if attrib exists but not blank
+        $("img[alt]:not([alt=''])").each((i, el) => {
+            // "Error" labels have a warning icon and expanded text on hover,
+            // but we add a special `warning` class to color it differently.
+			let altMsg = "Check alt: " + $(el).attr("alt");
+
+			annotate
+                .errorLabel($(el), "Check!", $(el).attr("alt") )
+                .addClass("tota11y-label-warning");
+        });
+
+
+        //  label presentational images
         $("img[role=\"presentation\"], img[alt=\"\"]").each((i, el) => {
             // "Error" labels have a warning icon and expanded text on hover,
             // but we add a special `warning` class to color it differently.
