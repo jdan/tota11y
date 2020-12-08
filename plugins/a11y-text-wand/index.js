@@ -27,11 +27,7 @@ class A11yTextWand extends Plugin {
 
       let textAlternative = axs.properties.findTextAlternatives(element, {});
 
-      // TODO: nasty Brucie hack: if this element is an img, grab its alt text and show that (otherwise textAlternative is blank for some reason). Ditto if it's an input with a value attribute, like WordPress search button <input type="submit" id="searchsubmit" value="Search"> )
-
-      //if ($(element).prop("nodeName") === "IMG" && element.hasAttribute("alt"))
-      //  {textAlternative +=" "+$(element).attr("alt");
-      //}
+      // nasty Brucie hack: if it's an input with a value attribute, like WordPress search button <input type="submit" id="searchsubmit" value="Search">, grab its velue text and show that (otherwise textAlternative is blank for some reason) )
 
       if (
         $(element).prop("nodeName") === "INPUT" &&
@@ -45,9 +41,6 @@ class A11yTextWand extends Plugin {
       }
       // TODO: test with fieldset and legend.
 
-      $(".tota11y-outlined").removeClass("tota11y-outlined");
-      $(element).addClass("tota11y-outlined");
-
       // append anything found in aria-describedby, as screen readers will announce this too. It's a good way of adding accessible help text to form inputs— see https://developer.paciellogroup.com/blog/2014/12/using-aria-describedby-to-provide-helpful-form-hints/
 
       const describedBy = $(element).attr("aria-describedby");
@@ -58,6 +51,9 @@ class A11yTextWand extends Plugin {
           if (el) textAlternative += " " + el.textContent;
         }
       }
+
+      $(".tota11y-outlined").removeClass("tota11y-outlined");
+      $(element).addClass("tota11y-outlined");
 
       if (!textAlternative) {
         $(".tota11y-info-section.active").html(
