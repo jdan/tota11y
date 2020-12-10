@@ -84,22 +84,48 @@ class ContrastPlugin extends Plugin {
                 return;
             }
 
-            // Ignore invisible elements
+			// Ignore invisible elements
+			// TODO also ignore 'visually hidden' things, eg https://www.a11yproject.com/posts/2013-01-11-how-to-hide-content/
             if (axs.utils.elementIsTransparent(el) ||
                 axs.utils.elementHasZeroArea(el)) {
                     return;
             }
 
-            let style = getComputedStyle(el);
+			let style = getComputedStyle(el);
             let bgColor = axs.utils.getBgColor(style, el);
-            let fgColor = axs.utils.getFgColor(style, el, bgColor);
-            let contrastRatio = axs.color.calculateContrastRatio(
-                fgColor, bgColor).toFixed(2);
+			let fgColor = axs.utils.getFgColor(style, el, bgColor);
+
+// Previous test used axs.utils.isLargeFont, which doesn't take bold text into account. This stolen from Mozilla uner MPL 2.0 license https://searchfox.org/mozilla-central/source/devtools/shared/accessibility.js#23
+
+			const isBoldText = parseInt(style.getPropertyValue("font-weight"), 10) >= 600;
+			const size = parseFloat(style.getPropertyValue("font-size"));
+
+			const LARGE_TEXT = {
+				// CSS pixel value (constant) that corresponds to 14 point text size which defines large text when font text is bold (font weight is greater than or equal to 600).
+				BOLD_LARGE_TEXT_MIN_PIXELS: 18.66,
+				// CSS pixel value (constant) that corresponds to 18 point text size which defines large text for normal text (e.g. not bold).
+				LARGE_TEXT_MIN_PIXELS: 24,
+			  };
+
+  			const isLargeText = size >=(isBoldText
+      ? LARGE_TEXT.BOLD_LARGE_TEXT_MIN_PIXELS
+      : LARGE_TEXT.LARGE_TEXT_MIN_PIXELS);
+
+// end Moz bit, need to replace the axs.utils below TODO
 
             // Calculate required ratio based on size
             // Using strings to prevent rounding
-            let requiredRatio = axs.utils.isLargeFont(style) ?
-                3.0 : 4.5;
+//          let requiredRatio = axs.utils.isLargeFont(style) ?
+//				3.0 : 4.5;
+
+			let requiredRatio = isLargeText ?
+				3.0 : 4.5;
+
+            let contrastRatio = axs.color.calculateContrastRatio(
+				fgColor, bgColor).toFixed(2);
+
+//				console.log(contrastRatio+" / reqd="+ requiredRatio);
+
 
             // Build a key for our `combinations` map and report the color
             // if we have not seen it yet
@@ -107,7 +133,7 @@ class ContrastPlugin extends Plugin {
                         axs.color.colorToString(bgColor) + "/" +
                         requiredRatio;
 
-            if (!axs.utils.isLowContrast(contrastRatio, style)) {
+            if (contrastRatio > requiredRatio ) {
                 // For acceptable contrast values, we don't show ratios if
                 // they have been presented already
                 if (!combinations[key]) {
