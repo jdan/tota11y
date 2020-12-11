@@ -4,7 +4,7 @@
 
 let $ = require("jquery");
 let Plugin = require("../base");
-let annotate = require("../shared/annotate")("zonk");
+let annotate = require("../shared/annotate")("Title attributes");
 require("./style.less");
 
 class TitlesPlugin extends Plugin {
@@ -17,23 +17,24 @@ class TitlesPlugin extends Plugin {
   }
 
   run() {
-    $("[role]:not(.tota11y-toolbar,.tota11y-plugin)").each(function () {
-      annotate.label($(this), $(this).attr("role"));
+    $("[title]").each(function () {
+      if ($(this).prop("tagName") !== "IFRAME") {
+        annotate
+          .label($(this), $(this).attr("title"))
+          .addClass("tota11y-label-warning");
+      }
     });
 
-    $("header, footer, nav, aside, main").each(function () {
-      annotate.label($(this), $(this).prop("tagName"));
-      $(this).addClass("tota11y-element-outlined");
-    });
-  }
-
-  cleanup() {
-    annotate.removeAll();
-
-    $(".tota11y-element-outlined").each(function () {
-      $(this).removeClass("tota11y-element-outlined");
+    $("iframe").each(function () {
+      if (!this.hasAttribute("title")) {
+        annotate.errorLabel($(this), "Error", "iframe with no title", "");
+      }
     });
   }
+
+	cleanup() {
+		annotate.removeAll();
+}
 }
 
-module.exports = LandmarksPlugin;
+module.exports = TitlesPlugin;
