@@ -20,6 +20,17 @@
 			font-size: 24px;
 			font-weight: bold;
 		}
+
+		.visually-hidden {
+			clip: rect(0 0 0 0);
+			clip-path: inset(50%);
+			height: 1px;
+			overflow: hidden;
+			position: absolute;
+			white-space: nowrap;
+			width: 1px;
+			color: white;
+		}
 	</style>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -103,7 +114,7 @@
 					<li>
 						<iframe class="github-btn"
 							src="http://ghbtns.com/github-btn.html?user=Khan&amp;repo=tota11y&amp;type=watch&amp;count=true"
-							width="95" height="20" ></iframe>
+							width="95" height="20"></iframe>
 					</li>
 					<li>
 						<iframe class="github-btn"
@@ -113,8 +124,7 @@
 					<li class="follow-btn">
 						<iframe id="twitter-widget-1" scrolling="no" frameborder="0" allowtransparency="true"
 							src="http://platform.twitter.com/widgets/follow_button.53db0107b4b6a3bad3794c3440f5809f.en.html#_=1433768369078&amp;dnt=false&amp;id=twitter-widget-1&amp;lang=en&amp;screen_name=tota11y&amp;show_count=true&amp;show_screen_name=true&amp;size=m"
-							class="twitter-follow-button twitter-follow-button"
-							data-twttr-rendered="true"
+							class="twitter-follow-button twitter-follow-button" data-twttr-rendered="true"
 							style="position: static; visibility: visible; width: 190px; height: 20px;"></iframe>
 					</li>
 					<li class="tweet-btn">
@@ -190,18 +200,16 @@
 		<div class="row">
 			<h1>Invalid h1</h1>
 		</div>
-<ul></ul>
+		<ul></ul>
 		<div class="row">
 			<div class="col-md-4">
-				<h2>Heading</h2>
-				<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
-					mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
-					mollis euismod. Donec sed odio dui. </p>
+				<h2 class="visually-hidden">Visually hidden Heading</h2>
+				<p>VISUALLY HIDDEN HEADING ABOVE</p>
 				<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
 			</div>
 			<div class="col-md-4">
 				<h2>Heading</h2>
-				<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor
+				<p>Donec id <span style="color:bisque">non mi porta gravida at eget metus</span>. Fusce dapibus, tellus ac cursus commodo, tortor
 					mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna
 					mollis euismod. Donec sed odio dui. </p>
 				<p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>

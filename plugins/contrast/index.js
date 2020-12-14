@@ -85,13 +85,21 @@ class ContrastPlugin extends Plugin {
             }
 
 			// Ignore invisible elements
-			// TODO also ignore 'visually hidden' things, eg https://www.a11yproject.com/posts/2013-01-11-how-to-hide-content/
+
             if (axs.utils.elementIsTransparent(el) ||
                 axs.utils.elementHasZeroArea(el)) {
                     return;
             }
 
 			let style = getComputedStyle(el);
+
+			// TODO also ignore 'visually hidden' things, eg https://www.a11yproject.com/posts/2013-01-11-how-to-hide-content/
+
+			const visuallyHidden = ((style.getPropertyValue("clip") == "rect(0px, 0px, 0px, 0px)") && (style.getPropertyValue("clip-path") == "inset(50%)") && (style.getPropertyValue("height") == "1px") && (style.getPropertyValue("overflow") == "hidden") &&  (style.getPropertyValue("position") == "absolute") && (style.getPropertyValue("white-space") == "nowrap") && (style.getPropertyValue("width") == "1px"))
+
+			if (visuallyHidden) {return};
+
+
             let bgColor = axs.utils.getBgColor(style, el);
 			let fgColor = axs.utils.getFgColor(style, el, bgColor);
 
