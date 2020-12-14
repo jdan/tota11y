@@ -33,7 +33,8 @@ class TitlesPlugin extends Plugin {
   }
 
 	cleanup() {
-		annotate.removeAll();
+		$(".tota11y-annotation-Title").remove()
+//		annotate.removeAll(); hacked with above b/c namespace in /shared/annotate/index.js
 }
 }
 
