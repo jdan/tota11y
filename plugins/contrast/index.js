@@ -91,7 +91,7 @@ class ContrastPlugin extends Plugin {
 
       let style = getComputedStyle(el);
 
-      // Also ignore 'visually hidden' things, eg https://www.a11yproject.com/posts/2013-01-11-how-to-hide-content/
+      // ignore 'visually hidden' things, eg https://www.a11yproject.com/posts/2013-01-11-how-to-hide-content/
 
       const visuallyHidden =
         style.getPropertyValue("clip") == "rect(0px, 0px, 0px, 0px)" && // even when zero, needs units
@@ -102,9 +102,10 @@ class ContrastPlugin extends Plugin {
         style.getPropertyValue("white-space") == "nowrap" &&
         style.getPropertyValue("width") == "1px";
 
-      if (visuallyHidden) {
-        return;
-      }
+      // Also ignore text with opacity:0 as found on guardian.co.uk, amazon.co.uk
+
+      if (visuallyHidden || style.getPropertyValue("opacity") == "0") return;
+      
       //
 
       let bgColor = axs.utils.getBgColor(style, el);
