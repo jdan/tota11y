@@ -27,11 +27,17 @@ class EmptyElementsPlugin extends Plugin {
         `;
     }
 	run() {
-		  $("p:empty, h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty, li:empty, ol:empty, ul:empty, br+br").each(function () {
+		  $("h1:empty, h2:empty, h3:empty, h4:empty, h5:empty, h6:empty, li:empty, ol:empty, ul:empty, nav:empty, header:empty, main:empty, aside:empty, footer:empty, figcaption:empty").each(function () {
 			$(this).append("EMPTY ELEMENT !!");
+			$(this).addClass("tota11y-empty"); // so we can find them again
+			annotate.errorLabel($(this),"Empty!", $(this).prop("tagName"));
+		});
+
+		$("p:empty, br+br").each(function () {
 			$(this).addClass("tota11y-empty"); // so we can find them again
 			annotate.label($(this), $(this).prop("tagName"));
 		});
+
 
 	  }
 
