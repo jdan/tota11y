@@ -26,7 +26,7 @@
     "handlebars": "^4.1.2",
     "handlebars-loader": "^1.7.1",
     "jquery": "^3.4.0",
-    "jsdom": "^8.1.0",
+    "jsdom": "^16.5.0",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "mocha": "^10.1.0",
