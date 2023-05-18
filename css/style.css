@@ -84,7 +84,7 @@ pre code {
     right: 25px;
     text-align: center;
     text-decoration: none;
-    top: 25px;
+    top: calc(2.5em + 25px);
     width: 120px;
 }
 .github-link:hover, .github-link:focus {
