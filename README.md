@@ -9,7 +9,7 @@ An accessibility visualization toolkit
 
 ## Deprecation Notice
 
-tota11y was created at a time when tooling to assist in developing accessible solutions was sparse. Since then, not only have some great browser extensions and automated tooling come into existence, but browsers have added specific development tooling to support accessibility. As such, we are no longer actively developing or maintaininet tota11y.
+tota11y was created at a time when tooling to assist in developing accessible solutions was sparse. Since then, not only have some great browser extensions and automated tooling come into existence, like [axe][1] and [axe-core][2] from [deque][3], but browsers have added specific development tooling to support accessibility. As such, we are no longer actively developing or maintaining tota11y.
 
 After careful consideration of the options available, we decided to archive the repository and deprecate the project. As such, we will no longer be accepting pull requests or issues.
 
@@ -24,3 +24,7 @@ The awesome glasses in our logo were created by [Kyle Scott](https://thenounproj
 ## License
 
 [MIT License](LICENSE.txt)
+
+[1]: https://www.deque.com/axe
+[2]: https://github.com/dequelabs/axe-core
+[3]: https://www.deque.com
